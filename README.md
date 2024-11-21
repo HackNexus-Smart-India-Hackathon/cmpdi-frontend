@@ -9,6 +9,13 @@ This repository contains the codebase for the **frontend** of the application, w
 
 ## Key Features
 
+### Admin Console
+- **Project Management**: Create unique project codes, update project details, and track project progress.
+- **User Authorization**: Approve and manage investigator access through email and mobile number verification.
+- **Audit Control**: Maintain a complete database for auditing and scrutiny.
+- **Email Notifications**: Automatically send official communications for delays, meeting updates, or revision requests.
+- **Status Control**: Update the final status of projects upon completion.
+
 ### Investigator Console
 - **Project Access**: Investigators can log in using credentials provided by CMPDI to access their sanctioned project details.
 - **Data Submission**: Input project information, quarterly progress updates, fund utilization reports, and other necessary forms as per **S&T guidelines**.
@@ -16,13 +23,6 @@ This repository contains the codebase for the **frontend** of the application, w
 - **Notifications**: Receive alerts for upcoming deadlines, missing submissions, and project updates.
 - **Internal Messaging**: Communicate with CMPDI admin through an integrated chat and email system for queries or clarifications.
 - **Data Locking**: Once submitted, modifications to data are restricted, ensuring data integrity.
-
-### Admin Console
-- **Project Management**: Create unique project codes, update project details, and track project progress.
-- **User Authorization**: Approve and manage investigator access through email and mobile number verification.
-- **Audit Control**: Maintain a complete database for auditing and scrutiny.
-- **Email Notifications**: Automatically send official communications for delays, meeting updates, or revision requests.
-- **Status Control**: Update the final status of projects upon completion.
 
 ### General Features
 - **Cross-Platform Support**: Available on Windows, Android, and macOS for both PC and mobile use.

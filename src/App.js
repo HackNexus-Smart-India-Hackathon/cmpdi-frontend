@@ -1,7 +1,7 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import AdminConsole from './pages/AdminConsole';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import AdminConsole from "./pages/AdminConsole";
+import "./App.css";
 
 function App() {
   return (

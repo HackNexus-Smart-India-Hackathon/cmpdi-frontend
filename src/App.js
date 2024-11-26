@@ -1,17 +1,17 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import AdminConsole from "./pages/AdminConsole";
-import "./App.css";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AdminConsole from './pages/AdminConsole';
+import './App.css';
 
 function App() {
   return (
     <Router>
-      <div>
+      {/* <div>
         <p className="flex justify-center items-center">cmpdi-frontend</p>
         <button>
           <Link to="/AdminConsole">click</Link>
         </button>
-      </div>
+      </div> */}
       <Routes>
         <Route path="/AdminConsole" element={<AdminConsole />} />
       </Routes>

@@ -84,127 +84,132 @@ const SignUp = () => {
         <img src={moc_img} alt="Ministry Of Coal" />
       </div>
       <div className="md:w-1 md:h-[80vh] h-1 bg-gray-300 mx-5"></div>
-      <div className="m-20 p-5 md:h-3/5 md:w-1/2 w-11/12 bg-white flex flex-col items-center max-w-xl shadow-2xl rounded-3xl">
+      <div className="m-20 p-5 md:h-3/5 md:w-4/5 w-11/12 bg-white flex flex-col items-center max-w-xl shadow-2xl rounded-3xl">
         <div className="text-4xl font-semibold">Sign Up</div>
         <form onSubmit={formik.handleSubmit} className="mt-10 flex flex-col">
           <div className="flex flex-row gap-2">
-            <div className="flex items-center m-auto w-1/2 h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
-              <img src={user_icon} alt="User" className="w-6 h-6 mx-2" />
-              <input
-                type="text"
-                name="username"
-                value={formik.values.username}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                placeholder="Username"
-                className="w-full p-2"
-              />
+            <div className='flex flex-col items-center w-1/2'>
+              <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
+                <img src={user_icon} alt="User" className="w-6 h-6 mx-2" />
+                <input
+                  type="text"
+                  name="username"
+                  value={formik.values.username}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="Username"
+                  className="w-full p-2"
+                />
+              </div>
+              {formik.touched.username && formik.errors.username && (
+                <p className="text-red-500 text-xs">{formik.errors.username}</p>
+                )}
             </div>
-            {formik.touched.username && formik.errors.username && (
-              <p className="text-red-500">{formik.errors.username}</p>
-            )}
-          </div>
-          <div className="flex flex-row gap-2">
-            <div className="flex items-center m-auto w-1/2 h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
-              <img src={email_icon} alt="Email" className="w-6 h-6 mx-2" />
-              <input
-                type="email"
-                name="email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                placeholder="Email"
-                className="w-full p-2"
-              />
-            </div>
-            {formik.touched.email && formik.errors.email && (
-              <p className="text-red-500">{formik.errors.email}</p>
-            )}
-          </div>
-          <div className="flex flex-row gap-2">
-            <div className="flex items-center m-auto w-1/2 h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
-              <img
-                src={password_icon}
-                alt="Password"
-                className="w-6 h-6 mx-2"
-              />
-              <input
-                type="password"
-                name="password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                placeholder="Password"
-                className="w-full p-2"
-              />
-            </div>
-            {formik.touched.password && formik.errors.password && (
-              <p className="text-red-500">{formik.errors.password}</p>
-            )}
-          </div>
-          <div className="flex flex-row gap-2">
-            <div className="flex items-center m-auto w-1/2 h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
-              <img
-                src={password_icon}
-                alt="Confirm Password"
-                className="w-6 h-6 mx-2"
-              />
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formik.values.confirmPassword}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                placeholder="Confirm Password"
-                className="w-full p-2"
-              />
-            </div>
-            {formik.touched.confirmPassword &&
-              formik.errors.confirmPassword && (
-                <p className="text-red-500">{formik.errors.confirmPassword}</p>
+            <div className='flex flex-col items-center w-1/2'>
+              <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
+                <img src={email_icon} alt="Email" className="w-6 h-6 mx-2" />
+                <input
+                  type="email"
+                  name="email"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="Email"
+                  className="w-full p-2"
+                />
+              </div>
+              {formik.touched.email && formik.errors.email && (
+                <p className="text-red-500 text-xs">{formik.errors.email}</p>
               )}
-          </div>
-          <div className="flex flex-row gap-2">
-            <div className="flex items-center m-auto w-1/2 h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
-              <img src={phone_icon} alt="Phone" className="w-6 h-6 mx-2" />
-              <input
-                type="text"
-                name="phone"
-                value={formik.values.phone}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                placeholder="Phone"
-                className="w-full p-2"
-              />
             </div>
-            {formik.touched.phone && formik.errors.phone && (
-              <p className="text-red-500">{formik.errors.phone}</p>
-            )}
           </div>
           <div className="flex flex-row gap-2">
-            <div className="flex items-center m-auto w-1/2 h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
-              <img src={role_icon} alt="Role" className="w-6 h-6 mx-2" />
-              <select
-                name="role"
-                value={formik.values.role}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="w-full p-2 bg-transparent border-none outline-none"
-              >
-                <option value="" disabled>
-                  Select Role
-                </option>
-                <option value="admin">Admin</option>
-                <option value="investigator">Investigator</option>
-                {/* <option value="guest">Guest</option> */}
-              </select>
+            <div className='flex flex-col items-center w-1/2'>
+              <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
+                <img
+                  src={password_icon}
+                  alt="Password"
+                  className="w-6 h-6 mx-2"
+                />
+                <input
+                  type="password"
+                  name="password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="Password"
+                  className="w-full p-2"
+                />
+                </div>  
+              {formik.touched.password && formik.errors.password && (
+                <p className="text-red-500 text-xs">{formik.errors.password}</p>
+                )}
             </div>
-            {formik.touched.role && formik.errors.role && (
-              <p className="text-red-500">{formik.errors.role}</p>
-            )}
-          </div>
+            <div className='flex flex-col items-center w-1/2 '>
+              <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
+                <img
+                  src={password_icon}
+                  alt="Confirm Password"
+                  className="w-6 h-6 mx-2"
+                />
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formik.values.confirmPassword}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="Confirm Password"
+                  className="w-full p-2"
+                />
+              </div>
+              {formik.touched.confirmPassword &&
+                formik.errors.confirmPassword && (
+                  <p className="text-red-500 text-xs ">{formik.errors.confirmPassword}</p>
+                )}
+              </div>
+            </div>
           <div className="flex flex-row gap-2">
-            <div className="flex items-center m-auto w-1/2 h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
+            <div className='flex flex-col items-center w-1/2'>
+              <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
+                <img src={phone_icon} alt="Phone" className="w-6 h-6 mx-2" />
+                <input
+                  type="text"
+                  name="phone"
+                  value={formik.values.phone}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="Phone"
+                  className="w-full p-2"
+                />
+              </div>
+              {formik.touched.phone && formik.errors.phone && (
+                <p className="text-red-500 text-xs">{formik.errors.phone}</p>
+                )}
+            </div>
+            <div className='flex flex-col items-center w-1/2'>
+              <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
+                <img src={role_icon} alt="Role" className="w-6 h-6 mx-2" />
+                <select
+                  name="role"
+                  value={formik.values.role}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="w-full p-2 bg-transparent border-none outline-none"
+                >
+                  <option value="" disabled>
+                    Select Role
+                  </option>
+                  <option value="admin">Admin</option>
+                  <option value="investigator">Investigator</option>
+                  {/* <option value="guest">Guest</option> */}
+                </select>
+              </div>
+              {formik.touched.role && formik.errors.role && (
+                <p className="text-red-500 text-xs">{formik.errors.role}</p>
+                )}
+            </div>
+          </div>
+            {/* <div className="flex items-center m-auto w-1/2 h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
               <input
                 type="checkbox"
                 name="twoFa"
@@ -216,9 +221,8 @@ const SignUp = () => {
               <label htmlFor="twoFa">Enable Two-Factor Authentication</label>
             </div>
             {formik.touched.twoFa && formik.errors.twoFa && (
-              <p className="text-red-500">{formik.errors.twoFa}</p>
-            )}
-          </div>
+              <p className="text-red-500 text-xs">{formik.errors.twoFa}</p>
+            )} */}
           <button
             type="submit"
             className="mt-4 p-2 bg-blue-500 text-white rounded"

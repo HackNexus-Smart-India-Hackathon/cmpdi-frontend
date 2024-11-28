@@ -6,6 +6,7 @@ import SignUp from './components/loginSignup/SignUp';
 import TwoFactorAuth from './components/loginSignup/TwoFactorAuth';
 import AdminConsole from './pages/AdminConsole';
 import './App.css';
+import Profile from './pages/profile';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/twofactorauthentication" element={<TwoFactorAuth />} />
         <Route path="/adminconsole" element={<AdminConsole />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );

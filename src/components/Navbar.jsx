@@ -11,6 +11,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { styled, alpha } from '@mui/material/styles';
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -54,7 +55,6 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [quickActionsAnchorEl, setQuickActionsAnchorEl] = useState(null);
-
   const isMenuOpen = Boolean(anchorEl);
   const isQuickActionsMenuOpen = Boolean(quickActionsAnchorEl);
 
@@ -73,7 +73,6 @@ const Navbar = () => {
   };
 
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const handleMobileMenuClose = () => {
@@ -102,10 +101,13 @@ const Navbar = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}>
+        <Link to="/profile">Profile</Link>
+      </MenuItem>
       <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
     </Menu>
   );
+
   const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
     <Menu
@@ -163,15 +165,16 @@ const Navbar = () => {
       </MenuItem>
     </Menu>
   );
+
   return (
-    <nav className="flex flex-row items-center items-center justify-between bg-gray-100 px-6 py-2 border-b border-gray-300">
+    <nav className="sticky top-0 z-50 flex flex-row items-center justify-between bg-slate-200 px-6 py-2 border-b border-slate-300">
       {/* Logo */}
       <div className="text-lg font-bold">
-        <img className="w-12 " src="logo\coal india logo.png" alt="logo" />
+        <img className="w-12 " src="logo/coal india logo.png" alt="logo" />
       </div>
 
       {/* Search Bar */}
-      <div className="flex flex-grow items-center mx-4 ">
+      <div className="flex flex-grow items-center mx-4">
         <Search>
           <SearchIconWrapper>
             <SearchIcon />
@@ -182,6 +185,7 @@ const Navbar = () => {
           />
         </Search>
       </div>
+
       <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={3} color="error">
@@ -198,6 +202,7 @@ const Navbar = () => {
           </Badge>
         </IconButton>
       </Box>
+
       {/* Quick Actions */}
       <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
         <div className="relative">

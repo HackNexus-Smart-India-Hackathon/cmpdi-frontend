@@ -6,6 +6,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import callRefreshToken from '../../utils/reset_token';
 import moc_img from '../Assets/moc.png';
 import 'react-toastify/dist/ReactToastify.css';
+import OtpInput from './OtpInput';
 
 const TwoFactorAuth = () => {
   const { user_id, access_token } = useSelector((state) => state.auth);
@@ -18,6 +19,10 @@ const TwoFactorAuth = () => {
   console.log('Secret:', secret);
   const baseUrl = process.env.REACT_APP_AUTH_BASE_API;
 
+  const onOtpSubmit = (otp) => { 
+    setTwoFaPin(otp);
+  }
+  
   const handle2FAPinSubmit = async () => {
     try {
       const response = await axios.post(
@@ -39,6 +44,7 @@ const TwoFactorAuth = () => {
       // Handle error (e.g., show error message)
     }
   };
+
   useEffect(() => {
     const generate2FASecret = async () => {
       try {
@@ -116,25 +122,15 @@ const TwoFactorAuth = () => {
           </div>
         </div>
         <div>Verification code</div>
-
         <div className=" mt-7 text-black text-l">
           <Link to="/resetpassword" className="text-blue-900">
             <span>Do you need help?</span>
           </Link>
         </div>
-        <input
-          type="text"
-          value={twoFaPin}
-          onChange={(e) => setTwoFaPin(e.target.value)}
-          placeholder="Enter 2FA PIN"
-          className="mt-4 p-2 border rounded"
-        />
+        <OtpInput length={6} onOtpSubmit={onOtpSubmit} />
         <button
           onClick={handle2FAPinSubmit}
-          className="flex justify-center items-center mt-2 md:w-2/5 w-4/5 h-10 text-white bg-black rounded-[30px] text-l cursor-pointer"
-        >
-          Verify 2FA PIN
-        </button>
+          className="mt-4 p-2 bg-black text-white rounded w-11/12 h-10 "> Verify 2FA PIN</button>
         {secret && <p id="secret">Your 2FA secret: {secret}</p>}
       </div>
       <ToastContainer />

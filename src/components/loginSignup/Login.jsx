@@ -97,11 +97,12 @@ const LoginSignup = () => {
           </Link>
         </div>
         <button
-          className="flex justify-center items-center mt-2 md:w-2/5 w-4/5 h-10 text-white bg-black rounded-[30px] text-l cursor-pointer"
-          onClick={handleSubmit}
-        >
-          Login
-        </button>
+            onClick={handleSubmit}
+            type="submit"
+            className="mt-4 p-2 w-11/12 bg-black text-white rounded"
+          >
+            Login
+          </button>
         <ToastContainer />
       </div>
     </div>

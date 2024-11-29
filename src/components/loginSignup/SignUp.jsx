@@ -199,7 +199,7 @@ const SignUp = () => {
                   <option value="" disabled>
                     Select Role
                   </option>
-                  <option value="admin">Admin</option>
+                  <option value="admin" >Admin</option>
                   <option value="investigator">Investigator</option>
                   {/* <option value="guest">Guest</option> */}
                 </select>
@@ -209,23 +209,9 @@ const SignUp = () => {
                 )}
             </div>
           </div>
-            {/* <div className="flex items-center m-auto w-1/2 h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
-              <input
-                type="checkbox"
-                name="twoFa"
-                checked={formik.values.twoFa}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="mr-2"
-              />
-              <label htmlFor="twoFa">Enable Two-Factor Authentication</label>
-            </div>
-            {formik.touched.twoFa && formik.errors.twoFa && (
-              <p className="text-red-500 text-xs">{formik.errors.twoFa}</p>
-            )} */}
           <button
             type="submit"
-            className="mt-4 p-2 bg-blue-500 text-white rounded"
+            className="mt-4 p-2 bg-black text-white rounded"
           >
             Sign Up
           </button>

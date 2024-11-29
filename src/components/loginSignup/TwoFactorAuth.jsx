@@ -130,7 +130,7 @@ const TwoFactorAuth = () => {
         <OtpInput length={6} onOtpSubmit={onOtpSubmit} />
         <button
           onClick={handle2FAPinSubmit}
-          className="flex justify-center items-center mt-2 md:w-2/5 w-4/5 h-10 text-white bg-black rounded-[30px] text-l cursor-pointer"> Verify 2FA PIN</button>
+          className="mt-4 p-2 bg-black text-white rounded w-11/12 h-10 "> Verify 2FA PIN</button>
         {secret && <p id="secret">Your 2FA secret: {secret}</p>}
       </div>
       <ToastContainer />

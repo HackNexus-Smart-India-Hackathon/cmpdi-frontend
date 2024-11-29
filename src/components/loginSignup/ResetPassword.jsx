@@ -28,9 +28,12 @@ const LoginSignup = () => {
             />
           </div>
         </div>
-        <div className="flex justify-center items-center mt-2  w-4/5 h-10 text-white bg-black rounded-[30px] text-l cursor-pointer">
-          Reset Password
-        </div>
+        <button
+            type="submit"
+            className="mt-4 p-2 w-11/12 bg-black text-white rounded"
+          >
+            Reset Password
+          </button>
       </div>
     </div>
   );

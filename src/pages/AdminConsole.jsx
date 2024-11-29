@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import FundRequisitionForm from '../components/Forms/FundRequisitionForm';
 import ProjectCompletionReportForm from '../components/Forms/ProjectCompletionReportForm';
 import ProjectDurationExtensionForm from '../components/Forms/ProjectDurationExtentionForm';
@@ -7,8 +8,9 @@ import QuarterlyStatusReportForm from '../components/Forms/QuaterlyStatusReportF
 import RevisionCostForm from '../components/Forms/RevisionofProjectCost';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
-
 const AdminConsole = () => {
+  const { user_id, access_token } = useSelector((state) => state.auth);
+  console.log(user_id, access_token);
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />

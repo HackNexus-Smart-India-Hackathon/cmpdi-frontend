@@ -88,7 +88,7 @@ const SignUp = () => {
         <div className="text-4xl font-semibold">Sign Up</div>
         <form onSubmit={formik.handleSubmit} className="mt-10 flex flex-col">
           <div className="flex flex-row gap-2">
-            <div className='flex flex-col items-center w-1/2'>
+            <div className="flex flex-col items-center w-1/2">
               <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
                 <img src={user_icon} alt="User" className="w-6 h-6 mx-2" />
                 <input
@@ -103,9 +103,9 @@ const SignUp = () => {
               </div>
               {formik.touched.username && formik.errors.username && (
                 <p className="text-red-500 text-xs">{formik.errors.username}</p>
-                )}
+              )}
             </div>
-            <div className='flex flex-col items-center w-1/2'>
+            <div className="flex flex-col items-center w-1/2">
               <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
                 <img src={email_icon} alt="Email" className="w-6 h-6 mx-2" />
                 <input
@@ -124,7 +124,7 @@ const SignUp = () => {
             </div>
           </div>
           <div className="flex flex-row gap-2">
-            <div className='flex flex-col items-center w-1/2'>
+            <div className="flex flex-col items-center w-1/2">
               <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
                 <img
                   src={password_icon}
@@ -140,12 +140,12 @@ const SignUp = () => {
                   placeholder="Password"
                   className="w-full p-2"
                 />
-                </div>  
+              </div>
               {formik.touched.password && formik.errors.password && (
                 <p className="text-red-500 text-xs">{formik.errors.password}</p>
-                )}
+              )}
             </div>
-            <div className='flex flex-col items-center w-1/2 '>
+            <div className="flex flex-col items-center w-1/2 ">
               <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
                 <img
                   src={password_icon}
@@ -164,12 +164,14 @@ const SignUp = () => {
               </div>
               {formik.touched.confirmPassword &&
                 formik.errors.confirmPassword && (
-                  <p className="text-red-500 text-xs ">{formik.errors.confirmPassword}</p>
+                  <p className="text-red-500 text-xs ">
+                    {formik.errors.confirmPassword}
+                  </p>
                 )}
-              </div>
             </div>
+          </div>
           <div className="flex flex-row gap-2">
-            <div className='flex flex-col items-center w-1/2'>
+            <div className="flex flex-col items-center w-1/2">
               <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
                 <img src={phone_icon} alt="Phone" className="w-6 h-6 mx-2" />
                 <input
@@ -184,9 +186,9 @@ const SignUp = () => {
               </div>
               {formik.touched.phone && formik.errors.phone && (
                 <p className="text-red-500 text-xs">{formik.errors.phone}</p>
-                )}
+              )}
             </div>
-            <div className='flex flex-col items-center w-1/2'>
+            <div className="flex flex-col items-center w-1/2">
               <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
                 <img src={role_icon} alt="Role" className="w-6 h-6 mx-2" />
                 <select
@@ -199,14 +201,14 @@ const SignUp = () => {
                   <option value="" disabled>
                     Select Role
                   </option>
-                  <option value="admin" >Admin</option>
+                  <option value="admin">Admin</option>
                   <option value="investigator">Investigator</option>
                   {/* <option value="guest">Guest</option> */}
                 </select>
               </div>
               {formik.touched.role && formik.errors.role && (
                 <p className="text-red-500 text-xs">{formik.errors.role}</p>
-                )}
+              )}
             </div>
           </div>
           <button

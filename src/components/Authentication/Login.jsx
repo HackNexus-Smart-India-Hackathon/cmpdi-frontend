@@ -97,12 +97,12 @@ const LoginSignup = () => {
           </Link>
         </div>
         <button
-            onClick={handleSubmit}
-            type="submit"
-            className="mt-4 p-2 w-11/12 bg-black text-white rounded"
-          >
-            Login
-          </button>
+          onClick={handleSubmit}
+          type="submit"
+          className="mt-4 p-2 w-11/12 bg-black text-white rounded"
+        >
+          Login
+        </button>
         <ToastContainer />
       </div>
     </div>

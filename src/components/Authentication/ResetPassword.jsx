@@ -29,11 +29,11 @@ const LoginSignup = () => {
           </div>
         </div>
         <button
-            type="submit"
-            className="mt-4 p-2 w-11/12 bg-black text-white rounded"
-          >
-            Reset Password
-          </button>
+          type="submit"
+          className="mt-4 p-2 w-11/12 bg-black text-white rounded"
+        >
+          Reset Password
+        </button>
       </div>
     </div>
   );

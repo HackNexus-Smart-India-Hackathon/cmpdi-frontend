@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+import OtpInput from './OtpInput';
 import callRefreshToken from '../../utils/reset_token';
 import moc_img from '../Assets/moc.png';
 import 'react-toastify/dist/ReactToastify.css';
-import OtpInput from './OtpInput';
 
 const TwoFactorAuth = () => {
   const { user_id, access_token } = useSelector((state) => state.auth);
@@ -19,10 +19,10 @@ const TwoFactorAuth = () => {
   console.log('Secret:', secret);
   const baseUrl = process.env.REACT_APP_AUTH_BASE_API;
 
-  const onOtpSubmit = (otp) => { 
+  const onOtpSubmit = (otp) => {
     setTwoFaPin(otp);
-  }
-  
+  };
+
   const handle2FAPinSubmit = async () => {
     try {
       const response = await axios.post(
@@ -130,7 +130,11 @@ const TwoFactorAuth = () => {
         <OtpInput length={6} onOtpSubmit={onOtpSubmit} />
         <button
           onClick={handle2FAPinSubmit}
-          className="mt-4 p-2 bg-black text-white rounded w-11/12 h-10 "> Verify 2FA PIN</button>
+          className="mt-4 p-2 bg-black text-white rounded w-11/12 h-10 "
+        >
+          {' '}
+          Verify 2FA PIN
+        </button>
         {secret && <p id="secret">Your 2FA secret: {secret}</p>}
       </div>
       <ToastContainer />

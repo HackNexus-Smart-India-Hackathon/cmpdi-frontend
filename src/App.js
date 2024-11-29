@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './components/loginSignup/Login';
-import ResetPassword from './components/loginSignup/ResetPassword';
-import SignUp from './components/loginSignup/SignUp';
-import TwoFactorAuth from './components/loginSignup/TwoFactorAuth';
+import Login from './components/Authentication/Login';
+import ResetPassword from './components/Authentication/ResetPassword';
+import SignUp from './components/Authentication/SignUp';
+import TwoFactorAuth from './components/Authentication/TwoFactorAuth';
 import AdminConsole from './pages/AdminConsole';
 import './App.css';
 import Profile from './pages/profile';
@@ -12,6 +12,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/resetpassword" element={<ResetPassword />} />

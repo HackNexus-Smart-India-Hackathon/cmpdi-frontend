@@ -6,8 +6,8 @@ import TaskOutlinedIcon from '@mui/icons-material/TaskOutlined';
 import TravelExploreOutlinedIcon from '@mui/icons-material/TravelExploreOutlined';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
-
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -85,25 +85,27 @@ const Sidebar = () => {
             <ul className="p-1 w-full">
               {sidebarItems.map((sidebarItem, index) => (
                 <React.Fragment key={index}>
-                  <li
-                    className={`m-2 p-2 flex items-center gap-3 pl-4 border-none rounded-md cursor-pointer hover:bg-slate-200 select-none ${
-                      sidebarItem.Children?.length > 0 &&
-                      isSubItemOpen &&
-                      openIndex === index
-                        ? `bg-slate-200`
-                        : ''
-                    }`}
-                  >
-                    <div className="text-base sm:text-lg md:text-xl">
-                      {sidebarItem.Icon}
-                    </div>
-                    <button
-                      onClick={() => handleVisibility(index)}
-                      className=""
+                  <Link to={sidebarItem.Link}>
+                    <li
+                      className={`m-2 p-2 flex items-center gap-3 pl-4 border-none rounded-md cursor-pointer hover:bg-slate-200 select-none ${
+                        sidebarItem.Children?.length > 0 &&
+                        isSubItemOpen &&
+                        openIndex === index
+                          ? `bg-slate-200`
+                          : ''
+                      }`}
                     >
-                      {sidebarItem.Item}
-                    </button>
-                  </li>
+                      <div className="text-base sm:text-lg md:text-xl">
+                        {sidebarItem.Icon}
+                      </div>
+                      <button
+                        onClick={() => handleVisibility(index)}
+                        className=""
+                      >
+                        {sidebarItem.Item}
+                      </button>
+                    </li>
+                  </Link>
                   {sidebarItem.Children?.length > 0 &&
                     isSubItemOpen &&
                     openIndex === index && (

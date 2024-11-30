@@ -7,7 +7,10 @@ import QuarterlyExpenditureStatementForm from '../components/Forms/QuarterlyExpe
 import QuarterlyStatusReportForm from '../components/Forms/QuaterlyStatusReportForm';
 import RevisionCostForm from '../components/Forms/RevisionofProjectCost';
 import Navbar from '../components/Navbar';
+import ProjectOnboarding from '../components/ProjectOnboarding';
+
 import Sidebar from '../components/Sidebar';
+
 const AdminConsole = () => {
   const { user_id, access_token } = useSelector((state) => state.auth);
   console.log(user_id, access_token);
@@ -20,7 +23,8 @@ const AdminConsole = () => {
           <Sidebar />
         </div>
 
-        <div className="flex-1 p-8">
+        <div className="flex-1 mx-10">
+          <ProjectOnboarding />
           <FundRequisitionForm />
           <QuarterlyStatusReportForm />
           <QuarterlyExpenditureStatementForm />

@@ -7,6 +7,7 @@ import TwoFactorAuth from './components/Authentication/TwoFactorAuth';
 import AdminConsole from './pages/AdminConsole';
 import './App.css';
 import Profile from './pages/profile';
+import Project from './pages/project';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/twofactorauthentication" element={<TwoFactorAuth />} />
         <Route path="/adminconsole" element={<AdminConsole />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="project/:title" element={<Project />} />
       </Routes>
     </Router>
   );

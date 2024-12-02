@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import { format, parse, startOfWeek, getDay } from "date-fns";
-import { enUS } from "date-fns/locale";
+import { format, parse, startOfWeek, getDay } from 'date-fns';
+import { enUS } from 'date-fns/locale';
+import React, { useState } from 'react';
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const locales = {
-  "en-US": enUS,
+  'en-US': enUS,
 };
 
 const localizer = dateFnsLocalizer({
@@ -18,7 +18,7 @@ const localizer = dateFnsLocalizer({
 
 const eventsList = [
   {
-    title: "Team Meeting",
+    title: 'Team Meeting',
     start: new Date(),
     end: new Date(),
     allDay: false,
@@ -29,7 +29,7 @@ const EventScheduler = () => {
   const [events, setEvents] = useState(eventsList);
 
   const handleSelectSlot = ({ start, end }) => {
-    const title = prompt("Enter the event title:");
+    const title = prompt('Enter the event title:');
     if (title) {
       setEvents([...events, { start, end, title }]);
     }
@@ -38,12 +38,12 @@ const EventScheduler = () => {
   const eventStyleGetter = (event) => {
     return {
       style: {
-        backgroundColor: "black",
-        color: "white",
-        borderRadius: "5px",
-        border: "none",
-        display: "block",
-        padding: "5px",
+        backgroundColor: 'black',
+        color: 'white',
+        borderRadius: '5px',
+        border: 'none',
+        display: 'block',
+        padding: '5px',
       },
     };
   };

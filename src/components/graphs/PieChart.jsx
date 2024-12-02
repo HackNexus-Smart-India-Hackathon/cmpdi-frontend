@@ -1,5 +1,5 @@
-import React from "react";
-import Plot from "react-plotly.js";
+import React from 'react';
+import Plot from 'react-plotly.js';
 
 const PieChart = ({ data }) => {
   if (!data || !Array.isArray(data) || data.length === 0) {
@@ -15,11 +15,11 @@ const PieChart = ({ data }) => {
         {
           values: values,
           labels: labels,
-          type: "pie",
+          type: 'pie',
         },
       ]}
       layout={{
-        title: "Pie Chart",
+        title: 'Pie Chart',
         width: 600,
         height: 400,
       }}

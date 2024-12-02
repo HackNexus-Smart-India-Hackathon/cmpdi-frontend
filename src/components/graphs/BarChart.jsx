@@ -1,5 +1,5 @@
-import React from "react";
-import Plot from "react-plotly.js";
+import React from 'react';
+import Plot from 'react-plotly.js';
 
 const BarChart = ({ data }) => {
   if (!data || !Array.isArray(data) || data.length === 0) {
@@ -15,16 +15,16 @@ const BarChart = ({ data }) => {
         {
           x: xValues,
           y: yValues,
-          type: "bar",
+          type: 'bar',
           marker: {
-            color: "blue",
+            color: 'blue',
           },
         },
       ]}
       layout={{
-        title: "Bar Chart",
-        xaxis: { title: "Categories" },
-        yaxis: { title: "Values" },
+        title: 'Bar Chart',
+        xaxis: { title: 'Categories' },
+        yaxis: { title: 'Values' },
         width: 600,
         height: 400,
       }}

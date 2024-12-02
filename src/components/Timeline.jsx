@@ -1,25 +1,25 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const milestones = [
-  { id: 1, date: "Jan 2014", title: "Kick-off Call", goals: [] },
-  { id: 2, date: "Feb 2014", title: "Data Gathering", goals: [] },
-  { id: 3, date: "Mar 2014", title: "Check Point 1", goals: [] },
-  { id: 4, date: "Apr 2014", title: "Release 1.0", goals: [] },
-  { id: 5, date: "May 2014", title: "Check Point 2", goals: [] },
-  { id: 6, date: "Jun 2014", title: "Release 3.0", goals: [] },
-  { id: 7, date: "Jul 2014", title: "Check Point 3", goals: [] },
-  { id: 8, date: "Aug 2014", title: "Project Wrap-up", goals: [] },
+  { id: 1, date: 'Jan 2014', title: 'Kick-off Call', goals: [] },
+  { id: 2, date: 'Feb 2014', title: 'Data Gathering', goals: [] },
+  { id: 3, date: 'Mar 2014', title: 'Check Point 1', goals: [] },
+  { id: 4, date: 'Apr 2014', title: 'Release 1.0', goals: [] },
+  { id: 5, date: 'May 2014', title: 'Check Point 2', goals: [] },
+  { id: 6, date: 'Jun 2014', title: 'Release 3.0', goals: [] },
+  { id: 7, date: 'Jul 2014', title: 'Check Point 3', goals: [] },
+  { id: 8, date: 'Aug 2014', title: 'Project Wrap-up', goals: [] },
 ];
 
 const MilestoneTimeline = () => {
   const [currentMilestone, setCurrentMilestone] = useState(null); // Tracks the clicked milestone
-  const [goalInput, setGoalInput] = useState("");
+  const [goalInput, setGoalInput] = useState('');
 
   const addGoal = (milestoneId) => {
     const milestone = milestones.find((m) => m.id === milestoneId);
     if (milestone && goalInput.trim()) {
       milestone.goals.push(goalInput.trim());
-      setGoalInput("");
+      setGoalInput('');
     }
   };
 

@@ -4,6 +4,7 @@ import Login from './components/Authentication/Login';
 import ResetPassword from './components/Authentication/ResetPassword';
 import SignUp from './components/Authentication/SignUp';
 import TwoFactorAuth from './components/Authentication/TwoFactorAuth';
+import AddProject from './pages/AddProject';
 import AdminConsole from './pages/AdminConsole';
 import './App.css';
 import Profile from './pages/profile';
@@ -21,6 +22,7 @@ function App() {
         <Route path="/adminconsole" element={<AdminConsole />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="project/:title" element={<Project />} />
+        <Route path="/project/add" element={<AddProject />} />
       </Routes>
     </Router>
   );

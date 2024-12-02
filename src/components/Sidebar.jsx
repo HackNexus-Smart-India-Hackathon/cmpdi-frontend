@@ -1,15 +1,15 @@
 import AnalyticsOutlinedIcon from '@mui/icons-material/AnalyticsOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import DashboardCustomizeOutlinedIcon from '@mui/icons-material/DashboardCustomizeOutlined';
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import TaskOutlinedIcon from '@mui/icons-material/TaskOutlined';
 import TravelExploreOutlinedIcon from '@mui/icons-material/TravelExploreOutlined';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
-
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
+  const { role } = useSelector((state) => state.auth);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSubItemOpen, setIsSubItemOpen] = useState(false);
   const [openIndex, setOpenIndex] = useState(null);
@@ -27,7 +27,7 @@ const Sidebar = () => {
     {
       Item: 'Dashboard',
       Icon: <DashboardCustomizeOutlinedIcon />,
-      Link: '/dashboard',
+      Link: `${role}console`,
     },
     {
       Item: 'Project',
@@ -37,11 +37,6 @@ const Sidebar = () => {
         { Item: 'Add Project', Link: '/dashboard/addproject' },
         { Item: 'View Project', Link: '/dashboard/viewproject' },
       ],
-    },
-    {
-      Item: 'Tasks',
-      Icon: <TaskOutlinedIcon />,
-      Link: '/tasks',
     },
     {
       Item: 'Analytics',
@@ -58,11 +53,6 @@ const Sidebar = () => {
       ],
     },
     {
-      Item: 'Notifications',
-      Icon: <NotificationsNoneOutlinedIcon />,
-      Link: '/notifications',
-    },
-    {
       Item: 'Meetings',
       Icon: <CalendarMonthOutlinedIcon />,
       Link: '/meetings',
@@ -72,9 +62,64 @@ const Sidebar = () => {
       ],
     },
   ];
-
+  const withChildren = (sidebarItem, index) => {
+    return (
+      <div>
+        <li
+          className={`m-2 p-2 flex items-center gap-3 pl-4 border-none rounded-md cursor-pointer hover:bg-slate-200 select-none ${
+            sidebarItem.Children?.length > 0 &&
+            isSubItemOpen &&
+            openIndex === index
+              ? `bg-slate-200`
+              : ''
+          }`}
+        >
+          <div className="text-base sm:text-lg md:text-xl">
+            {sidebarItem.Icon}
+          </div>
+          <button onClick={() => handleVisibility(index)} className="">
+            {sidebarItem.Item}
+          </button>
+        </li>
+        {isSubItemOpen && openIndex === index && (
+          <ul className="ml-8">
+            {sidebarItem.Children.map((childItem, childIndex) => (
+              <li
+                key={childIndex}
+                className="mx-6 my-1 px-4 py-1 border-none rounded-md cursor-pointer hover:bg-slate-200 select-none text-sm sm:text-base"
+              >
+                {<Link to={childItem.Link}>{childItem.Item}</Link>}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  };
+  const withoutChildren = (sidebarItem, index) => {
+    return (
+      <Link to={sidebarItem.Link}>
+        <li
+          className={`m-2 p-2 flex items-center gap-3 pl-4 border-none rounded-md cursor-pointer hover:bg-slate-200 select-none ${
+            sidebarItem.Children?.length > 0 &&
+            isSubItemOpen &&
+            openIndex === index
+              ? `bg-slate-200`
+              : ''
+          }`}
+        >
+          <div className="text-base sm:text-lg md:text-xl">
+            {sidebarItem.Icon}
+          </div>
+          <button onClick={() => handleVisibility(index)} className="">
+            {sidebarItem.Item}
+          </button>
+        </li>
+      </Link>
+    );
+  };
   return (
-    <>
+    <div>
       <button onClick={handleSidebarVisibility} className="">
         <ViewSidebarOutlinedIcon />
       </button>
@@ -85,39 +130,9 @@ const Sidebar = () => {
             <ul className="p-1 w-full">
               {sidebarItems.map((sidebarItem, index) => (
                 <React.Fragment key={index}>
-                  <li
-                    className={`m-2 p-2 flex items-center gap-3 pl-4 border-none rounded-md cursor-pointer hover:bg-slate-200 select-none ${
-                      sidebarItem.Children?.length > 0 &&
-                      isSubItemOpen &&
-                      openIndex === index
-                        ? `bg-slate-200`
-                        : ''
-                    }`}
-                  >
-                    <div className="text-base sm:text-lg md:text-xl">
-                      {sidebarItem.Icon}
-                    </div>
-                    <button
-                      onClick={() => handleVisibility(index)}
-                      className=""
-                    >
-                      {sidebarItem.Item}
-                    </button>
-                  </li>
-                  {sidebarItem.Children?.length > 0 &&
-                    isSubItemOpen &&
-                    openIndex === index && (
-                      <ul className="ml-8">
-                        {sidebarItem.Children.map((childItem, childIndex) => (
-                          <li
-                            key={childIndex}
-                            className="mx-6 my-1 px-4 py-1 border-none rounded-md cursor-pointer hover:bg-slate-200 select-none text-sm sm:text-base"
-                          >
-                            {childItem.Item}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                  {sidebarItem.Children
+                    ? withChildren(sidebarItem, index)
+                    : withoutChildren(sidebarItem, index)}
                 </React.Fragment>
               ))}
             </ul>
@@ -140,7 +155,7 @@ const Sidebar = () => {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,260 +1,275 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import React from 'react';
-import * as Yup from 'yup';
+import React, { useState } from 'react';
 
-const FundRequisitionForm = () => {
-  const initialValues = {
-    projectName: '',
-    projectCode: '',
-    companyName: '',
-    yearPeriod: '',
-    landBuilding: '',
-    capitalEquipment: '',
-    manpower: '',
-    consumables: '',
-    travel: '',
-    contingencies: '',
-    workshops: '',
+// Fund Categories
+const items = [
+  'Land Building',
+  'Capital Equipment',
+  'Manpower',
+  'Consumables',
+  'Travel',
+  'Contingencies',
+  'Workshop Seminar',
+];
+
+// Initial Data for Fund Categories
+const initialData = items.reduce((acc, item) => {
+  acc[item] = {
     totalApprovedCost: '',
-    totalFundReceived: '',
+    fundReceived: '',
     interestEarned: '',
-    expenditureIncurred: '',
-    balanceFund: '',
-    fundProvision: '',
+    expenditure: '',
+    balance: '',
+    provision: '',
     fundRequired: '',
   };
+  return acc;
+}, {});
 
-  const validationSchema = Yup.object({
-    projectName: Yup.string().required('Project Name is required'),
-    projectCode: Yup.string().required('Project Code is required'),
-    companyName: Yup.string().required('Company Name is required'),
-    yearPeriod: Yup.string().required('Year/Period is required'),
-    landBuilding: Yup.number()
-      .required('This field is required')
-      .min(0, 'Cannot be negative'),
-    capitalEquipment: Yup.number()
-      .required('This field is required')
-      .min(0, 'Cannot be negative'),
-    manpower: Yup.number()
-      .required('This field is required')
-      .min(0, 'Cannot be negative'),
-    consumables: Yup.number()
-      .required('This field is required')
-      .min(0, 'Cannot be negative'),
-    travel: Yup.number()
-      .required('This field is required')
-      .min(0, 'Cannot be negative'),
-    contingencies: Yup.number()
-      .required('This field is required')
-      .min(0, 'Cannot be negative'),
-    workshops: Yup.number()
-      .required('This field is required')
-      .min(0, 'Cannot be negative'),
-    totalApprovedCost: Yup.number()
-      .required('This field is required')
-      .min(0, 'Cannot be negative'),
-    totalFundReceived: Yup.number()
-      .required('This field is required')
-      .min(0, 'Cannot be negative'),
-    interestEarned: Yup.number().min(0, 'Cannot be negative'),
-    expenditureIncurred: Yup.number()
-      .required('This field is required')
-      .min(0, 'Cannot be negative'),
-    balanceFund: Yup.number()
-      .required('This field is required')
-      .min(0, 'Cannot be negative'),
-    fundProvision: Yup.number()
-      .required('This field is required')
-      .min(0, 'Cannot be negative'),
-    fundRequired: Yup.number()
-      .required('This field is required')
-      .min(0, 'Cannot be negative'),
-  });
+// Initial Form State (Project Information)
+const initialFormState = {
+  projectName: '',
+  projectCode: '',
+  institutionName: '',
+  yearPeriod: '',
+  funds: initialData,
+};
 
-  const onSubmit = (values) => {
-    console.log('Form submitted successfully:', values);
+function FundRequisitionForm() {
+  const [formData, setFormData] = useState(initialFormState);
+  const [expanded, setExpanded] = useState(null);
+  const [errors, setErrors] = useState({}); // To store validation errors
+
+  // Handle Input Changes for Project Information
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle Input Changes for Fund Categories
+  const handleChange = (item, field, value) => {
+    // Update field value
+    setFormData((prev) => {
+      const newFunds = {
+        ...prev.funds,
+        [item]: {
+          ...prev.funds[item],
+          [field]: value,
+        },
+      };
+
+      // Recalculate totals after each change
+      return {
+        ...prev,
+        funds: newFunds,
+      };
+    });
+  };
+
+  // Function to calculate total for each fund category
+  const calculateFundTotals = (item) => {
+    const fund = formData.funds[item];
+    const totalApprovedCost = parseFloat(fund.totalApprovedCost) || 0;
+    const fundReceived = parseFloat(fund.fundReceived) || 0;
+    const interestEarned = parseFloat(fund.interestEarned) || 0;
+    const expenditure = parseFloat(fund.expenditure) || 0;
+    const provision = parseFloat(fund.provision) || 0;
+    const fundRequired = parseFloat(fund.fundRequired) || 0;
+
+    // Calculate balance: totalApprovedCost - fundReceived - interestEarned - expenditure - provision
+    const balance =
+      totalApprovedCost -
+      fundReceived -
+      interestEarned -
+      expenditure -
+      provision;
+
+    return {
+      balance,
+      fundRequired,
+    };
+  };
+
+  // Validate form fields
+  const validateForm = () => {
+    let formErrors = {};
+
+    // Define custom labels for the form fields
+    const fieldLabels = {
+      projectName: 'Project title',
+      projectCode: 'Project code',
+      institutionName: 'Institution name',
+      yearPeriod: 'Year/Period',
+    };
+
+    const requiredFields = Object.keys(fieldLabels);
+
+    // Check for missing required fields in project information
+    requiredFields.forEach((field) => {
+      if (!formData[field]) {
+        formErrors[field] = `${fieldLabels[field]} is required.`;
+      }
+    });
+
+    // Check if the numerical fields in funds categories are valid
+    items.forEach((item) => {
+      Object.keys(formData.funds[item]).forEach((field) => {
+        const value = formData.funds[item][field];
+        if (field !== 'balance' && value && isNaN(value)) {
+          formErrors[`${item}_${field}`] =
+            `${field.replace(/([A-Z])/g, ' $1')} must be a number.`;
+        }
+      });
+    });
+
+    setErrors(formErrors);
+    return Object.keys(formErrors).length === 0;
+  };
+
+  // Handle Form Submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      console.log('Form Data Submitted:', formData);
+    } else {
+      console.log('Form contains errors:', errors);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 ">
-      <div className="max-w-5xl w-full bg-white border border-gray-400 rounded p-8">
-        <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
-          Fund Requisition Form
-        </h1>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-        >
-          {() => (
-            <Form>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label
-                    htmlFor="projectName"
-                    className="block text-sm font-medium text-gray-800"
-                  >
-                    Project Name
-                  </label>
-                  <Field
-                    name="projectName"
-                    type="text"
-                    className="mt-1 p-2 w-full border border-gray-400 rounded"
-                  />
-                  <ErrorMessage
-                    name="projectName"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
+    <div className="max-w-7xl mx-auto p-8 bg-gray-50 rounded-lg shadow-lg">
+      <h1 className="text-3xl font-bold mb-6">Fund Requisition Form</h1>
+      <form onSubmit={handleSubmit}>
+        {/* Project Information Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label className="block font-medium mb-2">Project Title</label>
+            <input
+              type="text"
+              name="projectName"
+              value={formData.projectName}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.projectName && (
+              <p className="text-red-500 text-sm">{errors.projectName}</p>
+            )}
+          </div>
+          <div>
+            <label className="block font-medium mb-2">Project Code</label>
+            <input
+              type="text"
+              name="projectCode"
+              value={formData.projectCode}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.projectCode && (
+              <p className="text-red-500 text-sm">{errors.projectCode}</p>
+            )}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label className="block font-medium mb-2">Institution Name</label>
+            <input
+              type="text"
+              name="institutionName"
+              value={formData.institutionName}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.institutionName && (
+              <p className="text-red-500 text-sm">{errors.institutionName}</p>
+            )}
+          </div>
+          <div>
+            <label className="block font-medium mb-2">Year/Period</label>
+            <input
+              type="text"
+              name="yearPeriod"
+              value={formData.yearPeriod}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.yearPeriod && (
+              <p className="text-red-500 text-sm">{errors.yearPeriod}</p>
+            )}
+          </div>
+        </div>
 
-                <div>
-                  <label
-                    htmlFor="projectCode"
-                    className="block text-sm font-medium text-gray-800"
-                  >
-                    Project Code
-                  </label>
-                  <Field
-                    name="projectCode"
-                    type="text"
-                    className="mt-1 p-2 w-full border border-gray-400 rounded"
-                  />
-                  <ErrorMessage
-                    name="projectCode"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="companyName"
-                    className="block text-sm font-medium text-gray-800"
-                  >
-                    Company/Institution Name
-                  </label>
-                  <Field
-                    name="companyName"
-                    type="text"
-                    className="mt-1 p-2 w-full border border-gray-400 rounded"
-                  />
-                  <ErrorMessage
-                    name="companyName"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="yearPeriod"
-                    className="block text-sm font-medium text-gray-800"
-                  >
-                    Year/Period
-                  </label>
-                  <Field
-                    name="yearPeriod"
-                    type="text"
-                    className="mt-1 p-2 w-full border border-gray-400 rounded"
-                  />
-                  <ErrorMessage
-                    name="yearPeriod"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  Financial Details
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {[
-                    { name: 'landBuilding', label: 'Land & Building' },
-                    { name: 'capitalEquipment', label: 'Capital Equipment' },
-                    { name: 'manpower', label: 'Manpower' },
-                    { name: 'consumables', label: 'Consumables' },
-                    { name: 'travel', label: 'Travel' },
-                    { name: 'contingencies', label: 'Contingencies' },
-                    { name: 'workshops', label: 'Workshops/Seminars' },
-                  ].map((field) => (
-                    <div key={field.name}>
-                      <label
-                        htmlFor={field.name}
-                        className="block text-sm font-medium text-gray-800"
-                      >
-                        {field.label} (₹ Lakhs)
+        {/* Collapsible Fund Sections */}
+        <label className="block font-medium mb-3">Fund Requirements</label>
+        <div className="space-y-4">
+          {items.map((item) => (
+            <div
+              key={item}
+              className="border rounded-lg shadow-sm bg-white overflow-hidden"
+            >
+              {/* Collapsible Section Header */}
+              <button
+                className={`w-full p-4 text-left font-semibold transition ${expanded === item ? 'bg-slate-300' : 'bg-gray-100'}`}
+                onClick={() =>
+                  setExpanded((prev) => (prev === item ? null : item))
+                }
+              >
+                {item}
+              </button>
+              {/* Expanded Section Content */}
+              {expanded === item && (
+                <div className="p-4 space-y-4">
+                  {Object.keys(formData.funds[item]).map((field) => (
+                    <div key={field} className="flex items-center gap-4">
+                      <label className="w-40 font-medium capitalize">
+                        {field.replace(/([A-Z])/g, ' $1')}
                       </label>
-                      <Field
-                        name={field.name}
-                        type="number"
-                        className="mt-1 p-2 w-full border border-gray-400 rounded"
+                      <input
+                        type="text"
+                        value={formData.funds[item][field]}
+                        onChange={(e) =>
+                          handleChange(item, field, e.target.value)
+                        }
+                        className="flex-1 px-4 py-2 border rounded-md focus:outline-black"
                       />
-                      <ErrorMessage
-                        name={field.name}
-                        component="div"
-                        className="text-red-500 text-sm"
-                      />
+                      {errors[`${item}_${field}`] && (
+                        <p className="text-red-500 text-sm">
+                          {errors[`${item}_${field}`]}
+                        </p>
+                      )}
                     </div>
                   ))}
+                  {/* Display Calculated Balance */}
+                  <div className="flex items-center gap-4">
+                    <label className="w-40 font-medium capitalize">
+                      Balance
+                    </label>
+                    <input
+                      type="text"
+                      value={calculateFundTotals(item).balance}
+                      readOnly
+                      className="flex-1 px-4 py-2 border rounded-md bg-gray-200"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
+            </div>
+          ))}
+        </div>
 
-              <div className="mt-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  Summary
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {[
-                    { name: 'totalApprovedCost', label: 'Total Approved Cost' },
-                    { name: 'totalFundReceived', label: 'Total Fund Received' },
-                    { name: 'interestEarned', label: 'Interest Earned' },
-                    {
-                      name: 'expenditureIncurred',
-                      label: 'Expenditure Incurred',
-                    },
-                    { name: 'balanceFund', label: 'Balance Fund' },
-                    { name: 'fundProvision', label: 'Fund Provision' },
-                    { name: 'fundRequired', label: 'Fund Required' },
-                  ].map((field) => (
-                    <div key={field.name}>
-                      <label
-                        htmlFor={field.name}
-                        className="block text-sm font-medium text-gray-800"
-                      >
-                        {field.label} (₹ Lakhs)
-                      </label>
-                      <Field
-                        name={field.name}
-                        type="number"
-                        className="mt-1 p-2 w-full border border-gray-400 rounded"
-                      />
-                      <ErrorMessage
-                        name={field.name}
-                        component="div"
-                        className="text-red-500 text-sm"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-8">
-                <button
-                  type="submit"
-                  className="w-full bg-black text-white font-bold py-2 rounded hover:bg-gray-800 transition duration-150"
-                >
-                  Submit Form
-                </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </div>
+        {/* Submit Button */}
+        <div className="mt-6 flex justify-end">
+          <button
+            type="submit"
+            className="px-6 py-2 bg-black text-white rounded-md hover:bg-slate-600 transition"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
     </div>
   );
-};
+}
 
 export default FundRequisitionForm;

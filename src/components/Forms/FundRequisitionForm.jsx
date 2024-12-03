@@ -1,14 +1,15 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 
 // Fund Categories
 const items = [
-  'Land Building',
-  'Capital Equipment',
+  'LandBuilding',
+  'CapitalEquipment',
   'Manpower',
   'Consumables',
   'Travel',
   'Contingencies',
-  'Workshop Seminar',
+  'WorkshopSeminar',
 ];
 
 // Initial Data for Fund Categories
@@ -27,7 +28,7 @@ const initialData = items.reduce((acc, item) => {
 
 // Initial Form State (Project Information)
 const initialFormState = {
-  projectName: '',
+  projectTitle: '',
   projectCode: '',
   institutionName: '',
   yearPeriod: '',
@@ -38,6 +39,7 @@ function FundRequisitionForm() {
   const [formData, setFormData] = useState(initialFormState);
   const [expanded, setExpanded] = useState(null);
   const [errors, setErrors] = useState({}); // To store validation errors
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Handle Input Changes for Project Information
   const handleInputChange = (e) => {
@@ -98,7 +100,7 @@ function FundRequisitionForm() {
 
     // Define custom labels for the form fields
     const fieldLabels = {
-      projectName: 'Project title',
+      projectTitle: 'Project title',
       projectCode: 'Project code',
       institutionName: 'Institution name',
       yearPeriod: 'Year/Period',
@@ -129,10 +131,24 @@ function FundRequisitionForm() {
   };
 
   // Handle Form Submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (validateForm()) {
-      console.log('Form Data Submitted:', formData);
+      setIsSubmitting(true); // Disable submit button while submitting
+      try {
+        const response = await axios.post(
+          'http://localhost:3000/api/forms/fund-requisition',
+          formData
+        );
+        console.log('Form Data Submitted:', response.data);
+        // Handle success (e.g., show a success message or reset the form)
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        // Handle error (e.g., show an error message)
+      } finally {
+        setIsSubmitting(false); // Enable submit button after submission
+      }
     } else {
       console.log('Form contains errors:', errors);
     }
@@ -148,13 +164,13 @@ function FundRequisitionForm() {
             <label className="block font-medium mb-2">Project Title</label>
             <input
               type="text"
-              name="projectName"
-              value={formData.projectName}
+              name="projectTitle"
+              value={formData.projectTitle}
               onChange={handleInputChange}
               className="w-full px-4 py-2 border rounded-md"
             />
-            {errors.projectName && (
-              <p className="text-red-500 text-sm">{errors.projectName}</p>
+            {errors.projectTitle && (
+              <p className="text-red-500 text-sm">{errors.projectTitle}</p>
             )}
           </div>
           <div>
@@ -262,9 +278,10 @@ function FundRequisitionForm() {
         <div className="mt-6 flex justify-end">
           <button
             type="submit"
-            className="px-6 py-2 bg-black text-white rounded-md hover:bg-slate-600 transition"
+            disabled={isSubmitting} // Disable button during submission
+            className={`px-6 py-2 ${isSubmitting ? 'bg-gray-400' : 'bg-black'} text-white rounded-md hover:bg-slate-600 transition`}
           >
-            Submit
+            {isSubmitting ? 'Submitting...' : 'Submit'}
           </button>
         </div>
       </form>

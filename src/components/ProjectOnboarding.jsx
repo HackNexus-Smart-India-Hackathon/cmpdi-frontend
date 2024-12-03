@@ -2,7 +2,6 @@ import axios from 'axios';
 import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import React, { useState } from 'react';
 import * as Yup from 'yup';
-// Import the component
 
 const SubImplementingAgencies = ({ values }) => {
   const [newAgency, setNewAgency] = useState('');
@@ -37,7 +36,7 @@ const SubImplementingAgencies = ({ values }) => {
             <div className="flex items-center gap-2">
               <input
                 type="text"
-                value={newAgency}
+                value={newAgency || ''}
                 onChange={(e) => setNewAgency(e.target.value)}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter' && newAgency.trim()) {
@@ -113,7 +112,7 @@ const AddInvestigator = ({ values }) => {
             <div className="flex items-center gap-2">
               <input
                 type="text"
-                value={newInvestigator}
+                value={newInvestigator || ''}
                 onChange={(e) => setNewInvestigator(e.target.value)}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter' && newInvestigator.trim()) {
@@ -160,273 +159,42 @@ const AddInvestigator = ({ values }) => {
   );
 };
 
-const ProposedOutlayForm = () => {
-  return (
-    <Formik
-      initialValues={{
-        items: {
-          capitalExpenditure: {
-            landBuilding: { totalCost: '', year1: '', year2: '', year3: '' },
-            equipment: { totalCost: '', year1: '', year2: '', year3: '' },
-          },
-          revenueExpenditure: {
-            salaries: { totalCost: '', year1: '', year2: '', year3: '' },
-            consumables: { totalCost: '', year1: '', year2: '', year3: '' },
-            travel: { totalCost: '', year1: '', year2: '', year3: '' },
-            workshop: { totalCost: '', year1: '', year2: '', year3: '' },
-          },
-          otherCosts: {
-            contingency: { totalCost: '', year1: '', year2: '', year3: '' },
-            institutionalOverhead: {
-              totalCost: '',
-              year1: '',
-              year2: '',
-              year3: '',
-            },
-            taxesDuties: { totalCost: '', year1: '', year2: '', year3: '' },
-          },
-        },
-        grandTotal: { totalCost: '', year1: '', year2: '', year3: '' },
-      }}
-      onSubmit={(values) => {
-        console.log('Form values:', values);
-      }}
-    >
-      {({ values }) => (
-        <Form className="px-1 pb-4 pt-4 space-y-6">
-          <table className="table-auto w-full border-collapse border border-gray-300 text-left text-sm">
-            <thead>
-              <tr>
-                <th className="border border-gray-300 px-4 py-2" rowSpan={2}>
-                  Sl. No.
-                </th>
-                <th className="border border-gray-300 px-4 py-2" rowSpan={2}>
-                  Items
-                </th>
-                <th className="border border-gray-300 px-4 py-2" colSpan={4}>
-                  (Rs. in lakhs)
-                </th>
-              </tr>
-              <tr>
-                <th className="border border-gray-300 px-4 py-2">
-                  Total Project Cost
-                </th>
-                <th className="border border-gray-300 px-4 py-2">1st Year</th>
-                <th className="border border-gray-300 px-4 py-2">2nd Year</th>
-                <th className="border border-gray-300 px-4 py-2">3rd Year</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Capital Expenditure */}
-              <tr>
-                <td
-                  colSpan={6}
-                  className="font-bold bg-gray-100 border border-gray-300 px-4 py-2"
-                >
-                  Capital Expenditure
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">9.1</td>
-                <td className="border border-gray-300 px-4 py-2">
-                  Land &amp; Building
-                </td>
-                {['totalCost', 'year1', 'year2', 'year3'].map((field, i) => (
-                  <td className="border border-gray-300 px-4 py-2" key={i}>
-                    <Field
-                      name={`items.capitalExpenditure.landBuilding.${field}`}
-                      type="text"
-                      className="w-full border rounded p-1"
-                    />
-                  </td>
-                ))}
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">9.2</td>
-                <td className="border border-gray-300 px-4 py-2">Equipment</td>
-                {['totalCost', 'year1', 'year2', 'year3'].map((field, i) => (
-                  <td className="border border-gray-300 px-4 py-2" key={i}>
-                    <Field
-                      name={`items.capitalExpenditure.equipment.${field}`}
-                      type="text"
-                      className="w-full border rounded p-1"
-                    />
-                  </td>
-                ))}
-              </tr>
-
-              {/* Revenue Expenditure */}
-              <tr>
-                <td
-                  colSpan={6}
-                  className="font-bold bg-gray-100 border border-gray-300 px-4 py-2"
-                >
-                  Revenue Expenditure
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">9.4</td>
-                <td className="border border-gray-300 px-4 py-2">
-                  Salaries / Allowances
-                </td>
-                {['totalCost', 'year1', 'year2', 'year3'].map((field, i) => (
-                  <td className="border border-gray-300 px-4 py-2" key={i}>
-                    <Field
-                      name={`items.revenueExpenditure.salaries.${field}`}
-                      type="text"
-                      className="w-full border rounded p-1"
-                    />
-                  </td>
-                ))}
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">9.5</td>
-                <td className="border border-gray-300 px-4 py-2">
-                  Consumables
-                </td>
-                {['totalCost', 'year1', 'year2', 'year3'].map((field, i) => (
-                  <td className="border border-gray-300 px-4 py-2" key={i}>
-                    <Field
-                      name={`items.revenueExpenditure.consumables.${field}`}
-                      type="text"
-                      className="w-full border rounded p-1"
-                    />
-                  </td>
-                ))}
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">9.6</td>
-                <td className="border border-gray-300 px-4 py-2">Travel</td>
-                {['totalCost', 'year1', 'year2', 'year3'].map((field, i) => (
-                  <td className="border border-gray-300 px-4 py-2" key={i}>
-                    <Field
-                      name={`items.revenueExpenditure.travel.${field}`}
-                      type="text"
-                      className="w-full border rounded p-1"
-                    />
-                  </td>
-                ))}
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">9.7</td>
-                <td className="border border-gray-300 px-4 py-2">
-                  Attending or Organizing Workshops/Seminars
-                </td>
-                {['totalCost', 'year1', 'year2', 'year3'].map((field, i) => (
-                  <td className="border border-gray-300 px-4 py-2" key={i}>
-                    <Field
-                      name={`items.revenueExpenditure.workshop.${field}`}
-                      type="text"
-                      className="w-full border rounded p-1"
-                    />
-                  </td>
-                ))}
-              </tr>
-
-              {/* Other Costs */}
-              <tr>
-                <td
-                  colSpan={6}
-                  className="font-bold bg-gray-100 border border-gray-300 px-4 py-2"
-                >
-                  Other Costs
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">9.9</td>
-                <td className="border border-gray-300 px-4 py-2">
-                  Contingency
-                </td>
-                {['totalCost', 'year1', 'year2', 'year3'].map((field, i) => (
-                  <td className="border border-gray-300 px-4 py-2" key={i}>
-                    <Field
-                      name={`items.otherCosts.contingency.${field}`}
-                      type="text"
-                      className="w-full border rounded p-1"
-                    />
-                  </td>
-                ))}
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">9.10</td>
-                <td className="border border-gray-300 px-4 py-2">
-                  Institutional Overhead
-                </td>
-                {['totalCost', 'year1', 'year2', 'year3'].map((field, i) => (
-                  <td className="border border-gray-300 px-4 py-2" key={i}>
-                    <Field
-                      name={`items.otherCosts.institutionalOverhead.${field}`}
-                      type="text"
-                      className="w-full border rounded p-1"
-                    />
-                  </td>
-                ))}
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">9.11</td>
-                <td className="border border-gray-300 px-4 py-2">
-                  Taxes and Duties
-                </td>
-                {['totalCost', 'year1', 'year2', 'year3'].map((field, i) => (
-                  <td className="border border-gray-300 px-4 py-2" key={i}>
-                    <Field
-                      name={`items.otherCosts.taxesDuties.${field}`}
-                      type="text"
-                      className="w-full border rounded p-1"
-                    />
-                  </td>
-                ))}
-              </tr>
-
-              {/* Grand Total */}
-              <tr>
-                <td className="border border-gray-300 px-4 py-2"></td>
-                <td className="font-bold border border-gray-300 px-4 py-2">
-                  GRAND TOTAL
-                </td>
-                {['totalCost', 'year1', 'year2', 'year3'].map((field, i) => (
-                  <td className="border border-gray-300 px-4 py-2" key={i}>
-                    <Field
-                      name={`grandTotal.${field}`}
-                      type="text"
-                      className="w-full border rounded p-1"
-                    />
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </Form>
-      )}
-    </Formik>
-  );
-};
-
 const ProjectOnboarding = () => {
-  // const [investigators, setInvestigators] = useState([]);
-  // console.log(investigators);
-
   const initialValues = {
     projectTitle: '',
     fundingSource: '',
+    description: '',
     principalImplementingAgency: '',
-    subImplementingAgencies: [], // Initialize as an empty array
+    subImplementingAgencies: [],
     projectInvestigators: [],
-    outlay: {
-      landAndBuilding: '',
-      equipment: '',
-      salaries: '',
-      consumables: '',
-      travel: '',
-      workshop: '',
-      contingency: '',
-      institutionalOverhead: '',
-      taxes: '',
+    projectOutlay: {
+      items: {
+        capitalExpenditure: {
+          landBuilding: { totalCost: '', year1: '', year2: '', year3: '' },
+          equipment: { totalCost: '', year1: '', year2: '', year3: '' },
+        },
+        revenueExpenditure: {
+          salaries: { totalCost: '', year1: '', year2: '', year3: '' },
+          consumables: { totalCost: '', year1: '', year2: '', year3: '' },
+          travel: { totalCost: '', year1: '', year2: '', year3: '' },
+          workshop: { totalCost: '', year1: '', year2: '', year3: '' },
+        },
+        otherCosts: {
+          contingency: { totalCost: '', year1: '', year2: '', year3: '' },
+          institutionalOverhead: {
+            totalCost: '',
+            year1: '',
+            year2: '',
+            year3: '',
+          },
+          taxesDuties: { totalCost: '', year1: '', year2: '', year3: '' },
+        },
+      },
+      grandTotal: { totalCost: '', year1: '', year2: '', year3: '' },
     },
     startDate: '',
-    duration: '',
-    milestones: [''],
-    description: '',
+    scheduleCompletionDate: '',
+    status: '',
   };
 
   const validationSchema = Yup.object().shape({
@@ -439,50 +207,51 @@ const ProjectOnboarding = () => {
       .of(Yup.string().required('Sub-implementing agency is required'))
       .min(1, 'At least one sub-implementing agency is required'),
     projectInvestigators: Yup.array().of(
-      Yup.object().shape({
-        emailOrPhone: Yup.string().required('Email or phone is required'),
-      })
+      Yup.string().required('project investigator is required')
     ),
     startDate: Yup.date().required('Start date is required'),
     duration: Yup.number()
       .typeError('Must be a number')
       .required('Duration is required'),
-    milestones: Yup.array().of(Yup.string().required('Milestone is required')),
+
     description: Yup.string(),
   });
 
-  // const handleSearchInvestigator = async (emailOrPhone) => {
+  // const handleSubmit = async (values, { resetForm, setSubmitting }) => {
   //   try {
-  //     const response = await axios.get(
-  //       `/api/investigator?query=${emailOrPhone}`
+  //     console.log('Submitting:', values);
+
+  //     const projectData = {
+  //       projectTitle: values.projectTitle,
+  //       fundingSource: values.fundingSource,
+  //       description: values.description,
+  //       principalImplementingAgency: values.principalImplementingAgency,
+  //       subImplementingAgencies: values.subImplementingAgencies,
+  //       projectInvestigators: values.projectInvestigators,
+  //       startDate: values.startDate,
+  //       scheduleCompletionDate: values.scheduleCompletionDate,
+  //       projectOutlay: values.outlay,
+  //       status: values.status,
+  //     };
+
+  //     const response = await axios.post(
+  //       'http://localhost:3000/api/projects/create',
+  //       projectData
   //     );
-  //     if (response.data.exists) {
-  //       alert('Investigator exists. Adding to the project.');
-  //       setInvestigators((prev) => [...prev, response.data]);
+
+  //     if (response.data.success) {
+  //       alert('Project created successfully');
+  //       resetForm();
   //     } else {
-  //       alert('Investigator does not exist. Sending registration link.');
-  //       await axios.post('/api/invite', { emailOrPhone });
+  //       alert('Error: ' + response.data.message);
   //     }
   //   } catch (error) {
-  //     console.error('Error searching investigator:', error);
-  //     alert('Failed to search investigator.');
+  //     console.error('Error submitting form:', error);
+  //     alert('Failed to submit the form. Please try again.');
+  //   } finally {
+  //     setSubmitting(false);
   //   }
   // };
-
-  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    try {
-      console.log('Submitting:', values);
-      await axios.post('/api/projects', values);
-      alert('Project submitted successfully.');
-      resetForm();
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('Failed to submit the form. Please try again.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center p-12">
       <div className="w-full max-w-7xl bg-white rounded shadow-md p-8">
@@ -490,10 +259,93 @@ const ProjectOnboarding = () => {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={handleSubmit}
+          // onSubmit={handleSubmit(values, { resetForm, setSubmitting })}
+          onSubmit={async (values, { setSubmitting, resetForm }) => {
+            try {
+              console.log('Submitting:', values);
+
+              const projectData = {
+                projectTitle: values.projectTitle,
+                fundingSource: values.fundingSource,
+                description: values.description,
+                principalImplementingAgency: values.principalImplementingAgency,
+                subImplementingAgencies: values.subImplementingAgencies,
+                projectInvestigators: values.projectInvestigators,
+                startDate: values.startDate,
+                scheduleCompletionDate: values.scheduleCompletionDate,
+                projectOutlay: values.outlay,
+                status: values.status,
+              };
+
+              const response = await axios.post(
+                'http://localhost:3000/api/projects/create',
+                projectData
+              );
+
+              if (response.data.success) {
+                alert('Project created successfully');
+                resetForm();
+              } else {
+                alert('Error: ' + response.data.message);
+              }
+            } catch (error) {
+              console.error('Error submitting form:', error);
+              alert('Failed to submit the form. Please try again.');
+            } finally {
+              setSubmitting(false);
+            }
+          }}
         >
-          {({ isSubmitting, values }) => (
-            <Form>
+          {({ isSubmitting, setSubmitting, resetForm, values }) => (
+            <Form
+              onSubmit={async (values) => {
+                try {
+                  console.log('Submitting:', values);
+
+                  const projectData = {
+                    projectTitle: values.projectTitle,
+                    fundingSource: values.fundingSource,
+                    description: values.description,
+                    principalImplementingAgency:
+                      values.principalImplementingAgency,
+                    subImplementingAgencies: values.subImplementingAgencies,
+                    projectInvestigators: values.projectInvestigators,
+                    startDate: values.startDate,
+                    scheduleCompletionDate: values.scheduleCompletionDate,
+                    projectOutlay: values.projectOutlay,
+                    status: values.status,
+                  };
+
+                  // const response = await axios.post(
+                  //   'http://localhost:3000/api/projects/create',
+                  //   projectData
+                  // );
+
+                  console.log(projectData);
+                  const response = await axios.post(
+                    'http://localhost:3000/api/projects/create',
+                    projectData,
+                    {
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                    }
+                  );
+
+                  if (response.data.success) {
+                    alert('Project created successfully');
+                    resetForm();
+                  } else {
+                    alert('Error: ' + response.data.message);
+                  }
+                } catch (error) {
+                  console.error('Error submitting form:', error);
+                  alert('Failed to submit the form. Please try again.');
+                } finally {
+                  setSubmitting(false);
+                }
+              }}
+            >
               <div className="mb-6">
                 <div className="flex flex-wrap gap-4 items-center">
                   {/* Project Title */}
@@ -504,6 +356,7 @@ const ProjectOnboarding = () => {
                     <Field
                       type="text"
                       name="projectTitle"
+                      value={values.projectTitle}
                       placeholder="Enter Project Title"
                       className="w-full px-3 py-2 border rounded"
                     />
@@ -522,6 +375,7 @@ const ProjectOnboarding = () => {
                     <Field
                       as="select"
                       name="fundingSource"
+                      value={values.fundingSource}
                       className="w-full px-3 py-2 border rounded appearance-none focus:outline-none focus:ring-2 focus:ring-black"
                       style={{
                         backgroundImage:
@@ -555,6 +409,7 @@ const ProjectOnboarding = () => {
                 <Field
                   as="textarea"
                   name="description"
+                  value={values.description}
                   placeholder="Provide a brief description of the project"
                   className="w-full px-3 py-2 border rounded resize-none"
                 />
@@ -573,6 +428,7 @@ const ProjectOnboarding = () => {
                 <Field
                   type="text"
                   name="principalImplementingAgency"
+                  value={values.principalImplementingAgency}
                   placeholder="Enter Principal Implementing Agency"
                   className="w-full px-3 py-2 border rounded"
                 />
@@ -607,6 +463,7 @@ const ProjectOnboarding = () => {
                     <Field
                       type="date"
                       name="startDate"
+                      value={values.startDate}
                       id="startDate"
                       className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-black"
                     />
@@ -628,6 +485,7 @@ const ProjectOnboarding = () => {
                     <Field
                       type="date"
                       name="scheduleCompletionDate"
+                      value={values.scheduleCompletionDate}
                       id="scheduleCompletionDate"
                       className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-black"
                     />
@@ -640,9 +498,321 @@ const ProjectOnboarding = () => {
                 </div>
               </div>
 
-              {/* Project Outlay */}
+              {/* Project Outlay Table */}
+
               <label className="block text-gray-700">Project Outlay</label>
-              <ProposedOutlayForm />
+              <table className="table-auto w-full border-collapse border border-gray-300 text-left text-sm">
+                <thead>
+                  <tr>
+                    <th
+                      className="border border-gray-300 px-4 py-2"
+                      rowSpan={2}
+                    >
+                      Sl. No.
+                    </th>
+                    <th
+                      className="border border-gray-300 px-4 py-2"
+                      rowSpan={2}
+                    >
+                      Items
+                    </th>
+                    <th
+                      className="border border-gray-300 px-4 py-2"
+                      colSpan={4}
+                    >
+                      (Rs. in lakhs)
+                    </th>
+                  </tr>
+                  <tr>
+                    <th className="border border-gray-300 px-4 py-2">
+                      Total Project Cost
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2">
+                      1st Year
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2">
+                      2nd Year
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2">
+                      3rd Year
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Capital Expenditure */}
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="font-bold bg-gray-100 border border-gray-300 px-4 py-2"
+                    >
+                      Capital Expenditure
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">9.1</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      Land &amp; Building
+                    </td>
+                    {['totalCost', 'year1', 'year2', 'year3'].map(
+                      (field, i) => (
+                        <td
+                          className="border border-gray-300 px-4 py-2"
+                          key={i}
+                        >
+                          <Field
+                            name={`items.capitalExpenditure.landBuilding.${field}`}
+                            type="text"
+                            className="w-full border rounded p-1"
+                            value={
+                              values?.items?.capitalExpenditure?.landBuilding?.[
+                                field
+                              ] || ''
+                            }
+                          />
+                        </td>
+                      )
+                    )}
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">9.2</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      Equipment
+                    </td>
+                    {['totalCost', 'year1', 'year2', 'year3'].map(
+                      (field, i) => (
+                        <td
+                          className="border border-gray-300 px-4 py-2"
+                          key={i}
+                        >
+                          <Field
+                            name={`items.capitalExpenditure.equipment.${field}`}
+                            type="text"
+                            className="w-full border rounded p-1"
+                            value={
+                              values?.items?.capitalExpenditure?.equipment?.[
+                                field
+                              ] || ''
+                            }
+                          />
+                        </td>
+                      )
+                    )}
+                  </tr>
+
+                  {/* Revenue Expenditure */}
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="font-bold bg-gray-100 border border-gray-300 px-4 py-2"
+                    >
+                      Revenue Expenditure
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">9.4</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      Salaries / Allowances
+                    </td>
+                    {['totalCost', 'year1', 'year2', 'year3'].map(
+                      (field, i) => (
+                        <td
+                          className="border border-gray-300 px-4 py-2"
+                          key={i}
+                        >
+                          <Field
+                            name={`items.revenueExpenditure.salaries.${field}`}
+                            type="text"
+                            className="w-full border rounded p-1"
+                            value={
+                              values?.items?.revenueExpenditure?.salaries?.[
+                                field
+                              ] || ''
+                            }
+                          />
+                        </td>
+                      )
+                    )}
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">9.5</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      Consumables
+                    </td>
+                    {['totalCost', 'year1', 'year2', 'year3'].map(
+                      (field, i) => (
+                        <td
+                          className="border border-gray-300 px-4 py-2"
+                          key={i}
+                        >
+                          <Field
+                            name={`items.revenueExpenditure.consumables.${field}`}
+                            type="text"
+                            className="w-full border rounded p-1"
+                            value={
+                              values?.items?.revenueExpenditure?.consumables?.[
+                                field
+                              ] || ''
+                            }
+                          />
+                        </td>
+                      )
+                    )}
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">9.6</td>
+                    <td className="border border-gray-300 px-4 py-2">Travel</td>
+                    {['totalCost', 'year1', 'year2', 'year3'].map(
+                      (field, i) => (
+                        <td
+                          className="border border-gray-300 px-4 py-2"
+                          key={i}
+                        >
+                          <Field
+                            name={`items.revenueExpenditure.travel.${field}`}
+                            type="text"
+                            className="w-full border rounded p-1"
+                            value={
+                              values?.items?.revenueExpenditure?.travel?.[
+                                field
+                              ] || ''
+                            }
+                          />
+                        </td>
+                      )
+                    )}
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">9.7</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      Attending or Organizing Workshops/Seminars
+                    </td>
+                    {['totalCost', 'year1', 'year2', 'year3'].map(
+                      (field, i) => (
+                        <td
+                          className="border border-gray-300 px-4 py-2"
+                          key={i}
+                        >
+                          <Field
+                            name={`items.revenueExpenditure.workshop.${field}`}
+                            type="text"
+                            className="w-full border rounded p-1"
+                            value={
+                              values?.items?.revenueExpenditure?.workshop?.[
+                                field
+                              ] || ''
+                            }
+                          />
+                        </td>
+                      )
+                    )}
+                  </tr>
+
+                  {/* Other Costs */}
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="font-bold bg-gray-100 border border-gray-300 px-4 py-2"
+                    >
+                      Other Costs
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">9.9</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      Contingency
+                    </td>
+                    {['totalCost', 'year1', 'year2', 'year3'].map(
+                      (field, i) => (
+                        <td
+                          className="border border-gray-300 px-4 py-2"
+                          key={i}
+                        >
+                          <Field
+                            name={`items.otherCosts.contingency.${field}`}
+                            type="text"
+                            className="w-full border rounded p-1"
+                            value={
+                              values?.items?.otherCosts?.contingency?.[field] ||
+                              ''
+                            }
+                          />
+                        </td>
+                      )
+                    )}
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">9.10</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      Institutional Overhead
+                    </td>
+                    {['totalCost', 'year1', 'year2', 'year3'].map(
+                      (field, i) => (
+                        <td
+                          className="border border-gray-300 px-4 py-2"
+                          key={i}
+                        >
+                          <Field
+                            name={`items.otherCosts.institutionalOverhead.${field}`}
+                            type="text"
+                            className="w-full border rounded p-1"
+                            value={
+                              values?.items?.otherCosts
+                                ?.institutionalOverhead?.[field] || ''
+                            }
+                          />
+                        </td>
+                      )
+                    )}
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">9.11</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      Taxes and Duties
+                    </td>
+                    {['totalCost', 'year1', 'year2', 'year3'].map(
+                      (field, i) => (
+                        <td
+                          className="border border-gray-300 px-4 py-2"
+                          key={i}
+                        >
+                          <Field
+                            name={`items.otherCosts.taxesDuties.${field}`}
+                            type="text"
+                            className="w-full border rounded p-1"
+                            value={
+                              values?.items?.otherCosts?.taxesDuties?.[field] ||
+                              ''
+                            }
+                          />
+                        </td>
+                      )
+                    )}
+                  </tr>
+
+                  {/* Grand Total */}
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2"></td>
+                    <td className="font-bold border border-gray-300 px-4 py-2">
+                      GRAND TOTAL
+                    </td>
+                    {['totalCost', 'year1', 'year2', 'year3'].map(
+                      (field, i) => (
+                        <td
+                          className="border border-gray-300 px-4 py-2"
+                          key={i}
+                        >
+                          <Field
+                            name={`grandTotal.${field}`}
+                            type="text"
+                            className="w-full border rounded p-1"
+                            value={values?.grandTotal?.[field] || ''}
+                          />
+                        </td>
+                      )
+                    )}
+                  </tr>
+                </tbody>
+              </table>
 
               {/* Status of Project */}
               <div className="mb-6">
@@ -652,6 +822,7 @@ const ProjectOnboarding = () => {
                 <Field
                   as="select"
                   name="status"
+                  value={values.status}
                   className="w-full px-3 py-2 border rounded appearance-none focus:outline-none focus:ring-2 focus:ring-black"
                 >
                   <option value="" disabled>
@@ -671,8 +842,44 @@ const ProjectOnboarding = () => {
 
               <button
                 type="submit"
-                disabled={isSubmitting}
                 className="bg-black text-white px-4 py-2 rounded"
+                disabled={isSubmitting}
+                onSubmit={async (values, { setSubmitting, resetForm }) => {
+                  try {
+                    console.log('Submitting:', values);
+
+                    const projectData = {
+                      projectTitle: values.projectTitle,
+                      fundingSource: values.fundingSource,
+                      description: values.description,
+                      principalImplementingAgency:
+                        values.principalImplementingAgency,
+                      subImplementingAgencies: values.subImplementingAgencies,
+                      projectInvestigators: values.projectInvestigators,
+                      startDate: values.startDate,
+                      scheduleCompletionDate: values.scheduleCompletionDate,
+                      projectOutlay: values.outlay,
+                      status: values.status,
+                    };
+
+                    const response = await axios.post(
+                      'http://localhost:3000/api/projects/create',
+                      projectData
+                    );
+
+                    if (response.data.success) {
+                      alert('Project created successfully');
+                      resetForm();
+                    } else {
+                      alert('Error: ' + response.data.message);
+                    }
+                  } catch (error) {
+                    console.error('Error submitting form:', error);
+                    alert('Failed to submit the form. Please try again.');
+                  } finally {
+                    setSubmitting(false);
+                  }
+                }}
               >
                 {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>

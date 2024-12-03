@@ -85,10 +85,11 @@ function ProjectForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Form Data:', formData);
+    const baseUrl = process.env.REACT_APP_PROJECT_BASE_API;
 
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/projects/create', // Replace with your API endpoint
+        `${baseUrl}/api/projects/create`, // Replace with your API endpoint
         formData,
         {
           headers: {

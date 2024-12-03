@@ -14,7 +14,7 @@ const InvestigatorConsole = () => {
 
       <div className="flex flex-grow">
         {/* Sidebar */}
-        <aside className="w-1/4 bg-gray-100 border-r border-gray-300">
+        <aside className="w-[17vw] bg-gray-100 border-r border-gray-300">
           <Sidebar />
         </aside>
 

@@ -16,7 +16,7 @@ const AdminConsole = () => {
       <Navbar />
 
       <div className="flex flex-1">
-        <div className="w-64">
+        <div className="w-[17vw]">
           <Sidebar />
         </div>
 

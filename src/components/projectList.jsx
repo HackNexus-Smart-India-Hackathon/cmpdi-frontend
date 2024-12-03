@@ -67,7 +67,7 @@ const ProjectTable = () => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Total Projects</h2>
+      <h2 className="text-2xl font-semibold mb-4">All Projects</h2>
       <table className="w-full border-collapse table-auto">
         <thead>
           <tr className="bg-gray-100 text-left">

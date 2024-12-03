@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
@@ -33,7 +33,7 @@ const LoginSignup = () => {
         console.log('Updated state:', { user_id, access_token, role });
 
         toast.success('Login successful!');
-        window.location.href = `/${role}Console`;
+        window.location.href = `/${role}/dashboard`;
       }
       console.log('Login successful:', response.data);
     } catch (error) {
@@ -45,7 +45,11 @@ const LoginSignup = () => {
   const handleSubmit = () => {
     handleLogin(email, password);
   };
-
+  useEffect(() => {
+    if (access_token && role && user_id) {
+      window.location.href = `/${role}/dashboard`;
+    }
+  }, [access_token, role, user_id]);
   return (
     <div className="my-6 m-auto p-5 md:w-9/12 w-11/12 bg-white flex flex-col md:flex-row items-center justify-center shadow-2xl rounded-3xl">
       <div className="w-2/5 md:w-1/2">

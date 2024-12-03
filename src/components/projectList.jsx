@@ -1,10 +1,12 @@
 import { IconButton } from '@mui/material';
 import React, { useState, useRef, useEffect } from 'react';
 import { FiMoreVertical } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 const ProjectTable = () => {
   const [showActions, setShowActions] = useState(null);
   const actionMenuRef = useRef(null);
+  const navigate = useNavigate();
 
   const projects = [
     {
@@ -64,10 +66,13 @@ const ProjectTable = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+  const handleView = (code, title) => {
+    navigate(`/project/${title}/${code}`);
+  };
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Total Projects</h2>
+      <h2 className="text-2xl font-semibold mb-4">All Projects</h2>
       <table className="w-full border-collapse table-auto">
         <thead>
           <tr className="bg-gray-100 text-left">
@@ -115,7 +120,7 @@ const ProjectTable = () => {
                   >
                     <button
                       className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                      onClick={() => alert('View')}
+                      onClick={() => handleView(project.title, project.code)}
                     >
                       View
                     </button>

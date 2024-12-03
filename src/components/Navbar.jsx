@@ -123,17 +123,18 @@ const Navbar = () => {
 
   return (
     <nav className="sticky top-0 z-50 flex flex-row items-center justify-between bg-slate-200 px-8 gap-4 py-4 border-b border-slate-300">
-      {/* Logo */}
       <div className="text-lg font-bold">
-        <img className="w-12" src="/logo/coal_india_logo.png" alt="logo" />
+        <img
+          className="w-20 cursor-pointer"
+          src="/logo/moc.png"
+          alt="logo"
+          onClick={() => window.open('https://coal.nic.in/', '_blank')}
+        />
       </div>
-
-      {/* Search Bar */}
       <div className="flex flex-col content-start	flex-wrap items-start	 flex-grow  mx-4">
         <h1 className="text-3xl font-bold">C.M.P.D.I.</h1>
         <h3 className="font-semibold text-lg">Research project Tracker</h3>
       </div>
-
       <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={3} color="error">
@@ -150,7 +151,6 @@ const Navbar = () => {
           </Badge>
         </IconButton>
       </Box>
-
       {/* Profile */}
       <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
         <IconButton

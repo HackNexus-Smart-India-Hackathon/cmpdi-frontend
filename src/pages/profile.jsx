@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import UserImage from '../components/Assets/userimg.png';
 import callRefreshToken from '../utils/reset_token';
-import UserImage from '../components/Assets/userimg.png'; 
 
 const Profile = () => {
   const [data, setData] = useState(null);
@@ -75,7 +75,9 @@ const Profile = () => {
                 className="w-24 h-24 rounded-full border-2 border-gray-300 mb-4"
               />
             )}
-            <h1 className="text-xl font-semibold text-gray-800">{data.username}</h1>
+            <h1 className="text-xl font-semibold text-gray-800">
+              {data.username}
+            </h1>
             <p className="text-gray-500 mb-4">{data.email}</p>
             {/* Add more fields as needed */}
           </div>

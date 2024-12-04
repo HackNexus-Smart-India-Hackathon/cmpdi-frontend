@@ -1,242 +1,274 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import React from 'react';
-import * as Yup from 'yup';
+import axios from 'axios';
+import React, { useState } from 'react';
+
+// Financial Categories
+const financialCategories = [
+  'LandBuilding',
+  'CapitalEquipment',
+  'Manpower',
+  'Consumables',
+  'Travel',
+  'Contingencies',
+  'Seminars',
+  'Others',
+];
+
+// Initialize financial details
+const initializeFinancialDetails = () => {
+  return financialCategories.reduce((acc, category) => {
+    acc[category] = {
+      totalApproved: '',
+      sanctionedProvision: '',
+      previousYear: '',
+      previousQuarter: '',
+      currentQuarter: '',
+    };
+    return acc;
+  }, {});
+};
 
 const QuarterlyExpenditureStatementForm = () => {
-  const initialValues = {
+  const [formData, setFormData] = useState({
     projectName: '',
     projectCode: '',
     companyName: '',
     quarterEnding: '',
-    landBuilding: {
-      totalApproved: 0,
-      sanctionedProvision: 0,
-      incurredPreviousYear: 0,
-      incurredPreviousQuarter: 0,
-      currentQuarter: 0,
-    },
-    capitalEquipment: {
-      totalApproved: 0,
-      sanctionedProvision: 0,
-      incurredPreviousYear: 0,
-      incurredPreviousQuarter: 0,
-      currentQuarter: 0,
-    },
-    manpower: {
-      totalApproved: 0,
-      sanctionedProvision: 0,
-      incurredPreviousYear: 0,
-      incurredPreviousQuarter: 0,
-      currentQuarter: 0,
-    },
-    consumables: {
-      totalApproved: 0,
-      sanctionedProvision: 0,
-      incurredPreviousYear: 0,
-      incurredPreviousQuarter: 0,
-      currentQuarter: 0,
-    },
-    travel: {
-      totalApproved: 0,
-      sanctionedProvision: 0,
-      incurredPreviousYear: 0,
-      incurredPreviousQuarter: 0,
-      currentQuarter: 0,
-    },
-    contingencies: {
-      totalApproved: 0,
-      sanctionedProvision: 0,
-      incurredPreviousYear: 0,
-      incurredPreviousQuarter: 0,
-      currentQuarter: 0,
-    },
-    seminars: {
-      totalApproved: 0,
-      sanctionedProvision: 0,
-      incurredPreviousYear: 0,
-      incurredPreviousQuarter: 0,
-      currentQuarter: 0,
-    },
-    others: {
-      totalApproved: 0,
-      sanctionedProvision: 0,
-      incurredPreviousYear: 0,
-      incurredPreviousQuarter: 0,
-      currentQuarter: 0,
-    },
+    financialDetails: initializeFinancialDetails(),
     fundsAdvanced: '',
     expenditureToDate: '',
     unspentBalance: '',
-  };
-
-  const validationSchema = Yup.object({
-    projectName: Yup.string().required('Project Name is required'),
-    projectCode: Yup.string().required('Project Code is required'),
-    companyName: Yup.string().required('Company Name is required'),
-    quarterEnding: Yup.string().required('Quarter Ending is required'),
-    fundsAdvanced: Yup.number()
-      .min(0, 'Cannot be negative')
-      .required('Funds advanced is required'),
-    expenditureToDate: Yup.number()
-      .min(0, 'Cannot be negative')
-      .required('Expenditure to date is required'),
-    unspentBalance: Yup.number()
-      .min(0, 'Cannot be negative')
-      .required('Unspent Balance is required'),
   });
 
-  const onSubmit = (values) => {
-    console.log('Form submitted successfully:', values);
+  const [expandedCategory, setExpandedCategory] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Handle input changes for top-level fields
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const financialFields = [
-    { name: 'landBuilding', label: 'Land & Building' },
-    { name: 'capitalEquipment', label: 'Capital Equipment' },
-    { name: 'manpower', label: 'Manpower' },
-    { name: 'consumables', label: 'Consumables' },
-    { name: 'travel', label: 'TA/DA' },
-    { name: 'contingencies', label: 'Contingencies' },
-    { name: 'seminars', label: 'Attending/Organizing Seminars' },
-    { name: 'others', label: 'Others' },
-  ];
+  // Handle input changes for financial details
+  const handleFinancialChange = (category, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      financialDetails: {
+        ...prev.financialDetails,
+        [category]: {
+          ...prev.financialDetails[category],
+          [field]: value,
+        },
+      },
+    }));
+  };
+
+  // Validate form data
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Check required fields
+    ['projectName', 'projectCode', 'companyName', 'quarterEnding'].forEach(
+      (field) => {
+        if (!formData[field]) {
+          newErrors[field] = `${field.replace(/([A-Z])/g, ' $1')} is required.`;
+        }
+      }
+    );
+
+    // Check numerical fields
+    ['fundsAdvanced', 'expenditureToDate', 'unspentBalance'].forEach(
+      (field) => {
+        if (!formData[field]) {
+          newErrors[field] = `${field.replace(/([A-Z])/g, ' $1')} is required.`;
+        } else if (isNaN(formData[field]) || formData[field] < 0) {
+          newErrors[field] =
+            `${field.replace(/([A-Z])/g, ' $1')} must be a valid non-negative number.`;
+        }
+      }
+    );
+    console.log(newErrors);
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+
+    // Prepare data for API
+    const apiPayload = {
+      ...formData,
+      financialDetails: Object.entries(formData.financialDetails).map(
+        ([category, details]) => ({
+          category,
+          ...details,
+        })
+      ),
+    };
+
+    console.log(apiPayload);
+
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/api/forms/quarterly-expenditure-statement',
+        apiPayload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      console.log('Response:', response.data);
+      alert('Quarterly Expenditure Statement created successfully!');
+      // setFormData({
+      //   projectName: '',
+      //   projectCode: '',
+      //   companyName: '',
+      //   quarterEnding: '',
+      //   financialDetails: initializeFinancialDetails(),
+      //   fundsAdvanced: '',
+      //   expenditureToDate: '',
+      //   unspentBalance: '',
+      // });
+    } catch (error) {
+      console.error('Error submitting form:', error.response || error.message);
+      alert('Failed to create the statement. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl w-full bg-white border border-gray-400 rounded p-8">
-        <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
-          Quarterly Expenditure Statement Form
-        </h1>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-        >
-          {({ values }) => (
-            <Form>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {[
-                  { name: 'projectName', label: 'Project Name' },
-                  { name: 'projectCode', label: 'Project Code' },
-                  { name: 'companyName', label: 'Company Name/Institution' },
-                  { name: 'quarterEnding', label: 'Quarter Ending' },
-                ].map((field) => (
-                  <div key={field.name}>
-                    <label
-                      htmlFor={field.name}
-                      className="block text-sm font-medium text-gray-800"
-                    >
-                      {field.label}
-                    </label>
-                    <Field
-                      name={field.name}
-                      type="text"
-                      className="mt-1 p-2 w-full border border-gray-400 rounded"
-                    />
-                    <ErrorMessage
-                      name={field.name}
-                      component="div"
-                      className="text-red-500 text-sm"
-                    />
-                  </div>
-                ))}
-              </div>
+    <div className="max-w-7xl mx-auto p-8 bg-gray-50 rounded-lg shadow-lg">
+      <h1 className="text-3xl font-bold mb-6">
+        Quarterly Expenditure Statement
+      </h1>
+      <form onSubmit={handleSubmit}>
+        {/* Project Information */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          {[
+            { label: 'Project Name', name: 'projectName' },
+            { label: 'Project Code', name: 'projectCode' },
+            { label: 'Company Name', name: 'companyName' },
+            { label: 'Quarter Ending', name: 'quarterEnding' },
+          ].map(({ label, name }) => (
+            <div key={name}>
+              <label className="block font-medium mb-2">{label}</label>
+              <input
+                type="text"
+                name={name}
+                value={formData[name]}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+              {errors[name] && (
+                <p className="text-red-500 text-sm">{errors[name]}</p>
+              )}
+            </div>
+          ))}
+        </div>
 
-              <div className="mt-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  Financial Details
-                </h2>
-                <div className="overflow-auto">
-                  <table className="w-full text-left border-collapse border border-gray-300">
-                    <thead>
-                      <tr>
-                        <th className="border border-gray-300 p-2">Item</th>
-                        <th className="border border-gray-300 p-2">
-                          Total Approved Cost
-                        </th>
-                        <th className="border border-gray-300 p-2">
-                          Sanctioned Provision
-                        </th>
-                        <th className="border border-gray-300 p-2">
-                          Expenditure Incurred (Prev. Year)
-                        </th>
-                        <th className="border border-gray-300 p-2">
-                          Expenditure Incurred (Prev. Quarter)
-                        </th>
-                        <th className="border border-gray-300 p-2">
-                          Expenditure Incurred (Current Quarter)
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {financialFields.map((field) => (
-                        <tr key={field.name}>
-                          <td className="border border-gray-300 p-2">
-                            {field.label}
-                          </td>
-                          {[
-                            'totalApproved',
-                            'sanctionedProvision',
-                            'incurredPreviousYear',
-                            'incurredPreviousQuarter',
-                            'currentQuarter',
-                          ].map((key) => (
-                            <td
-                              key={key}
-                              className="border border-gray-300 p-2"
-                            >
-                              <Field
-                                name={`${field.name}.${key}`}
-                                type="number"
-                                className="p-2 w-full border border-gray-400 rounded"
-                              />
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+        {/* Financial Details */}
+        <label className="block font-medium mb-3">Financial Details</label>
+        <div className="space-y-4">
+          {financialCategories.map((category) => (
+            <div
+              key={category}
+              className="border rounded-lg shadow-sm bg-white overflow-hidden"
+            >
+              {/* Collapsible Header */}
+              <button
+                type="button"
+                className={`w-full p-4 text-left font-semibold transition ${
+                  expandedCategory === category ? 'bg-slate-300' : 'bg-gray-100'
+                }`}
+                onClick={() =>
+                  setExpandedCategory((prev) =>
+                    prev === category ? null : category
+                  )
+                }
+              >
+                {category.replace(/([A-Z])/g, ' $1')}
+              </button>
+
+              {/* Collapsible Content */}
+              {expandedCategory === category && (
+                <div className="p-4 space-y-4">
+                  {Object.keys(formData.financialDetails[category]).map(
+                    (field) => (
+                      <div key={field} className="flex items-center gap-4">
+                        <label className="w-40 font-medium capitalize">
+                          {field.replace(/([A-Z])/g, ' $1')}
+                        </label>
+                        <input
+                          type="number"
+                          value={
+                            formData.financialDetails[category][field] || ''
+                          }
+                          onChange={(e) =>
+                            handleFinancialChange(
+                              category,
+                              field,
+                              e.target.value
+                            )
+                          }
+                          className="flex-1 px-4 py-2 border rounded-md"
+                        />
+                      </div>
+                    )
+                  )}
                 </div>
-              </div>
+              )}
+            </div>
+          ))}
+        </div>
 
-              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {[
-                  { name: 'fundsAdvanced', label: 'Funds Advanced Till Date' },
-                  { name: 'expenditureToDate', label: 'Expenditure Till Date' },
-                  { name: 'unspentBalance', label: 'Unspent Balance in Hand' },
-                ].map((field) => (
-                  <div key={field.name}>
-                    <label
-                      htmlFor={field.name}
-                      className="block text-sm font-medium text-gray-800"
-                    >
-                      {field.label}
-                    </label>
-                    <Field
-                      name={field.name}
-                      type="number"
-                      className="mt-1 p-2 w-full border border-gray-400 rounded"
-                    />
-                    <ErrorMessage
-                      name={field.name}
-                      component="div"
-                      className="text-red-500 text-sm"
-                    />
-                  </div>
-                ))}
-              </div>
+        {/* Funds Section */}
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {[
+            { label: 'Funds Advanced Till Date', name: 'fundsAdvanced' },
+            { label: 'Expenditure Till Date', name: 'expenditureToDate' },
+            { label: 'Unspent Balance in Hand', name: 'unspentBalance' },
+          ].map(({ label, name }) => (
+            <div key={name}>
+              <label className="block font-medium mb-2">{label}</label>
+              <input
+                type="number"
+                name={name}
+                value={formData[name]}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+              {errors[name] && (
+                <p className="text-red-500 text-sm">{errors[name]}</p>
+              )}
+            </div>
+          ))}
+        </div>
 
-              <div className="mt-8">
-                <button
-                  type="submit"
-                  className="w-full bg-black text-white font-bold py-2 rounded hover:bg-gray-800 transition duration-150"
-                >
-                  Submit Form
-                </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </div>
+        {/* Submit Button */}
+        <div className="mt-6 flex justify-end">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={`px-6 py-2 ${
+              isSubmitting ? 'bg-gray-400' : 'bg-black'
+            } text-white rounded-md hover:bg-slate-600 transition`}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

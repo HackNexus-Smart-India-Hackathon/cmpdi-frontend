@@ -1,6 +1,5 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import React from 'react';
-import * as Yup from 'yup';
+import axios from 'axios';
+import React, { useState } from 'react';
 
 const ProjectCompletionReportForm = () => {
   const initialValues = {
@@ -21,176 +20,213 @@ const ProjectCompletionReportForm = () => {
     finalExpenditureStatement: '',
   };
 
-  const validationSchema = Yup.object({
-    title: Yup.string().required('Title of the project is required'),
-    projectCode: Yup.string().required('Project Code is required'),
-    commencementDate: Yup.date().required('Date of commencement is required'),
-    approvedCompletionDate: Yup.date().required(
-      'Approved date of completion is required'
-    ),
-    actualCompletionDate: Yup.date().required(
-      'Actual date of completion is required'
-    ),
-    objectives: Yup.string().required('Objectives are required'),
-    workProgram: Yup.string().required('Work programme is required'),
-    workDoneDetails: Yup.string().required('Details of work done are required'),
-    objectivesFulfilled: Yup.string().required(
-      'Details of objectives fulfillment are required'
-    ),
-    reasonsUncovered: Yup.string().required(
-      'Reasons for uncovered areas are required'
-    ),
-    furtherStudiesNeeded: Yup.string().required(
-      'Indication of further studies required'
-    ),
-    conclusions: Yup.string().required(
-      'Conclusions and recommendations are required'
-    ),
-    applicationScope: Yup.string().required('Scope of application is required'),
-    associatedPersons: Yup.string().required(
-      'Names of associated persons and their expertise are required'
-    ),
-    finalExpenditureStatement: Yup.string().required(
-      'Final expenditure statement details are required'
-    ),
-  });
+  const [formData, setFormData] = useState(initialValues);
+  const [errors, setErrors] = useState({});
+  const [expanded, setExpanded] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = (values) => {
-    console.log('Form submitted successfully:', values);
+  const validateField = (name, value) => {
+    if (!value.trim()) {
+      return 'This field is required.';
+    }
+    return '';
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    Object.entries(formData).forEach(([key, value]) => {
+      const error = validateField(key, value);
+      if (error) newErrors[key] = error;
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateField(name, value),
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      setIsSubmitting(true);
+      setErrors({}); // Clear previous errors
+      try {
+        const response = await axios.post(
+          'http://localhost:3000/api/forms//project-completion-report',
+          formData
+        );
+
+        // Handle success
+        console.log(response.data);
+        // alert('Project Completion Report created successfully!');
+        // setFormData(initialValues); // Reset the form
+      } catch (error) {
+        if (error.response) {
+          // The request was made, and the server responded with a status code
+          const { data } = error.response;
+          if (data.fieldErrors) {
+            setErrors(data.fieldErrors); // Set field-specific errors
+          } else {
+            alert(`Error: ${data.message || 'An unknown error occurred.'}`);
+          }
+        } else if (error.request) {
+          // The request was made, but no response was received
+          console.error('No response received:', error.request);
+          alert('No response from the server. Please try again later.');
+        } else {
+          // Something happened in setting up the request
+          console.error('Error setting up the request:', error.message);
+          alert(
+            'An error occurred while submitting the form. Please try again.'
+          );
+        }
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl w-full bg-white border border-gray-400 rounded p-8">
-        <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
-          Project Completion Report Form
-        </h1>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-        >
-          {() => (
-            <Form>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {[
-                  { name: 'title', label: 'Title of the Project' },
-                  { name: 'projectCode', label: 'Project Code' },
-                  {
-                    name: 'commencementDate',
-                    label: 'Date of Commencement',
-                    type: 'date',
-                  },
-                  {
-                    name: 'approvedCompletionDate',
-                    label: 'Approved Completion Date',
-                    type: 'date',
-                  },
-                  {
-                    name: 'actualCompletionDate',
-                    label: 'Actual Completion Date',
-                    type: 'date',
-                  },
-                ].map((field) => (
-                  <div key={field.name}>
-                    <label
-                      htmlFor={field.name}
-                      className="block text-sm font-medium text-gray-800"
-                    >
-                      {field.label}
-                    </label>
-                    <Field
-                      name={field.name}
-                      type={field.type || 'text'}
-                      className="mt-1 p-2 w-full border border-gray-400 rounded"
-                    />
-                    <ErrorMessage
-                      name={field.name}
-                      component="div"
-                      className="text-red-500 text-sm"
-                    />
-                  </div>
-                ))}
-              </div>
+    <div className="max-w-7xl mx-auto p-8 bg-gray-50 rounded-lg shadow-lg">
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Project Completion Report Form
+      </h1>
+      <form onSubmit={handleSubmit}>
+        {/* Project Information Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          {[
+            { name: 'title', label: 'Project Title' },
+            { name: 'projectCode', label: 'Project Code' },
+            {
+              name: 'commencementDate',
+              label: 'Date of Commencement',
+              type: 'date',
+            },
+            {
+              name: 'approvedCompletionDate',
+              label: 'Approved Completion Date',
+              type: 'date',
+            },
+            {
+              name: 'actualCompletionDate',
+              label: 'Actual Completion Date',
+              type: 'date',
+            },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="block font-medium mb-2">{field.label}</label>
+              <input
+                type={field.type || 'text'}
+                name={field.name}
+                value={formData[field.name]}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+              {errors[field.name] && (
+                <p className="text-red-500 text-sm">{errors[field.name]}</p>
+              )}
+            </div>
+          ))}
+        </div>
 
-              {[
-                {
-                  name: 'objectives',
-                  label: 'Objectives as Stated in the Proposal',
-                },
-                {
-                  name: 'workProgram',
-                  label: 'Proposed and Approved Work Programme',
-                },
-                {
-                  name: 'workDoneDetails',
-                  label: 'Details of Work Done During the Project',
-                },
-                {
-                  name: 'objectivesFulfilled',
-                  label:
-                    'Extent to which Objectives as outlined in the Original Proposal have been Fulfilled',
-                },
-                {
-                  name: 'reasonsUncovered',
-                  label: 'Reasons for Not Covering Certain Areas (if any)',
-                },
-                {
-                  name: 'furtherStudiesNeeded',
-                  label: 'Need for Further Studies in Uncovered Areas',
-                },
-                {
-                  name: 'conclusions',
-                  label:
-                    'Conclusions and Recommendations (Including Quantified Benefits to the Industry)',
-                },
-                {
-                  name: 'applicationScope',
-                  label: 'Scope of Application in the Coal Industry',
-                },
-                {
-                  name: 'associatedPersons',
-                  label:
-                    'Names of Persons Associated with the Project and Their Expertise',
-                },
-                {
-                  name: 'finalExpenditureStatement',
-                  label: 'Final Expenditure Statement (Form III & IV)',
-                },
-              ].map((field) => (
-                <div className="mt-6" key={field.name}>
-                  <label
-                    htmlFor={field.name}
-                    className="block text-sm font-medium text-gray-800"
-                  >
-                    {field.label}
-                  </label>
-                  <Field
-                    as="textarea"
+        {/* Collapsible Sections */}
+        <label className="block font-medium mb-3">Project Details</label>
+        <div className="space-y-4">
+          {[
+            {
+              name: 'objectives',
+              label: 'Objectives as Stated in the Proposal',
+            },
+            {
+              name: 'workProgram',
+              label: 'Proposed and Approved Work Programme',
+            },
+            {
+              name: 'workDoneDetails',
+              label: 'Details of Work Done During the Project',
+            },
+            {
+              name: 'objectivesFulfilled',
+              label: 'Extent to which Objectives have been Fulfilled',
+            },
+            {
+              name: 'reasonsUncovered',
+              label: 'Reasons for Not Covering Certain Areas',
+            },
+            { name: 'furtherStudiesNeeded', label: 'Need for Further Studies' },
+            { name: 'conclusions', label: 'Conclusions and Recommendations' },
+            {
+              name: 'applicationScope',
+              label: 'Scope of Application in Industry',
+            },
+            {
+              name: 'associatedPersons',
+              label: 'Names of Associated Persons and Their Expertise',
+            },
+            {
+              name: 'finalExpenditureStatement',
+              label: 'Final Expenditure Statement',
+            },
+          ].map((field) => (
+            <div
+              key={field.name}
+              className="border rounded-lg shadow-sm bg-white overflow-hidden"
+            >
+              {/* Collapsible Section Header */}
+              <button
+                type="button"
+                className={`w-full p-4 text-left font-semibold transition ${
+                  expanded === field.name ? 'bg-slate-300' : 'bg-gray-100'
+                }`}
+                onClick={() =>
+                  setExpanded((prev) =>
+                    prev === field.name ? null : field.name
+                  )
+                }
+              >
+                {field.label}
+              </button>
+              {/* Expanded Section Content */}
+              {expanded === field.name && (
+                <div className="p-4 space-y-4">
+                  <textarea
                     name={field.name}
+                    value={formData[field.name]}
+                    onChange={handleInputChange}
                     rows="3"
-                    className="mt-1 p-2 w-full border border-gray-400 rounded"
+                    className="w-full px-4 py-2 border rounded-md"
                   />
-                  <ErrorMessage
-                    name={field.name}
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
+                  {errors[field.name] && (
+                    <p className="text-red-500 text-sm">{errors[field.name]}</p>
+                  )}
                 </div>
-              ))}
+              )}
+            </div>
+          ))}
+        </div>
 
-              <div className="mt-8">
-                <button
-                  type="submit"
-                  className="w-full bg-black text-white font-bold py-2 rounded hover:bg-gray-800 transition duration-150"
-                >
-                  Submit Form
-                </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </div>
+        {/* Submit Button */}
+        <div className="mt-6 flex justify-end">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={`px-6 py-2 ${
+              isSubmitting ? 'bg-gray-400' : 'bg-black'
+            } text-white rounded-md hover:bg-slate-600 transition`}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

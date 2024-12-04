@@ -1,6 +1,5 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import React from 'react';
-import * as Yup from 'yup';
+import axios from 'axios';
+import React, { useState } from 'react';
 
 const ProjectDurationExtensionForm = () => {
   const initialValues = {
@@ -18,190 +17,220 @@ const ProjectDurationExtensionForm = () => {
     extensionReason: '',
     totalCost: '',
     actualExpenditure: '',
+    furtherStudiesNeeded: '', // New optional field
+    applicationScope: '', // New optional field
   };
 
-  const validationSchema = Yup.object({
-    projectName: Yup.string().required('Project Name is required'),
-    projectCode: Yup.string().required('Project Code is required'),
-    principalAgency: Yup.string().required(
-      'Principal Implementing Agency is required'
-    ),
-    projectLeader: Yup.string().required(
-      'Project Leader/Coordinator is required'
-    ),
-    startDate: Yup.date().required('Start Date is required'),
-    completionDate: Yup.date().required(
-      'Scheduled Completion Date is required'
-    ),
-    approvedObjectives: Yup.string().required(
-      'Approved Objectives are required'
-    ),
-    approvedWorkProgram: Yup.string().required(
-      'Approved Work Program is required'
-    ),
-    workDoneDetails: Yup.string().required('Details of Work Done are required'),
-    revisedSchedule: Yup.string().required(
-      'Revised Schedule with Justification is required'
-    ),
-    timeExtension: Yup.number()
-      .min(1, 'Time extension must be at least 1 month')
-      .required('Proposed Time Extension is required'),
-    extensionReason: Yup.string().required(
-      'Reason for Time Extension is required'
-    ),
-    totalCost: Yup.number()
-      .min(0, 'Cannot be negative')
-      .required('Total Cost is required'),
-    actualExpenditure: Yup.number()
-      .min(0, 'Cannot be negative')
-      .required('Actual Expenditure is required'),
-  });
+  const [formData, setFormData] = useState(initialValues);
+  const [errors, setErrors] = useState({});
+  const [expanded, setExpanded] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = (values) => {
-    console.log('Form submitted successfully:', values);
+  const validateField = (name, value) => {
+    if (
+      !value.trim() &&
+      !['furtherStudiesNeeded', 'applicationScope'].includes(name)
+    ) {
+      return 'This field is required.';
+    }
+    if (name === 'timeExtension' && value <= 0) {
+      return 'Time extension must be at least 1 month.';
+    }
+    if (['totalCost', 'actualExpenditure'].includes(name) && value < 0) {
+      return 'Value cannot be negative.';
+    }
+    return '';
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    Object.entries(formData).forEach(([key, value]) => {
+      const error = validateField(key, value);
+      if (error) newErrors[key] = error;
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateField(name, value),
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      setIsSubmitting(true);
+      try {
+        const response = await axios.post(
+          'http://localhost:3000/api/forms/project-duration-extension',
+          formData
+        );
+        console.log('Form submitted successfully:', response.data);
+        // alert('Form submitted successfully!');
+        // setFormData(initialValues); // Reset the form
+      } catch (error) {
+        alert('An error occurred while submitting the form.');
+        console.error(error.response?.data || error.message);
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          apiError: error.response?.data?.message || 'Unknown error occurred.',
+        }));
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl w-full bg-white border border-gray-400 rounded p-8">
-        <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
-          Extension of Project Duration Form
-        </h1>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-        >
-          {() => (
-            <Form>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {[
-                  { name: 'projectName', label: 'Project Name' },
-                  { name: 'projectCode', label: 'Project Code' },
-                  {
-                    name: 'principalAgency',
-                    label: 'Principal Implementing Agency',
-                  },
-                  {
-                    name: 'projectLeader',
-                    label: 'Project Leader/Coordinator',
-                  },
-                  { name: 'startDate', label: 'Start Date', type: 'date' },
-                  {
-                    name: 'completionDate',
-                    label: 'Scheduled Completion Date',
-                    type: 'date',
-                  },
-                ].map((field) => (
-                  <div key={field.name}>
-                    <label
-                      htmlFor={field.name}
-                      className="block text-sm font-medium text-gray-800"
-                    >
-                      {field.label}
-                    </label>
-                    <Field
-                      name={field.name}
-                      type={field.type || 'text'}
-                      className="mt-1 p-2 w-full border border-gray-400 rounded"
-                    />
-                    <ErrorMessage
-                      name={field.name}
-                      component="div"
-                      className="text-red-500 text-sm"
-                    />
-                  </div>
-                ))}
-              </div>
+    <div className="max-w-7xl mx-auto p-8 bg-gray-50 rounded-lg shadow-lg">
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Extension of Project Duration Form
+      </h1>
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          {[
+            /* Render standard input fields */
+            { name: 'projectName', label: 'Project Name' },
+            { name: 'projectCode', label: 'Project Code' },
+            { name: 'principalAgency', label: 'Principal Implementing Agency' },
+            { name: 'projectLeader', label: 'Project Leader/Coordinator' },
+            { name: 'startDate', label: 'Start Date', type: 'date' },
+            {
+              name: 'completionDate',
+              label: 'Scheduled Completion Date',
+              type: 'date',
+            },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="block font-medium mb-2">{field.label}</label>
+              <input
+                type={field.type || 'text'}
+                name={field.name}
+                value={formData[field.name]}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+              {errors[field.name] && (
+                <p className="text-red-500 text-sm">{errors[field.name]}</p>
+              )}
+            </div>
+          ))}
+        </div>
 
-              {[
-                { name: 'approvedObjectives', label: 'Approved Objectives' },
-                {
-                  name: 'approvedWorkProgram',
-                  label: 'Approved Work Program and Schedule',
-                },
-                {
-                  name: 'workDoneDetails',
-                  label: 'Details of Work Done (Bar Chart)',
-                },
-                {
-                  name: 'revisedSchedule',
-                  label: 'Revised Bar Chart/PERT Network with Justification',
-                },
-              ].map((field) => (
-                <div className="mt-6" key={field.name}>
-                  <label
-                    htmlFor={field.name}
-                    className="block text-sm font-medium text-gray-800"
-                  >
-                    {field.label}
-                  </label>
-                  <Field
-                    as="textarea"
+        <div className="space-y-4">
+          {[
+            /* Render expandable textarea fields */
+            { name: 'approvedObjectives', label: 'Approved Objectives' },
+            {
+              name: 'approvedWorkProgram',
+              label: 'Approved Work Program and Schedule',
+            },
+            { name: 'workDoneDetails', label: 'Details of Work Done' },
+            {
+              name: 'revisedSchedule',
+              label: 'Revised Bar Chart/PERT Network with Justification',
+            },
+            {
+              name: 'extensionReason',
+              label: 'Reason for Proposed Time Extension',
+            },
+            {
+              name: 'furtherStudiesNeeded',
+              label: 'Further Studies Needed (Optional)',
+            },
+            { name: 'applicationScope', label: 'Application Scope (Optional)' },
+          ].map((field) => (
+            <div
+              key={field.name}
+              className="border rounded-lg shadow-sm bg-white overflow-hidden"
+            >
+              <button
+                type="button"
+                className={`w-full p-4 text-left font-semibold transition ${
+                  expanded === field.name ? 'bg-slate-300' : 'bg-gray-100'
+                }`}
+                onClick={() =>
+                  setExpanded((prev) =>
+                    prev === field.name ? null : field.name
+                  )
+                }
+              >
+                {field.label}
+              </button>
+              {expanded === field.name && (
+                <div className="p-4">
+                  <textarea
                     name={field.name}
+                    value={formData[field.name]}
+                    onChange={handleInputChange}
                     rows="3"
-                    className="mt-1 p-2 w-full border border-gray-400 rounded"
+                    className="w-full px-4 py-2 border rounded-md"
                   />
-                  <ErrorMessage
-                    name={field.name}
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
+                  {errors[field.name] && (
+                    <p className="text-red-500 text-sm">{errors[field.name]}</p>
+                  )}
                 </div>
-              ))}
+              )}
+            </div>
+          ))}
+        </div>
 
-              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {[
-                  {
-                    name: 'timeExtension',
-                    label: 'Proposed Time Extension (Months)',
-                    type: 'number',
-                  },
-                  { name: 'extensionReason', label: 'Reason for Extension' },
-                  {
-                    name: 'totalCost',
-                    label: 'Total Cost of the Project (₹ Lakhs)',
-                    type: 'number',
-                  },
-                  {
-                    name: 'actualExpenditure',
-                    label: 'Actual Expenditure Incurred (₹ Lakhs)',
-                    type: 'number',
-                  },
-                ].map((field) => (
-                  <div key={field.name}>
-                    <label
-                      htmlFor={field.name}
-                      className="block text-sm font-medium text-gray-800"
-                    >
-                      {field.label}
-                    </label>
-                    <Field
-                      name={field.name}
-                      type={field.type || 'text'}
-                      className="mt-1 p-2 w-full border border-gray-400 rounded"
-                    />
-                    <ErrorMessage
-                      name={field.name}
-                      component="div"
-                      className="text-red-500 text-sm"
-                    />
-                  </div>
-                ))}
-              </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+          {[
+            /* Render numeric fields */
+            {
+              name: 'timeExtension',
+              label: 'Proposed Time Extension (Months)',
+              type: 'number',
+            },
+            {
+              name: 'totalCost',
+              label: 'Total Cost of the Project (₹ Lakhs)',
+              type: 'number',
+            },
+            {
+              name: 'actualExpenditure',
+              label: 'Actual Expenditure Incurred (₹ Lakhs)',
+              type: 'number',
+            },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="block font-medium mb-2">{field.label}</label>
+              <input
+                type={field.type}
+                name={field.name}
+                value={formData[field.name]}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+              {errors[field.name] && (
+                <p className="text-red-500 text-sm">{errors[field.name]}</p>
+              )}
+            </div>
+          ))}
+        </div>
 
-              <div className="mt-8">
-                <button
-                  type="submit"
-                  className="w-full bg-black text-white font-bold py-2 rounded hover:bg-gray-800 transition duration-150"
-                >
-                  Submit Form
-                </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </div>
+        {errors.apiError && (
+          <p className="text-red-500 mt-4">{errors.apiError}</p>
+        )}
+
+        <div className="mt-8 flex justify-end">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={`px-6 py-2 ${
+              isSubmitting ? 'bg-gray-400' : 'bg-black'
+            } text-white rounded-md hover:bg-slate-600 transition`}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

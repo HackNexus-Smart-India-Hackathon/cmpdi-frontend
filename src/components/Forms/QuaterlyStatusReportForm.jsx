@@ -1,14 +1,70 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 
-// Initial form state
+// Quarterly Report Sections
+const sections = [
+  {
+    title: 'Project Information',
+    fields: [
+      { name: 'projectName', label: 'Project Name' },
+      { name: 'projectCode', label: 'Project Code' },
+      { name: 'progressQuarter', label: 'Progress for Quarter' },
+      {
+        name: 'principalImplementingAgency',
+        label: 'Principal Implementing Agency',
+      },
+      { name: 'startDate', label: 'Date of Commencement', type: 'date' },
+      {
+        name: 'completionDate',
+        label: 'Approved Completion Date',
+        type: 'date',
+      },
+    ],
+  },
+  {
+    title: 'Work Status',
+    fields: [
+      { name: 'barChartStatus', label: 'Bar Chart Status', type: 'textarea' },
+      {
+        name: 'workDetails',
+        label: 'Details of Work Done During the Quarter',
+        type: 'textarea',
+      },
+      {
+        name: 'slippageReasons',
+        label: 'Slippage Reasons (if any)',
+        type: 'textarea',
+      },
+      {
+        name: 'correctiveActions',
+        label: 'Corrective Actions Taken',
+        type: 'textarea',
+      },
+      {
+        name: 'nextQuarterWork',
+        label: 'Work Expected in Next Quarter',
+        type: 'textarea',
+      },
+    ],
+  },
+  {
+    title: 'Expenditure Details',
+    fields: [
+      {
+        name: 'expenditureStatement',
+        label: 'Expenditure Statement (Form-III & IV)',
+        type: 'textarea',
+      },
+    ],
+  },
+];
+
 const initialFormState = {
   projectName: '',
   projectCode: '',
   progressQuarter: '',
-  principalAgency: '',
-  subAgency: '',
-  projectCoordinator: '',
+  principalImplementingAgency: '',
+  subImplementingAgencies: [],
   startDate: '',
   completionDate: '',
   barChartStatus: '',
@@ -17,27 +73,25 @@ const initialFormState = {
   correctiveActions: '',
   nextQuarterWork: '',
   expenditureStatement: '',
+  projectInvestigators: [],
 };
 
-function QuarterlyProgressForm() {
+function QuarterlyStatusReportForm() {
   const [formData, setFormData] = useState(initialFormState);
+  const [expanded, setExpanded] = useState(null);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newAgency, setNewAgency] = useState('');
+  const [newInvestigator, setNewInvestigator] = useState('');
 
-  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData({ ...formData, [name]: value });
   };
 
-  // Validate form
   const validateForm = () => {
     let formErrors = {};
-
-    // Check for required fields
+    // Check required fields
     Object.keys(formData).forEach((field) => {
       if (
         !formData[field] &&
@@ -52,241 +106,216 @@ function QuarterlyProgressForm() {
     return Object.keys(formErrors).length === 0;
   };
 
-  // Handle form submission
+  const handleAddTag = (key, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: [...prev[key], value],
+    }));
+  };
+
+  const handleRemoveTag = (key, index) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: prev[key].filter((_, i) => i !== index),
+    }));
+  };
+
+  // Handle Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (validateForm()) {
-      setIsSubmitting(true); // Disable submit button while submitting
+      setIsSubmitting(true);
       try {
         const response = await axios.post(
-          'http://localhost:3000/api/forms/quarterly-status-report', // Your API endpoint
+          'http://localhost:3000/api/forms/quarterly-status-report',
           formData
         );
         console.log('Form Data Submitted:', response.data);
-        // Handle success (e.g., show a success message or reset the form)
       } catch (error) {
         console.error('Error submitting form:', error);
-        // Handle error (e.g., show an error message)
       } finally {
-        setIsSubmitting(false); // Enable submit button after submission
+        setIsSubmitting(false);
       }
-    } else {
-      console.log('Form contains errors:', errors);
     }
   };
 
   return (
     <div className="max-w-7xl mx-auto p-8 bg-gray-50 rounded-lg shadow-lg">
-      <h1 className="text-3xl font-bold mb-6">Quarterly Status Report Form</h1>
+      <h1 className="text-3xl font-bold mb-6">Quarterly Status Report</h1>
       <form onSubmit={handleSubmit}>
         {/* Project Information Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-          <div>
-            <label className="block font-medium mb-2">Project Name</label>
-            <input
-              type="text"
-              name="projectName"
-              value={formData.projectName}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
-            />
-            {errors.projectName && (
-              <p className="text-red-500 text-sm">{errors.projectName}</p>
-            )}
-          </div>
-          <div>
-            <label className="block font-medium mb-2">Project Code</label>
-            <input
-              type="text"
-              name="projectCode"
-              value={formData.projectCode}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
-            />
-            {errors.projectCode && (
-              <p className="text-red-500 text-sm">{errors.projectCode}</p>
-            )}
-          </div>
+          {sections[0].fields.map((field) => (
+            <div key={field.name}>
+              <label className="block font-medium mb-2">{field.label}</label>
+              <input
+                type={field.type || 'text'}
+                name={field.name}
+                value={formData[field.name]}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-md"
+                required
+              />
+              {errors[field.name] && (
+                <p className="text-red-500 text-sm">{errors[field.name]}</p>
+              )}
+            </div>
+          ))}
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-          <div>
-            <label className="block font-medium mb-2">Progress Quarter</label>
-            <input
-              type="text"
-              name="progressQuarter"
-              value={formData.progressQuarter}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
-            />
-            {errors.progressQuarter && (
-              <p className="text-red-500 text-sm">{errors.progressQuarter}</p>
-            )}
+
+        {/* Sub Implementing Agencies */}
+        <div className="mb-6">
+          <label className="block font-medium mb-2">
+            Sub Implementing Agencies
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {formData.subImplementingAgencies.map((agency, index) => (
+              <span
+                key={index}
+                className="px-3 py-1 bg-gray-200 text-black rounded-full flex items-center gap-2"
+              >
+                {agency}
+                <button
+                  type="button"
+                  className="text-slate-600"
+                  onClick={() =>
+                    handleRemoveTag('subImplementingAgencies', index)
+                  }
+                >
+                  ×
+                </button>
+              </span>
+            ))}
           </div>
-          <div>
-            <label className="block font-medium mb-2">Principal Agency</label>
+          <div className="flex mt-2 gap-2">
             <input
               type="text"
-              name="principalAgency"
-              value={formData.principalAgency}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
+              value={newAgency}
+              onChange={(e) => setNewAgency(e.target.value)}
+              placeholder="Add a new agency"
+              className="flex-1 px-4 py-2 border rounded-md"
             />
-            {errors.principalAgency && (
-              <p className="text-red-500 text-sm">{errors.principalAgency}</p>
-            )}
-          </div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-          <div>
-            <label className="block font-medium mb-2">Sub Agency</label>
-            <input
-              type="text"
-              name="subAgency"
-              value={formData.subAgency}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
-            />
-            {errors.subAgency && (
-              <p className="text-red-500 text-sm">{errors.subAgency}</p>
-            )}
-          </div>
-          <div>
-            <label className="block font-medium mb-2">
-              Project Coordinator
-            </label>
-            <input
-              type="text"
-              name="projectCoordinator"
-              value={formData.projectCoordinator}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
-            />
-            {errors.projectCoordinator && (
-              <p className="text-red-500 text-sm">
-                {errors.projectCoordinator}
-              </p>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                if (newAgency) {
+                  handleAddTag('subImplementingAgencies', newAgency);
+                  setNewAgency('');
+                }
+              }}
+              className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+            >
+              Add
+            </button>
           </div>
         </div>
 
-        {/* Dates Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-          <div>
-            <label className="block font-medium mb-2">Start Date</label>
-            <input
-              type="date"
-              name="startDate"
-              value={formData.startDate}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
-            />
-            {errors.startDate && (
-              <p className="text-red-500 text-sm">{errors.startDate}</p>
-            )}
+        {/* Project Investigators */}
+        <div className="mb-6">
+          <label className="block font-medium mb-2">
+            Project Investigators
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {formData.projectInvestigators.map((investigator, index) => (
+              <span
+                key={index}
+                className="px-3 py-1 bg-gray-200 text-black rounded-full flex items-center gap-2"
+              >
+                {investigator}
+                <button
+                  type="button"
+                  className="text-slate-600"
+                  onClick={() => handleRemoveTag('projectInvestigators', index)}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
           </div>
-          <div>
-            <label className="block font-medium mb-2">Completion Date</label>
+          <div className="flex mt-2 gap-2">
             <input
-              type="date"
-              name="completionDate"
-              value={formData.completionDate}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
+              type="text"
+              value={newInvestigator}
+              onChange={(e) => setNewInvestigator(e.target.value)}
+              placeholder="Email or Phone"
+              className="flex-1 px-4 py-2 border rounded-md"
             />
-            {errors.completionDate && (
-              <p className="text-red-500 text-sm">{errors.completionDate}</p>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                if (newInvestigator) {
+                  handleAddTag('projectInvestigators', newInvestigator);
+                  setNewInvestigator('');
+                }
+              }}
+              className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+            >
+              Add
+            </button>
           </div>
         </div>
+        {/* Work Status Section with Accordion UI */}
+        <div className="space-y-4">
+          {sections.slice(1).map((section) => (
+            <div
+              key={section.title}
+              className="border rounded-lg shadow-sm bg-white overflow-hidden"
+            >
+              <button
+                type="button"
+                className={`w-full p-4 text-left font-semibold transition ${expanded === section.title ? 'bg-slate-300' : 'bg-gray-100'}`}
+                onClick={() =>
+                  setExpanded(expanded === section.title ? null : section.title)
+                }
+              >
+                {section.title}
+              </button>
 
-        {/* Textarea Fields Section */}
-        <div className="space-y-6 mb-6">
-          <div>
-            <label className="block font-medium mb-2">Bar Chart Status</label>
-            <textarea
-              name="barChartStatus"
-              value={formData.barChartStatus}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
-            />
-            {errors.barChartStatus && (
-              <p className="text-red-500 text-sm">{errors.barChartStatus}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block font-medium mb-2">Work Details</label>
-            <textarea
-              name="workDetails"
-              value={formData.workDetails}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
-            />
-            {errors.workDetails && (
-              <p className="text-red-500 text-sm">{errors.workDetails}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block font-medium mb-2">Slippage Reasons</label>
-            <textarea
-              name="slippageReasons"
-              value={formData.slippageReasons}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium mb-2">Corrective Actions</label>
-            <textarea
-              name="correctiveActions"
-              value={formData.correctiveActions}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium mb-2">Next Quarter Work</label>
-            <textarea
-              name="nextQuarterWork"
-              value={formData.nextQuarterWork}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
-            />
-            {errors.nextQuarterWork && (
-              <p className="text-red-500 text-sm">{errors.nextQuarterWork}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block font-medium mb-2">
-              Expenditure Statement
-            </label>
-            <textarea
-              name="expenditureStatement"
-              value={formData.expenditureStatement}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-md"
-            />
-            {errors.expenditureStatement && (
-              <p className="text-red-500 text-sm">
-                {errors.expenditureStatement}
-              </p>
-            )}
-          </div>
+              {expanded === section.title && (
+                <div className="p-4 space-y-6">
+                  {section.fields.map((field) => (
+                    <div key={field.name} className="flex flex-col gap-3">
+                      <label className="font-medium capitalize">
+                        {field.label}
+                      </label>
+                      {field.type === 'textarea' ? (
+                        <textarea
+                          name={field.name}
+                          value={formData[field.name]}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-2 border rounded-md resize-none"
+                          rows="4"
+                        />
+                      ) : (
+                        <input
+                          type="text"
+                          name={field.name}
+                          value={formData[field.name]}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-2 border rounded-md"
+                        />
+                      )}
+                      {errors[field.name] && (
+                        <p className="text-red-500 text-sm">
+                          {errors[field.name]}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
-
         {/* Submit Button */}
-        <div className="text-center">
+        <div className="mt-6 flex justify-end">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-6 py-3 bg-blue-600 text-white rounded-md"
+            className={`px-6 py-2 ${isSubmitting ? 'bg-gray-400' : 'bg-black'} text-white rounded-md hover:bg-slate-600 transition`}
           >
-            {isSubmitting ? 'Submitting...' : 'Submit Report'}
+            {isSubmitting ? 'Submitting...' : 'Submit'}
           </button>
         </div>
       </form>
@@ -294,4 +323,4 @@ function QuarterlyProgressForm() {
   );
 }
 
-export default QuarterlyProgressForm;
+export default QuarterlyStatusReportForm;

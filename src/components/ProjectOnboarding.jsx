@@ -1,44 +1,46 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-
-const initialValues = {
-  projectTitle: '',
-  fundingSource: '',
-  description: '',
-  principalImplementingAgency: '',
-  subImplementingAgencies: [],
-  projectInvestigators: [],
-  projectOutlay: {
-    items: {
-      capitalExpenditure: {
-        landBuilding: { totalCost: '', year1: '', year2: '', year3: '' },
-        equipment: { totalCost: '', year1: '', year2: '', year3: '' },
-      },
-      revenueExpenditure: {
-        salaries: { totalCost: '', year1: '', year2: '', year3: '' },
-        consumables: { totalCost: '', year1: '', year2: '', year3: '' },
-        travel: { totalCost: '', year1: '', year2: '', year3: '' },
-        workshop: { totalCost: '', year1: '', year2: '', year3: '' },
-      },
-      otherCosts: {
-        contingency: { totalCost: '', year1: '', year2: '', year3: '' },
-        institutionalOverhead: {
-          totalCost: '',
-          year1: '',
-          year2: '',
-          year3: '',
-        },
-        taxesDuties: { totalCost: '', year1: '', year2: '', year3: '' },
-      },
-    },
-    grandTotal: { totalCost: '', year1: '', year2: '', year3: '' },
-  },
-  startDate: '',
-  scheduleCompletionDate: '',
-  status: '',
-};
+import { useSelector } from 'react-redux';
 
 function ProjectForm() {
+  const { user_id } = useSelector((state) => state.auth);
+  const initialValues = {
+    projectTitle: '',
+    fundingSource: '',
+    description: '',
+    principalImplementingAgency: '',
+    subImplementingAgencies: [],
+    projectInvestigators: [],
+    adminId: [user_id],
+    projectOutlay: {
+      items: {
+        capitalExpenditure: {
+          landBuilding: { totalCost: '', year1: '', year2: '', year3: '' },
+          equipment: { totalCost: '', year1: '', year2: '', year3: '' },
+        },
+        revenueExpenditure: {
+          salaries: { totalCost: '', year1: '', year2: '', year3: '' },
+          consumables: { totalCost: '', year1: '', year2: '', year3: '' },
+          travel: { totalCost: '', year1: '', year2: '', year3: '' },
+          workshop: { totalCost: '', year1: '', year2: '', year3: '' },
+        },
+        otherCosts: {
+          contingency: { totalCost: '', year1: '', year2: '', year3: '' },
+          institutionalOverhead: {
+            totalCost: '',
+            year1: '',
+            year2: '',
+            year3: '',
+          },
+          taxesDuties: { totalCost: '', year1: '', year2: '', year3: '' },
+        },
+      },
+      grandTotal: { totalCost: '', year1: '', year2: '', year3: '' },
+    },
+    startDate: '',
+    scheduleCompletionDate: '',
+    status: '',
+  };
   const [formData, setFormData] = useState(initialValues);
   const [newAgency, setNewAgency] = useState('');
   const [newInvestigator, setNewInvestigator] = useState('');

@@ -4,6 +4,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import FundUtilizationChart from '../components/adminConsole/fundsGraph';
 import KeyMetrix from '../components/adminConsole/keymetrix';
+import QuarterlyStatusReportForm from '../components/Forms/QuaterlyStatusReportForm';
 import Navbar from '../components/Navbar';
 import ProjectTable from '../components/projectList';
 import Sidebar from '../components/Sidebar';
@@ -57,6 +58,7 @@ const AdminConsole = () => {
           <div>
             <ProjectTable />
           </div>
+          <QuarterlyStatusReportForm />
         </div>
       </div>
     </div>

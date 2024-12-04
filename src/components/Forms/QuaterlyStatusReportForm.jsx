@@ -1,182 +1,297 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import React from 'react';
-import * as Yup from 'yup';
+import axios from 'axios';
+import React, { useState } from 'react';
 
-const QuarterlyStatusReportForm = () => {
-  const initialValues = {
-    projectName: '',
-    projectCode: '',
-    progressQuarter: '',
-    principalAgency: '',
-    subAgency: '',
-    projectCoordinator: '',
-    startDate: '',
-    completionDate: '',
-    barChartStatus: '',
-    workDetails: '',
-    slippageReasons: '',
-    correctiveActions: '',
-    nextQuarterWork: '',
-    expenditureStatement: '',
+// Initial form state
+const initialFormState = {
+  projectName: '',
+  projectCode: '',
+  progressQuarter: '',
+  principalAgency: '',
+  subAgency: '',
+  projectCoordinator: '',
+  startDate: '',
+  completionDate: '',
+  barChartStatus: '',
+  workDetails: '',
+  slippageReasons: '',
+  correctiveActions: '',
+  nextQuarterWork: '',
+  expenditureStatement: '',
+};
+
+function QuarterlyProgressForm() {
+  const [formData, setFormData] = useState(initialFormState);
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const validationSchema = Yup.object({
-    projectName: Yup.string().required('Project Name is required'),
-    projectCode: Yup.string().required('Project Code is required'),
-    progressQuarter: Yup.string().required('Progress for Quarter is required'),
-    principalAgency: Yup.string().required(
-      'Principal Implementing Agency is required'
-    ),
-    subAgency: Yup.string().required('Sub-Implementing Agency is required'),
-    projectCoordinator: Yup.string().required(
-      'Project Coordinator is required'
-    ),
-    startDate: Yup.date().required('Start Date is required'),
-    completionDate: Yup.date().required('Completion Date is required'),
-    barChartStatus: Yup.string().required('Bar Chart Status is required'),
-    workDetails: Yup.string().required('Work Details are required'),
-    slippageReasons: Yup.string(),
-    correctiveActions: Yup.string(),
-    nextQuarterWork: Yup.string().required('Work for Next Quarter is required'),
-    expenditureStatement: Yup.string().required(
-      'Expenditure Statement is required'
-    ),
-  });
+  // Validate form
+  const validateForm = () => {
+    let formErrors = {};
 
-  const onSubmit = (values) => {
-    console.log('Form submitted successfully:', values);
+    // Check for required fields
+    Object.keys(formData).forEach((field) => {
+      if (
+        !formData[field] &&
+        field !== 'slippageReasons' &&
+        field !== 'correctiveActions'
+      ) {
+        formErrors[field] = `${field.replace(/([A-Z])/g, ' $1')} is required.`;
+      }
+    });
+
+    setErrors(formErrors);
+    return Object.keys(formErrors).length === 0;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (validateForm()) {
+      setIsSubmitting(true); // Disable submit button while submitting
+      try {
+        const response = await axios.post(
+          'http://localhost:3000/api/forms/quarterly-status-report', // Your API endpoint
+          formData
+        );
+        console.log('Form Data Submitted:', response.data);
+        // Handle success (e.g., show a success message or reset the form)
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        // Handle error (e.g., show an error message)
+      } finally {
+        setIsSubmitting(false); // Enable submit button after submission
+      }
+    } else {
+      console.log('Form contains errors:', errors);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl w-full bg-white border border-gray-400 rounded p-8">
-        <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
-          Quarterly Status Report Form
-        </h1>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-        >
-          {() => (
-            <Form>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {[
-                  { name: 'projectName', label: 'Project Name' },
-                  { name: 'projectCode', label: 'Project Code' },
-                  { name: 'progressQuarter', label: 'Progress for Quarter' },
-                  { name: 'principalAgency', label: 'Principal Agency' },
-                  { name: 'subAgency', label: 'Sub-Implementing Agency' },
-                  {
-                    name: 'projectCoordinator',
-                    label: 'Project Coordinator/Leader',
-                  },
-                  {
-                    name: 'startDate',
-                    label: 'Date of Commencement',
-                    type: 'date',
-                  },
-                  {
-                    name: 'completionDate',
-                    label: 'Approved Completion Date',
-                    type: 'date',
-                  },
-                ].map((field) => (
-                  <div key={field.name}>
-                    <label
-                      htmlFor={field.name}
-                      className="block text-sm font-medium text-gray-800"
-                    >
-                      {field.label}
-                    </label>
-                    <Field
-                      name={field.name}
-                      type={field.type || 'text'}
-                      className="mt-1 p-2 w-full border border-gray-400 rounded"
-                    />
-                    <ErrorMessage
-                      name={field.name}
-                      component="div"
-                      className="text-red-500 text-sm"
-                    />
-                  </div>
-                ))}
-              </div>
+    <div className="max-w-7xl mx-auto p-8 bg-gray-50 rounded-lg shadow-lg">
+      <h1 className="text-3xl font-bold mb-6">Quarterly Status Report Form</h1>
+      <form onSubmit={handleSubmit}>
+        {/* Project Information Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label className="block font-medium mb-2">Project Name</label>
+            <input
+              type="text"
+              name="projectName"
+              value={formData.projectName}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.projectName && (
+              <p className="text-red-500 text-sm">{errors.projectName}</p>
+            )}
+          </div>
+          <div>
+            <label className="block font-medium mb-2">Project Code</label>
+            <input
+              type="text"
+              name="projectCode"
+              value={formData.projectCode}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.projectCode && (
+              <p className="text-red-500 text-sm">{errors.projectCode}</p>
+            )}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label className="block font-medium mb-2">Progress Quarter</label>
+            <input
+              type="text"
+              name="progressQuarter"
+              value={formData.progressQuarter}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.progressQuarter && (
+              <p className="text-red-500 text-sm">{errors.progressQuarter}</p>
+            )}
+          </div>
+          <div>
+            <label className="block font-medium mb-2">Principal Agency</label>
+            <input
+              type="text"
+              name="principalAgency"
+              value={formData.principalAgency}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.principalAgency && (
+              <p className="text-red-500 text-sm">{errors.principalAgency}</p>
+            )}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label className="block font-medium mb-2">Sub Agency</label>
+            <input
+              type="text"
+              name="subAgency"
+              value={formData.subAgency}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.subAgency && (
+              <p className="text-red-500 text-sm">{errors.subAgency}</p>
+            )}
+          </div>
+          <div>
+            <label className="block font-medium mb-2">
+              Project Coordinator
+            </label>
+            <input
+              type="text"
+              name="projectCoordinator"
+              value={formData.projectCoordinator}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.projectCoordinator && (
+              <p className="text-red-500 text-sm">
+                {errors.projectCoordinator}
+              </p>
+            )}
+          </div>
+        </div>
 
-              <div className="mt-6">
-                <label
-                  htmlFor="barChartStatus"
-                  className="block text-sm font-medium text-gray-800"
-                >
-                  Bar Chart Status
-                </label>
-                <Field
-                  as="textarea"
-                  name="barChartStatus"
-                  rows="3"
-                  className="mt-1 p-2 w-full border border-gray-400 rounded"
-                />
-                <ErrorMessage
-                  name="barChartStatus"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
+        {/* Dates Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label className="block font-medium mb-2">Start Date</label>
+            <input
+              type="date"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.startDate && (
+              <p className="text-red-500 text-sm">{errors.startDate}</p>
+            )}
+          </div>
+          <div>
+            <label className="block font-medium mb-2">Completion Date</label>
+            <input
+              type="date"
+              name="completionDate"
+              value={formData.completionDate}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.completionDate && (
+              <p className="text-red-500 text-sm">{errors.completionDate}</p>
+            )}
+          </div>
+        </div>
 
-              {[
-                {
-                  name: 'workDetails',
-                  label: 'Details of Work Done During the Quarter',
-                },
-                { name: 'slippageReasons', label: 'Slippage Reasons (if any)' },
-                {
-                  name: 'correctiveActions',
-                  label: 'Corrective Actions Taken',
-                },
-                {
-                  name: 'nextQuarterWork',
-                  label: 'Work Expected in Next Quarter',
-                },
-                {
-                  name: 'expenditureStatement',
-                  label: 'Expenditure Statement (Form-III & IV)',
-                },
-              ].map((field) => (
-                <div className="mt-6" key={field.name}>
-                  <label
-                    htmlFor={field.name}
-                    className="block text-sm font-medium text-gray-800"
-                  >
-                    {field.label}
-                  </label>
-                  <Field
-                    as="textarea"
-                    name={field.name}
-                    rows="3"
-                    className="mt-1 p-2 w-full border border-gray-400 rounded"
-                  />
-                  <ErrorMessage
-                    name={field.name}
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
-              ))}
+        {/* Textarea Fields Section */}
+        <div className="space-y-6 mb-6">
+          <div>
+            <label className="block font-medium mb-2">Bar Chart Status</label>
+            <textarea
+              name="barChartStatus"
+              value={formData.barChartStatus}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.barChartStatus && (
+              <p className="text-red-500 text-sm">{errors.barChartStatus}</p>
+            )}
+          </div>
 
-              <div className="mt-8">
-                <button
-                  type="submit"
-                  className="w-full bg-black text-white font-bold py-2 rounded hover:bg-gray-800 transition duration-150"
-                >
-                  Submit Form
-                </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </div>
+          <div>
+            <label className="block font-medium mb-2">Work Details</label>
+            <textarea
+              name="workDetails"
+              value={formData.workDetails}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.workDetails && (
+              <p className="text-red-500 text-sm">{errors.workDetails}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block font-medium mb-2">Slippage Reasons</label>
+            <textarea
+              name="slippageReasons"
+              value={formData.slippageReasons}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium mb-2">Corrective Actions</label>
+            <textarea
+              name="correctiveActions"
+              value={formData.correctiveActions}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium mb-2">Next Quarter Work</label>
+            <textarea
+              name="nextQuarterWork"
+              value={formData.nextQuarterWork}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.nextQuarterWork && (
+              <p className="text-red-500 text-sm">{errors.nextQuarterWork}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block font-medium mb-2">
+              Expenditure Statement
+            </label>
+            <textarea
+              name="expenditureStatement"
+              value={formData.expenditureStatement}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+            {errors.expenditureStatement && (
+              <p className="text-red-500 text-sm">
+                {errors.expenditureStatement}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="text-center">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="px-6 py-3 bg-blue-600 text-white rounded-md"
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit Report'}
+          </button>
+        </div>
+      </form>
     </div>
   );
-};
+}
 
-export default QuarterlyStatusReportForm;
+export default QuarterlyProgressForm;

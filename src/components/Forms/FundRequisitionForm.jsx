@@ -9,7 +9,7 @@ const items = [
   'Consumables',
   'Travel',
   'Contingencies',
-  'WorkshopSeminar',
+  'Workshop Seminar',
 ];
 
 // Initial Data for Fund Categories

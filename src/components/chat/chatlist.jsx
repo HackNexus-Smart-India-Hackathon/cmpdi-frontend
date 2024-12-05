@@ -4,16 +4,39 @@ import SearchIcon from '@mui/icons-material/Search';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Chatscreen from './chatscreen';
 import SidebarChat from './sidebarchat';
+import { useDispatch, useSelector } from 'react-redux';
+import { setChats } from '../../state';
+
+
 
 const ChatSection = () => {
   const displaySectionRef = useRef(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
-
+  const {chat} = useSelector((state) =>state.auth)
+  const {chats} =  useSelector((state) => state.chat)
   const toggleChat = useCallback(() => {
     setIsChatOpen(!isChatOpen);
   }, [isChatOpen]);
-
+  const baseUrl = process.env.REACT_APP_AUTH_BASE_API;
+  const getChat = async ()=>{
+    try {
+      let response = await axios(`${baseUrl}/chat/chats` , {
+        user_id : chat._id
+      })
+      if(response.status == 200) {
+        const chats = response.data.chat
+        useDispatch(setChats({chats}))
+      }
+    } catch (error) {
+      console.log("error retrieving chat data")
+      toast.error('Error retrieving chat. Please try again.');
+    }
+  }
+  useEffect(()=>{
+    getChat()
+  },[])
+  
   const openChat = (chat) => {
     setSelectedChat(chat);
     setIsChatOpen(true);
@@ -22,7 +45,6 @@ const ChatSection = () => {
     setSelectedChat(null);
     setIsChatOpen(true);
   };
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -55,41 +77,18 @@ const ChatSection = () => {
         </div>
         {/* chat list */}
         <div className="bg-white h-[56vh] p-1 rounded-md overflow-auto	">
-          <SidebarChat
-            roomName="Room 1"
-            lastMessage="Hello there!"
-            onClick={() => openChat({ roomName: 'Room 1' })}
-          />
-          <SidebarChat
-            roomName="Room 2"
-            lastMessage="How are you?"
-            onClick={() => openChat({ roomName: 'Room 2' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
+          {()=>{
+            chats.forEach(chat=>{
+              let chat_id = chat._id
+              return (
+                <SidebarChat
+              roomName="Room 3"
+              lastMessage="Good morning!"
+              onClick={() => openChat({ roomName: 'Room 3' } , chat_id =chat_id )}
+            /> 
+              )
+            })
+          }}
         </div>
       </div>
     );

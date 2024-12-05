@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
@@ -13,7 +13,7 @@ const LoginSignup = () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { user_id, access_token, role } = useSelector((state) => state.auth);
+  const { user_id, access_token, role ,chat } = useSelector((state) => state.auth);
   console.log(user_id, access_token, role);
 
   const baseUrl = process.env.REACT_APP_AUTH_BASE_API;
@@ -27,13 +27,14 @@ const LoginSignup = () => {
         const user_id = response.data.user.id;
         const access_token = response.data.token;
         const { role } = response.data.user;
-        dispatch(setLogin({ user_id, access_token, role }));
+        const chat = response.data.chat
+        dispatch(setLogin({ user_id, access_token, role,chat }));
 
-        console.log('Dispatched setLogin:', { user_id, access_token, role });
-        console.log('Updated state:', { user_id, access_token, role });
+        console.log('Dispatched setLogin:', { user_id, access_token, role,chat });
+        console.log('Updated state:', { user_id, access_token, role ,chat});
 
         toast.success('Login successful!');
-        window.location.href = `/${role}/dashboard`;
+        window.location.href = `/${role}Console`;
       }
       console.log('Login successful:', response.data);
     } catch (error) {
@@ -45,11 +46,7 @@ const LoginSignup = () => {
   const handleSubmit = () => {
     handleLogin(email, password);
   };
-  useEffect(() => {
-    if (access_token && role && user_id) {
-      window.location.href = `/${role}/dashboard`;
-    }
-  }, [access_token, role, user_id]);
+
   return (
     <div className="my-6 m-auto p-5 md:w-9/12 w-11/12 bg-white flex flex-col md:flex-row items-center justify-center shadow-2xl rounded-3xl">
       <div className="w-2/5 md:w-1/2">

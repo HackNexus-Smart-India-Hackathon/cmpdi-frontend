@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { useFormik } from 'formik';
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+// import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import * as yup from 'yup';
 import { setLogin } from '../../state';
@@ -16,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const baseUrl = process.env.REACT_APP_AUTH_BASE_API;
 
+// Validation schema using Yup
 const validationSchema = yup.object({
   email: yup
     .string()
@@ -30,53 +30,70 @@ const validationSchema = yup.object({
     .oneOf([yup.ref('password'), null], 'Passwords must match')
     .required('Confirm Password is required'),
   username: yup.string().required('Username is required'),
-  phone: yup.string().required('Phone number is required'),
+  phone_number: yup
+    .string()
+    .matches(/^\d{10}$/, 'Phone number must be 10 digits')
+    .required('Phone number is required'),
   role: yup.string().required('Role is required'),
-  twoFa: yup.boolean().oneOf([true], '2FA is required'),
 });
 
 const SignUp = () => {
   const dispatch = useDispatch();
-  const { user_id, access_token, role } = useSelector((state) => state.auth);
-  console.log(user_id, access_token, role);
-  const formik = useFormik({
-    initialValues: {
-      email: '',
-      password: '',
-      confirmPassword: '',
-      username: '',
-      phone: '',
-      role: 'admin',
-      twoFa: false,
-    },
-    validationSchema: validationSchema,
-    onSubmit: async (values) => {
-      const data = {
-        email: values.email,
-        password: values.password,
-        username: values.username,
-        phone_number: values.phone,
-        role: values.role,
-        two_factor_enabled: values.twoFa,
-      };
-
-      try {
-        const response = await axios.post(`${baseUrl}/auth/register`, data);
-
-        if (response.status === 201) {
-          toast.success('Sign up successful!');
-          const user_id = response.data.user.id;
-          const access_token = response.data.token;
-          const { role } = response.data.user;
-          dispatch(setLogin({ user_id, access_token, role }));
-          window.location.href = `/twofactorauthentication`;
-        }
-      } catch (error) {
-        console.error('Error signing up:', error);
-        toast.error('Sign up failed. Please try again.');
-      }
-    },
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    username: '',
+    phone_number: '',
+    role: 'admin',
   });
+
+  const [errors, setErrors] = useState({});
+
+  // Validate form data
+  const validateForm = async () => {
+    try {
+      await validationSchema.validate(formData, { abortEarly: false });
+      setErrors({});
+      return true;
+    } catch (error) {
+      const newErrors = {};
+      error.inner.forEach((err) => {
+        newErrors[err.path] = err.message;
+      });
+      setErrors(newErrors);
+      return false;
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const isValid = await validateForm();
+    if (!isValid) return;
+
+    try {
+      const response = await axios.post(`${baseUrl}/auth/register`, formData);
+      if (response.status === 201) {
+        toast.success('Sign up successful!');
+        const user_id = response.data.user.id;
+        const access_token = response.data.token;
+        const role = response.data.user.role;
+        dispatch(setLogin({ user_id, access_token, role }));
+        window.location.href = `/twofactorauthentication`;
+      }
+    } catch (error) {
+      console.error('Error signing up:', error);
+      toast.error('Sign up failed. Please try again.');
+    }
+  };
 
   return (
     <div className="my-6 m-auto p-5 md:w-9/12 w-11/12 bg-white flex flex-col md:flex-row items-center justify-center shadow-2xl rounded-3xl">
@@ -86,7 +103,8 @@ const SignUp = () => {
       <div className="md:w-1 md:h-[80vh] h-1 bg-gray-300 mx-5"></div>
       <div className="m-20 p-5 md:h-3/5 md:w-4/5 w-11/12 bg-white flex flex-col items-center max-w-xl shadow-2xl rounded-3xl">
         <div className="text-4xl font-semibold">Sign Up</div>
-        <form onSubmit={formik.handleSubmit} className="mt-10 flex flex-col">
+        <form onSubmit={handleSubmit} className="mt-10 flex flex-col">
+          {/* Username and Email */}
           <div className="flex flex-row gap-2">
             <div className="flex flex-col items-center w-1/2">
               <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
@@ -94,35 +112,36 @@ const SignUp = () => {
                 <input
                   type="text"
                   name="username"
-                  value={formik.values.username}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
+                  value={formData.username}
+                  onChange={handleChange}
                   placeholder="Username"
                   className="w-full p-2"
                 />
               </div>
-              {formik.touched.username && formik.errors.username && (
-                <p className="text-red-500 text-xs">{formik.errors.username}</p>
+              {errors.username && (
+                <p className="text-red-500 text-xs">{errors.username}</p>
               )}
             </div>
+
             <div className="flex flex-col items-center w-1/2">
               <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
                 <img src={email_icon} alt="Email" className="w-6 h-6 mx-2" />
                 <input
                   type="email"
                   name="email"
-                  value={formik.values.email}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="Email"
                   className="w-full p-2"
                 />
               </div>
-              {formik.touched.email && formik.errors.email && (
-                <p className="text-red-500 text-xs">{formik.errors.email}</p>
+              {errors.email && (
+                <p className="text-red-500 text-xs">{errors.email}</p>
               )}
             </div>
           </div>
+
+          {/* Password Fields */}
           <div className="flex flex-row gap-2">
             <div className="flex flex-col items-center w-1/2">
               <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
@@ -134,18 +153,18 @@ const SignUp = () => {
                 <input
                   type="password"
                   name="password"
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
+                  value={formData.password}
+                  onChange={handleChange}
                   placeholder="Password"
                   className="w-full p-2"
                 />
               </div>
-              {formik.touched.password && formik.errors.password && (
-                <p className="text-red-500 text-xs">{formik.errors.password}</p>
+              {errors.password && (
+                <p className="text-red-500 text-xs">{errors.password}</p>
               )}
             </div>
-            <div className="flex flex-col items-center w-1/2 ">
+
+            <div className="flex flex-col items-center w-1/2">
               <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
                 <img
                   src={password_icon}
@@ -155,37 +174,38 @@ const SignUp = () => {
                 <input
                   type="password"
                   name="confirmPassword"
-                  value={formik.values.confirmPassword}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
                   placeholder="Confirm Password"
                   className="w-full p-2"
                 />
               </div>
-              {formik.touched.confirmPassword &&
-                formik.errors.confirmPassword && (
-                  <p className="text-red-500 text-xs ">
-                    {formik.errors.confirmPassword}
-                  </p>
-                )}
+              {errors.confirmPassword && (
+                <p className="text-red-500 text-xs">{errors.confirmPassword}</p>
+              )}
             </div>
           </div>
+
+          {/* Phone and Role */}
           <div className="flex flex-row gap-2">
             <div className="flex flex-col items-center w-1/2">
               <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
-                <img src={phone_icon} alt="Phone" className="w-6 h-6 mx-2" />
+                <img
+                  src={phone_icon}
+                  alt="Phone Number"
+                  className="w-6 h-6 mx-2"
+                />
                 <input
                   type="text"
-                  name="phone"
-                  value={formik.values.phone}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  placeholder="Phone"
+                  name="phone_number"
+                  value={formData.phone_number}
+                  onChange={handleChange}
+                  placeholder="Phone Number"
                   className="w-full p-2"
                 />
               </div>
-              {formik.touched.phone && formik.errors.phone && (
-                <p className="text-red-500 text-xs">{formik.errors.phone}</p>
+              {errors.phone_number && (
+                <p className="text-red-500 text-xs">{errors.phone_number}</p>
               )}
             </div>
             <div className="flex flex-col items-center w-1/2">
@@ -193,9 +213,8 @@ const SignUp = () => {
                 <img src={role_icon} alt="Role" className="w-6 h-6 mx-2" />
                 <select
                   name="role"
-                  value={formik.values.role}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
+                  value={formData.role}
+                  onChange={handleChange}
                   className="w-full p-2 bg-transparent border-none outline-none"
                 >
                   <option value="" disabled>
@@ -203,14 +222,14 @@ const SignUp = () => {
                   </option>
                   <option value="admin">Admin</option>
                   <option value="investigator">Investigator</option>
-                  {/* <option value="guest">Guest</option> */}
                 </select>
               </div>
-              {formik.touched.role && formik.errors.role && (
-                <p className="text-red-500 text-xs">{formik.errors.role}</p>
+              {errors.role && (
+                <p className="text-red-500 text-xs">{errors.role}</p>
               )}
             </div>
           </div>
+
           <button
             type="submit"
             className="mt-4 p-2 bg-black text-white rounded"
@@ -218,14 +237,8 @@ const SignUp = () => {
             Sign Up
           </button>
         </form>
-        <div className="mt-7 text-black text-l">
-          Already have an Id? Login{' '}
-          <Link to="/login" className="text-blue-900">
-            <span>Here!</span>
-          </Link>
-        </div>
+        <ToastContainer />
       </div>
-      <ToastContainer />
     </div>
   );
 };

@@ -6,27 +6,87 @@ import MicIcon from '@mui/icons-material/Mic';
 import MoreVertIcon from '@mui/icons-material/MoreVert'; // More options icon
 import SearchIcon from '@mui/icons-material/Search';
 import IconButton from '@mui/material/IconButton';
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 // import SearchIcon from '@mui/icons-material/Search'; // Search icon
 
-const Chatscreen = ({ roomName, closeChat }) => {
-  //   const messages = [
-  //     {
-  //       _id: '1',
-  //       name: 'Ellen',
-  //       message: 'Hey! How are you?',
-  //       timestamp: '40 seconds ago',
-  //       recieved: false,
-  //     },
-  //     {
-  //       _id: '2',
-  //       name: 'Ellen',
-  //       message: 'Hey! How are you?',
-  //       timestamp: '40 seconds ago',
-  //       recieved: true,
-  //     },
-  //   ];
-  //   const displaySectionRef = useRef(null);
+const Chatscreen = ({ roomName, closeChat }, chat_id) => {
+  const baseUrl = process.env.REACT_APP_AUTH_BASE_API;
+  const [message, setMessage] = useState('');
+  const [prevMessages, setPrevMessage] = useState([]);
+  const [socket, setSocket] = useState(null);
+  const { chat } = useSelector((state) => state.auth);
+  const handleChange = (e) => {
+    setMessage(e.target.value);
+  };
+  useEffect(() => {
+    const getPrevMeessage = async () => {
+      try {
+        let response = axios.get(`${baseUrl}/chat/getPrevChat`, {
+          chat_id,
+        });
+        if (response.status === 200) {
+          const messages = response.data.messages;
+          setPrevMessage((prevMessages) => [...prevMessages, messages]);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getPrevMeessage();
+    const ws = new WebSocket('ws://loclahost:8080');
+    setSocket(ws);
+
+    ws.onopen = () => {
+      console.log('connected to websocket');
+    };
+    const msg = {
+      type: 'JOIN_ROOM',
+      payload: {
+        name: chat.name,
+        userId: chat._id,
+        roomId: chat_id,
+      },
+    };
+    ws.send(msg);
+    ws.onmessage = (event) => {
+      let newMessage = event.data;
+      console.log(newMessage);
+    };
+    ws.onclose = () => {
+      console.log('closing connection');
+    };
+    ws.onerror = () => {
+      console.log();
+    };
+  }, [baseUrl, chat._id, chat.name, chat_id]);
+  const saveMessage = () => {
+    axios
+      .post(`${baseUrl}/chat/message`, {
+        content: message,
+        chat_id,
+        created_by: chat.name,
+      })
+      .then((res) => {
+        if (res.status === 200) console.log('message saved successfully');
+      })
+      .catch((error) => [console.error(error)]);
+  };
+  const sendMessage = () => {
+    saveMessage();
+    if (socket) {
+      const msg = {
+        type: 'SEND_MESSAGE',
+        payload: {
+          userId: chat._id,
+          roomId: chat_id,
+          message: message,
+        },
+      };
+      socket.send(msg);
+    }
+  };
   return (
     <div>
       <div className="h-[65vh] bg-gray-100 shadow-lg rounded-md flex flex-col overflow-hidden">
@@ -56,7 +116,18 @@ const Chatscreen = ({ roomName, closeChat }) => {
         </div>
 
         {/* Chat Body */}
-        <div className="flex-1 bg-beige-100 overflow-y-auto p-4"></div>
+        <div className="flex-1 bg-beige-100 overflow-y-auto p-4">
+          {prevMessages.map((message, index) => (
+            <div key={index} className="flex flex-col">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                <div className="bg-white p-2 ml-2 rounded-md">
+                  <p>{message.content}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
 
         {/* Footer */}
         <div className="flex items-center p-3 bg-white border-t border-gray-300">
@@ -65,7 +136,10 @@ const Chatscreen = ({ roomName, closeChat }) => {
             type="text"
             placeholder="Type a message"
             className="flex-1 mx-3 p-2 bg-gray-100 rounded-full focus:outline-none"
+            value={message}
+            onChange={handleChange}
           />
+          <button onClick={sendMessage}>send</button>
           <MicIcon />
         </div>
       </div>

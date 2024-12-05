@@ -1,23 +1,24 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 
-const ProjectCompletionReportForm = () => {
+const ProjectDurationExtensionForm = ({ edit }) => {
   const initialValues = {
-    title: '',
+    projectName: '',
     projectCode: '',
-    commencementDate: '',
-    approvedCompletionDate: '',
-    actualCompletionDate: '',
-    objectives: '',
-    workProgram: '',
+    principalAgency: '',
+    projectLeader: '',
+    startDate: '',
+    completionDate: '',
+    approvedObjectives: '',
+    approvedWorkProgram: '',
     workDoneDetails: '',
-    objectivesFulfilled: '',
-    reasonsUncovered: '',
-    furtherStudiesNeeded: '',
-    conclusions: '',
-    applicationScope: '',
-    associatedPersons: '',
-    finalExpenditureStatement: '',
+    revisedSchedule: '',
+    timeExtension: '',
+    extensionReason: '',
+    totalCost: '',
+    actualExpenditure: '',
+    furtherStudiesNeeded: '', // New optional field
+    applicationScope: '', // New optional field
   };
 
   const [formData, setFormData] = useState(initialValues);
@@ -26,8 +27,17 @@ const ProjectCompletionReportForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateField = (name, value) => {
-    if (!value.trim()) {
+    if (
+      !value.trim() &&
+      !['furtherStudiesNeeded', 'applicationScope'].includes(name)
+    ) {
       return 'This field is required.';
+    }
+    if (name === 'timeExtension' && value <= 0) {
+      return 'Time extension must be at least 1 month.';
+    }
+    if (['totalCost', 'actualExpenditure'].includes(name) && value < 0) {
+      return 'Value cannot be negative.';
     }
     return '';
   };
@@ -44,10 +54,7 @@ const ProjectCompletionReportForm = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: validateField(name, value),
@@ -58,37 +65,21 @@ const ProjectCompletionReportForm = () => {
     e.preventDefault();
     if (validateForm()) {
       setIsSubmitting(true);
-      setErrors({}); // Clear previous errors
       try {
         const response = await axios.post(
-          'http://localhost:3000/api/forms//project-completion-report',
+          'http://localhost:3000/api/forms/project-duration-extension',
           formData
         );
-
-        // Handle success
-        console.log(response.data);
-        // alert('Project Completion Report created successfully!');
+        console.log('Form submitted successfully:', response.data);
+        // alert('Form submitted successfully!');
         // setFormData(initialValues); // Reset the form
       } catch (error) {
-        if (error.response) {
-          // The request was made, and the server responded with a status code
-          const { data } = error.response;
-          if (data.fieldErrors) {
-            setErrors(data.fieldErrors); // Set field-specific errors
-          } else {
-            alert(`Error: ${data.message || 'An unknown error occurred.'}`);
-          }
-        } else if (error.request) {
-          // The request was made, but no response was received
-          console.error('No response received:', error.request);
-          alert('No response from the server. Please try again later.');
-        } else {
-          // Something happened in setting up the request
-          console.error('Error setting up the request:', error.message);
-          alert(
-            'An error occurred while submitting the form. Please try again.'
-          );
-        }
+        alert('An error occurred while submitting the form.');
+        console.error(error.response?.data || error.message);
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          apiError: error.response?.data?.message || 'Unknown error occurred.',
+        }));
       } finally {
         setIsSubmitting(false);
       }
@@ -98,27 +89,20 @@ const ProjectCompletionReportForm = () => {
   return (
     <div className="max-w-7xl mx-auto p-8 bg-gray-50 rounded-lg shadow-lg">
       <h1 className="text-3xl font-bold mb-6 text-center">
-        Project Completion Report Form
+        Extension of Project Duration Form
       </h1>
       <form onSubmit={handleSubmit}>
-        {/* Project Information Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
           {[
-            { name: 'title', label: 'Project Title' },
+            /* Render standard input fields */
+            { name: 'projectName', label: 'Project Name' },
             { name: 'projectCode', label: 'Project Code' },
+            { name: 'principalAgency', label: 'Principal Implementing Agency' },
+            { name: 'projectLeader', label: 'Project Leader/Coordinator' },
+            { name: 'startDate', label: 'Start Date', type: 'date' },
             {
-              name: 'commencementDate',
-              label: 'Date of Commencement',
-              type: 'date',
-            },
-            {
-              name: 'approvedCompletionDate',
-              label: 'Approved Completion Date',
-              type: 'date',
-            },
-            {
-              name: 'actualCompletionDate',
-              label: 'Actual Completion Date',
+              name: 'completionDate',
+              label: 'Scheduled Completion Date',
               type: 'date',
             },
           ].map((field) => (
@@ -138,50 +122,33 @@ const ProjectCompletionReportForm = () => {
           ))}
         </div>
 
-        {/* Collapsible Sections */}
-        <label className="block font-medium mb-3">Project Details</label>
         <div className="space-y-4">
           {[
+            /* Render expandable textarea fields */
+            { name: 'approvedObjectives', label: 'Approved Objectives' },
             {
-              name: 'objectives',
-              label: 'Objectives as Stated in the Proposal',
+              name: 'approvedWorkProgram',
+              label: 'Approved Work Program and Schedule',
+            },
+            { name: 'workDoneDetails', label: 'Details of Work Done' },
+            {
+              name: 'revisedSchedule',
+              label: 'Revised Bar Chart/PERT Network with Justification',
             },
             {
-              name: 'workProgram',
-              label: 'Proposed and Approved Work Programme',
+              name: 'extensionReason',
+              label: 'Reason for Proposed Time Extension',
             },
             {
-              name: 'workDoneDetails',
-              label: 'Details of Work Done During the Project',
+              name: 'furtherStudiesNeeded',
+              label: 'Further Studies Needed (Optional)',
             },
-            {
-              name: 'objectivesFulfilled',
-              label: 'Extent to which Objectives have been Fulfilled',
-            },
-            {
-              name: 'reasonsUncovered',
-              label: 'Reasons for Not Covering Certain Areas',
-            },
-            { name: 'furtherStudiesNeeded', label: 'Need for Further Studies' },
-            { name: 'conclusions', label: 'Conclusions and Recommendations' },
-            {
-              name: 'applicationScope',
-              label: 'Scope of Application in Industry',
-            },
-            {
-              name: 'associatedPersons',
-              label: 'Names of Associated Persons and Their Expertise',
-            },
-            {
-              name: 'finalExpenditureStatement',
-              label: 'Final Expenditure Statement',
-            },
+            { name: 'applicationScope', label: 'Application Scope (Optional)' },
           ].map((field) => (
             <div
               key={field.name}
               className="border rounded-lg shadow-sm bg-white overflow-hidden"
             >
-              {/* Collapsible Section Header */}
               <button
                 type="button"
                 className={`w-full p-4 text-left font-semibold transition ${
@@ -195,9 +162,8 @@ const ProjectCompletionReportForm = () => {
               >
                 {field.label}
               </button>
-              {/* Expanded Section Content */}
               {expanded === field.name && (
-                <div className="p-4 space-y-4">
+                <div className="p-4">
                   <textarea
                     name={field.name}
                     value={formData[field.name]}
@@ -214,8 +180,46 @@ const ProjectCompletionReportForm = () => {
           ))}
         </div>
 
-        {/* Submit Button */}
-        <div className="mt-6 flex justify-end">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+          {[
+            /* Render numeric fields */
+            {
+              name: 'timeExtension',
+              label: 'Proposed Time Extension (Months)',
+              type: 'number',
+            },
+            {
+              name: 'totalCost',
+              label: 'Total Cost of the Project (₹ Lakhs)',
+              type: 'number',
+            },
+            {
+              name: 'actualExpenditure',
+              label: 'Actual Expenditure Incurred (₹ Lakhs)',
+              type: 'number',
+            },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="block font-medium mb-2">{field.label}</label>
+              <input
+                type={field.type}
+                name={field.name}
+                value={formData[field.name]}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+              {errors[field.name] && (
+                <p className="text-red-500 text-sm">{errors[field.name]}</p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {errors.apiError && (
+          <p className="text-red-500 mt-4">{errors.apiError}</p>
+        )}
+
+        <div className="mt-8 flex justify-end">
           <button
             type="submit"
             disabled={isSubmitting}
@@ -231,4 +235,4 @@ const ProjectCompletionReportForm = () => {
   );
 };
 
-export default ProjectCompletionReportForm;
+export default ProjectDurationExtensionForm;

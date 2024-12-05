@@ -11,6 +11,9 @@ import AddProject from './pages/AddProject';
 
 import AdminConsole from './pages/AdminConsole';
 import './App.css';
+import FormsFill from './pages/formsFill';
+import FormsList from './pages/formsList';
+import FormsView from './pages/formsView';
 import InvestigatorConsole from './pages/InvestigatorConsole';
 import MeetingLogs from './pages/MeetingLogs';
 import MeetingSchedule from './pages/MeetingSchedule';
@@ -42,6 +45,9 @@ function App() {
         <Route path="/project/all" element={<ProjectList />} />
         <Route path="/schedule/meetings" element={<MeetingSchedule />} />
         <Route path="/meeting/logs" element={<MeetingLogs />} />
+        <Route path="/forms" element={<FormsList />} />
+        <Route path="/forms/view/:title/:code" element={<FormsView />} />
+        <Route path="/forms/fill/:title/:code" element={<FormsFill />} />
         <Route path="/piegraph" element={<PieChart />} />
         <Route path="/bargraph" element={<BarChart />} />
       </Routes>

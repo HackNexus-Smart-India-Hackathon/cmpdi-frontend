@@ -20,7 +20,7 @@ const initialFormState = {
   justification: '',
 };
 
-function RevisionCostForm() {
+function RevisionCostForm({ edit }) {
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState({});
   const [newAgency, setNewAgency] = useState('');

@@ -35,7 +35,9 @@ const initialFormState = {
   funds: initialData,
 };
 
-function FundRequisitionForm() {
+function FundRequisitionForm({ edit }) {
+  console.log(edit);
+
   const [formData, setFormData] = useState(initialFormState);
   const [expanded, setExpanded] = useState(null);
   const [errors, setErrors] = useState({}); // To store validation errors
@@ -281,7 +283,13 @@ function FundRequisitionForm() {
             disabled={isSubmitting} // Disable button during submission
             className={`px-6 py-2 ${isSubmitting ? 'bg-gray-400' : 'bg-black'} text-white rounded-md hover:bg-slate-600 transition`}
           >
-            {isSubmitting ? 'Submitting...' : 'Submit'}
+            {edit
+              ? isSubmitting
+                ? 'Editing...'
+                : 'Edit'
+              : isSubmitting
+                ? 'Submitting...'
+                : 'Submit'}
           </button>
         </div>
       </form>

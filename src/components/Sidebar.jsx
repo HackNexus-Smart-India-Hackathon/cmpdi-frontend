@@ -28,8 +28,19 @@ const Sidebar = () => {
   const handleProfileMenuOpen = () => {
     navigate('/profile');
   };
-
-  const sidebarItems = [
+  const InvestigatorSidebar = [
+    {
+      Item: 'Dashboard',
+      Icon: <DashboardCustomizeOutlinedIcon />,
+      Link: `/${role}/dashboard`,
+    },
+    {
+      Item: 'Forms',
+      Icon: <WorkOutlineOutlinedIcon />,
+      Link: '/forms',
+    },
+  ];
+  const AdminSidebarItems = [
     {
       Item: 'Dashboard',
       Icon: <DashboardCustomizeOutlinedIcon />,
@@ -174,13 +185,21 @@ const Sidebar = () => {
 
       <div className="h-screen fixed left-0 w-[17vw] bg-slate-100">
         <ul className="p-1 py-8 flex flex-col  w-full">
-          {sidebarItems.map((sidebarItem, index) => (
-            <React.Fragment key={index}>
-              {sidebarItem.Children
-                ? withChildren(sidebarItem, index)
-                : withoutChildren(sidebarItem, index)}
-            </React.Fragment>
-          ))}
+          {role === 'admin'
+            ? AdminSidebarItems.map((sidebarItem, index) => (
+                <React.Fragment key={index}>
+                  {sidebarItem.Children
+                    ? withChildren(sidebarItem, index)
+                    : withoutChildren(sidebarItem, index)}
+                </React.Fragment>
+              ))
+            : InvestigatorSidebar.map((sidebarItem, index) => (
+                <React.Fragment key={index}>
+                  {sidebarItem.Children
+                    ? withChildren(sidebarItem, index)
+                    : withoutChildren(sidebarItem, index)}
+                </React.Fragment>
+              ))}
         </ul>
 
         <div className="bottom-8 fixed">

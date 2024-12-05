@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import OtpInput from './OtpInput';
 import callRefreshToken from '../../utils/reset_token';
@@ -9,7 +10,8 @@ import moc_img from '../Assets/moc.png';
 import 'react-toastify/dist/ReactToastify.css';
 
 const TwoFactorAuth = () => {
-  const { user_id, access_token } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const { user_id, access_token, role } = useSelector((state) => state.auth);
   console.log(access_token, user_id);
 
   const [qrCodeUrl, setQrCodeUrl] = useState('');
@@ -37,7 +39,7 @@ const TwoFactorAuth = () => {
       );
       if (response.status === 200) {
         console.log('2FA verification successful:', response.data);
-        window.location.href = '/adminconsole';
+        navigate(`/${role}/dashboard`);
       }
     } catch (error) {
       console.error('Error verifying 2FA PIN:', error);

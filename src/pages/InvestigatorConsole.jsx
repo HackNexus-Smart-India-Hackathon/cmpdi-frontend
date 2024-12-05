@@ -37,4 +37,3 @@ const InvestigatorConsole = () => {
 };
 
 export default InvestigatorConsole;
-

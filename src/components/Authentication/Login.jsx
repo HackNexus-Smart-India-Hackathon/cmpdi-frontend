@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { setLogin } from '../../state';
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,9 +12,10 @@ import moc_img from '../Assets/moc.png';
 
 const LoginSignup = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { user_id, access_token, role ,chat } = useSelector((state) => state.auth);
+  const { user_id, access_token, role } = useSelector((state) => state.auth);
   console.log(user_id, access_token, role);
 
   const baseUrl = process.env.REACT_APP_AUTH_BASE_API;
@@ -27,14 +29,19 @@ const LoginSignup = () => {
         const user_id = response.data.user.id;
         const access_token = response.data.token;
         const { role } = response.data.user;
-        const chat = response.data.chat
-        dispatch(setLogin({ user_id, access_token, role,chat }));
+        const chat = response.data.chat;
+        dispatch(setLogin({ user_id, access_token, role, chat }));
 
-        console.log('Dispatched setLogin:', { user_id, access_token, role,chat });
-        console.log('Updated state:', { user_id, access_token, role ,chat});
+        console.log('Dispatched setLogin:', {
+          user_id,
+          access_token,
+          role,
+          chat,
+        });
+        console.log('Updated state:', { user_id, access_token, role, chat });
 
         toast.success('Login successful!');
-        window.location.href = `/${role}Console`;
+        navigate(`/${role}/dashboard`);
       }
       console.log('Login successful:', response.data);
     } catch (error) {

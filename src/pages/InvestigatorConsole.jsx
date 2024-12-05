@@ -1,9 +1,9 @@
 import React from 'react';
+import ChatList from '../components/chat/chatlist';
 import Navbar from '../components/Navbar';
 import ScheduleTable from '../components/ScheduleTable';
 import Sidebar from '../components/Sidebar';
 import Timeline from '../components/Timeline';
-
 const InvestigatorConsole = () => {
   return (
     <div className="flex flex-col h-screen">
@@ -29,6 +29,7 @@ const InvestigatorConsole = () => {
           <section>
             <ScheduleTable />
           </section>
+          <ChatList />
         </main>
       </div>
     </div>

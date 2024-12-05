@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 // import QuarterlyExpenditureStatementonCapitalEquipment from '../components/formsView/QuarterlyExpenditureStatementonCapitalEquipment';
 // import QuarterlyStatusReportForm from '../components/formsView/QuarterlyStatusReportForm';
 // import RevisionCostForm from '../components/formsView/RevisionCostForm';
+import ChatList from '../components/chat/chatlist';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 const FormsView = () => {
@@ -100,6 +101,7 @@ const FormsView = () => {
             ))}
           </tbody>
         </table>
+        <ChatList />
       </div>
     );
   };

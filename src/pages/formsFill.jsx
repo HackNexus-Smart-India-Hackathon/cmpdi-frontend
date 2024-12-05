@@ -1,5 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import ChatSection from '../components/chat/chatlist';
 import FundRequisitionForm from '../components/FormsFill/FundRequisitionForm';
 import ProjectCompletionReportForm from '../components/FormsFill/ProjectCompletionReportForm';
 import ProjectDurationExtensionForm from '../components/FormsFill/ProjectDurationExtentionForm';
@@ -43,7 +44,10 @@ const FormsFill = ({ edit = false }) => {
         <div className="w-[17vw]">
           <Sidebar />
         </div>
-        <div className="flex-1 m-4">{renderFormComponent(edit)}</div>
+        <div className="flex-1 m-4">
+          {renderFormComponent(edit)}
+          <ChatSection />
+        </div>
       </div>
     </div>
   );

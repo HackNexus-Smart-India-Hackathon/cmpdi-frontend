@@ -2,7 +2,7 @@ import { TrashIcon } from '@heroicons/react/outline';
 import axios from 'axios';
 import React, { useState } from 'react';
 
-const QuarterlyExpenditureStatementonCapitalEquipment = () => {
+const QuarterlyExpenditureStatementonCapitalEquipment = ({ edit }) => {
   const initialValues = {
     projectName: '',
     projectCode: '',

@@ -76,7 +76,7 @@ const initialFormState = {
   projectInvestigators: [],
 };
 
-function QuarterlyStatusReportForm() {
+function QuarterlyStatusReportForm({ edit }) {
   const [formData, setFormData] = useState(initialFormState);
   const [expanded, setExpanded] = useState(null);
   const [errors, setErrors] = useState({});

@@ -27,7 +27,7 @@ const initializeFinancialDetails = () => {
   }, {});
 };
 
-const QuarterlyExpenditureStatementForm = () => {
+const QuarterlyExpenditureStatementForm = ({ edit }) => {
   const [formData, setFormData] = useState({
     projectName: '',
     projectCode: '',

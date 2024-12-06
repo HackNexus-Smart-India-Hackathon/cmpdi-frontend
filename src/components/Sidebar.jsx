@@ -70,11 +70,7 @@ const Sidebar = () => {
     {
       Item: 'Meetings',
       Icon: <CalendarMonthOutlinedIcon />,
-      Link: '/meetings',
-      Children: [
-        { Item: 'Schedule Meetings', Link: '/schedule/meetings' },
-        { Item: 'Meeting Logs', Link: '/meeting/logs' },
-      ],
+      Link: '/meeting/logs',
     },
   ];
   const withChildren = (sidebarItem, index) => {

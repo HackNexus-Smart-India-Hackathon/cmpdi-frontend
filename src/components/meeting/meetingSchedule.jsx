@@ -1,14 +1,12 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-const Scheduler = () => {
-  const navigate = useNavigate();
+const Scheduler = ({ project_id, setIsScheduleMeetModalOpen }) => {
   const [formData, setFormData] = useState({
     title: '',
     date: '',
     time: '',
-    project_id: '',
+    project_id: project_id,
   });
 
   const handleChange = (e) => {
@@ -32,19 +30,16 @@ const Scheduler = () => {
         alert(
           'Meeting Scheduled Successfully!\n Check your email for details.'
         );
-        navigate('/meetings/logs');
+        setIsScheduleMeetModalOpen(false);
       }
     } catch (error) {
       console.error('Error scheduling meeting:', error);
       alert('Failed to schedule meeting. Please try again.');
     }
-    console.log('Meeting Scheduled:', formData);
-    // Add form submission logic here (e.g., API call)
-    alert('Meeting Scheduled Successfully!');
   };
 
   return (
-    <div className="h-[85vh] bg-gray-100 flex items-center justify-center">
+    <div className=" absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  bg-white border-2 border-black shadow-xl p-4">
       <div className="bg-white p-8 rounded shadow-lg w-96">
         <h2 className="text-2xl font-bold mb-6 text-center">
           Schedule Meeting
@@ -98,30 +93,11 @@ const Scheduler = () => {
               required
             />
           </div>
-          {/* Project ID */}
-          <div>
-            <label
-              className="block text-sm font-medium mb-1"
-              htmlFor="project_id"
-            >
-              Project ID
-            </label>
-            <input
-              type="text"
-              name="project_id"
-              id="project_id"
-              value={formData.project_id}
-              onChange={handleChange}
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Enter project ID"
-              required
-            />
-          </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+            className="w-full bg-black text-white py-2 rounded  focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
           >
             Schedule Meeting
           </button>

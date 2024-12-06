@@ -11,6 +11,7 @@ const ProjectTable = () => {
   const [projects, setProjects] = useState([]);
   const { user_id } = useSelector((state) => state.auth);
   const [isLoadingProject, setIsLoadingProject] = useState(true);
+  console.log(projects);
 
   const actionMenuRef = useRef(null);
   const navigate = useNavigate();
@@ -23,8 +24,8 @@ const ProjectTable = () => {
   const toggleActions = (index) => {
     setShowActions(showActions === index ? null : index);
   };
-  const handleView = (code, title) => {
-    navigate(`/project/${title}/${code}`);
+  const handleView = (code, title, id) => {
+    navigate(`/project/${title}/${code}/${id}`);
   };
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -112,7 +113,13 @@ const ProjectTable = () => {
                     >
                       <button
                         className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                        onClick={() => handleView(project.title, project.code)}
+                        onClick={() =>
+                          handleView(
+                            project.projectTitle,
+                            project.projectCode,
+                            project.id
+                          )
+                        }
                       >
                         View
                       </button>

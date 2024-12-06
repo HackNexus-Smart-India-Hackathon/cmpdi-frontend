@@ -107,7 +107,7 @@ const ChatSection = () => {
       {isChatOpen && (
         <div
           ref={displaySectionRef}
-          className="ease-out transition-all duration-1000 bg-slate-200 p-4 rounded-md shadow-lg mt-2 fixed top-36 right-4 h-[70vh] w-fit overflow-y-auto"
+          className="z-30 ease-out transition-all duration-1000 bg-slate-200 p-4 rounded-md shadow-lg mt-2 fixed top-36 right-4 h-[70vh] w-fit overflow-y-auto "
         >
           {selectedChat ? (
             <Chatscreen

@@ -23,10 +23,10 @@ const FileUpload = () => {
 
     if (result.success) {
       setUploadStatus('File uploaded successfully!');
-      console.log('Upload Response Data:', result.data); // Log success response
+      console.log('Upload Response Data:', result.data);
     } else {
       setUploadStatus('Failed to upload file.');
-      console.error('Upload Error Data:', result.error); // Log error response
+      console.error('Upload Error Data:', result.error);
     }
   };
 
@@ -35,7 +35,9 @@ const FileUpload = () => {
       <h2>File Upload</h2>
       <form onSubmit={handleUpload}>
         <input type="file" onChange={handleFileChange} />
-        <button type="submit">Upload</button>
+        <button type="submit" className="bg-black px-4 py-2 text-white rounded">
+          Upload
+        </button>
       </form>
       {uploadStatus && <p>{uploadStatus}</p>}
     </div>

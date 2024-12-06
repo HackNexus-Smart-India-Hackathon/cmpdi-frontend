@@ -11,13 +11,13 @@ export const uploadFile = async (file, uploadUrl) => {
       },
     });
 
-    console.log('Raw Backend Response:', response); // Log the entire response
-    return { success: true, data: response.data }; // Return JSON data
+    console.log('Raw Backend Response:', response);
+    return { success: true, data: response.data };
   } catch (error) {
-    console.error('Upload Error (Raw):', error); // Log the raw error
+    console.error('Upload Error (Raw):', error);
     return {
       success: false,
       error: error.response?.data || error.message,
-    }; // Return error structure
+    };
   }
 };

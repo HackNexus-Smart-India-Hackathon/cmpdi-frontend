@@ -1,15 +1,10 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import FileUpload from '../FileUpload';
+import ProjectDetails from '../ProjectDetails';
 
 // Initial form state
 const initialFormState = {
-  projectName: '',
-  projectCode: '',
-  principalImplementingAgency: '',
-  subImplementingAgencies: [],
-  projectInvestigators: [],
-  startDate: '',
-  scheduledCompletionDate: '',
   approvedObjective: '',
   approvedWorkProgram: '',
   workDetails: '',
@@ -20,59 +15,50 @@ const initialFormState = {
   justification: '',
 };
 
+const sections = [
+  {
+    title: 'Revision Detail',
+    fields: [
+      {
+        name: 'approvedObjective',
+        label: 'Approved Objective',
+        type: 'textarea',
+      },
+      {
+        name: 'approvedWorkProgram',
+        label: 'Approved Work Program and Schedule',
+        type: 'textarea',
+      },
+      {
+        name: 'workDetails',
+        label: 'Details of Work Done with Actual Time Schedule (Bar Chart)',
+        type: 'textarea',
+      },
+      {
+        name: 'revisedTimeSchedule',
+        label: 'Revised Time Schedule',
+        type: 'textarea',
+      },
+
+      {
+        name: 'justification',
+        label: 'Justification for Revision/Re-appropriation',
+        type: 'textarea',
+      },
+    ],
+  },
+];
+
 function RevisionCostForm({ edit }) {
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState({});
-  const [newAgency, setNewAgency] = useState('');
-  const [newInvestigator, setNewInvestigator] = useState('');
+  const [expanded, setExpanded] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Handle input changes for dynamic fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-  };
-
-  // Add sub-implementing agency
-  const handleAddAgency = () => {
-    if (newAgency) {
-      setFormData((prev) => ({
-        ...prev,
-        subImplementingAgencies: [...prev.subImplementingAgencies, newAgency],
-      }));
-      setNewAgency('');
-    }
-  };
-
-  // Remove sub-implementing agency
-  const handleRemoveAgency = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      subImplementingAgencies: prev.subImplementingAgencies.filter(
-        (_, i) => i !== index
-      ),
-    }));
-  };
-
-  // Add project investigator
-  const handleAddInvestigator = () => {
-    if (newInvestigator) {
-      setFormData((prev) => ({
-        ...prev,
-        projectInvestigators: [...prev.projectInvestigators, newInvestigator],
-      }));
-      setNewInvestigator('');
-    }
-  };
-
-  // Remove project investigator
-  const handleRemoveInvestigator = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      projectInvestigators: prev.projectInvestigators.filter(
-        (_, i) => i !== index
-      ),
-    }));
   };
 
   // Simple validation
@@ -111,205 +97,117 @@ function RevisionCostForm({ edit }) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-8 bg-gray-50 rounded-lg shadow-lg">
-      <h1 className="text-3xl font-bold mb-6 text-center">
-        Revision of Project Cost/Re-appropriation of Funds
-      </h1>
-      <form onSubmit={handleSubmit}>
-        {/* Project Information Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-          {[
-            { name: 'projectName', label: 'Project Name' },
-            { name: 'projectCode', label: 'Project Code' },
-            {
-              name: 'principalImplementingAgency',
-              label: 'Principal Implementing Agency',
-            },
-            { name: 'startDate', label: 'Start Date', type: 'date' },
-            {
-              name: 'scheduledCompletionDate',
-              label: 'Scheduled Completion Date',
-              type: 'date',
-            },
-          ].map((field) => (
-            <div key={field.name}>
-              <label className="block font-medium mb-2">{field.label}</label>
-              <input
-                type={field.type || 'text'}
-                name={field.name}
-                value={formData[field.name]}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border rounded-md"
-              />
-              {errors[field.name] && (
-                <p className="text-red-500 text-sm">{errors[field.name]}</p>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Sub Implementing Agencies */}
-        <div className="mb-6">
-          <label className="block font-medium mb-2">
-            Sub Implementing Agencies
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {formData.subImplementingAgencies.map((agency, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-gray-200 text-black rounded-full flex items-center gap-2"
+    <>
+      <ProjectDetails />
+      <div className="max-w-7xl mx-auto p-8 bg-gray-50 rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold mb-10 ">Revision of Project Cost</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <label className="block font-medium mb-3">Required Details</label>
+            {sections.slice(0).map((section) => (
+              <div
+                key={section.title}
+                className="border rounded-lg shadow-sm bg-white overflow-hidden"
               >
-                {agency}
                 <button
                   type="button"
-                  className="text-slate-600"
-                  onClick={() => handleRemoveAgency(index)}
+                  className={`w-full p-4 text-left font-semibold transition ${expanded === section.title ? 'bg-slate-300' : 'bg-gray-100'}`}
+                  onClick={() =>
+                    setExpanded(
+                      expanded === section.title ? null : section.title
+                    )
+                  }
                 >
-                  ×
+                  {section.title}
                 </button>
-              </span>
+
+                {expanded === section.title && (
+                  <div className="p-4 space-y-6">
+                    {section.fields.map((field) => (
+                      <div key={field.name} className="flex flex-col gap-3">
+                        <label className="font-medium capitalize">
+                          {field.label}
+                        </label>
+                        {field.type === 'textarea' ? (
+                          <textarea
+                            name={field.name}
+                            value={formData[field.name]}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-2 border rounded-md resize-none"
+                            rows="4"
+                          />
+                        ) : (
+                          <input
+                            type="text"
+                            name={field.name}
+                            value={formData[field.name]}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-2 border rounded-md"
+                          />
+                        )}
+                        {errors[field.name] && (
+                          <p className="text-red-500 text-sm">
+                            {errors[field.name]}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
-          <div className="flex mt-2 gap-2">
-            <input
-              type="text"
-              value={newAgency}
-              onChange={(e) => setNewAgency(e.target.value)}
-              placeholder="Add a new agency"
-              className="flex-1 px-4 py-2 border rounded-md"
-            />
-            <button
-              type="button"
-              onClick={handleAddAgency}
-              className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
-            >
-              Add
-            </button>
-          </div>
-        </div>
 
-        {/* Project Investigators */}
-        <div className="mb-6">
-          <label className="block font-medium mb-2">
-            Project Investigators
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {formData.projectInvestigators.map((investigator, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-gray-200 text-black rounded-full flex items-center gap-2"
-              >
-                {investigator}
-                <button
-                  type="button"
-                  className="text-slate-600"
-                  onClick={() => handleRemoveInvestigator(index)}
-                >
-                  ×
-                </button>
-              </span>
+          {/* Financials */}
+          <div className="mt-6 mb-6">
+            {[
+              {
+                name: 'totalApprovedCost',
+                label: 'Total Approved Cost (₹ Lakhs)',
+                type: 'number',
+              },
+              {
+                name: 'actualExpenditure',
+                label: 'Actual Expenditure Till Last Quarter (₹ Lakhs)',
+                type: 'number',
+              },
+              {
+                name: 'revisedCost',
+                label: 'Revised Cost of the Project (₹ Lakhs)',
+                type: 'number',
+              },
+            ].map((field) => (
+              <div key={field.name}>
+                <label className="block font-medium mb-2">{field.label}</label>
+                <input
+                  type={field.type || 'text'}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border rounded-md mt-4 mb-4"
+                />
+                {errors[field.name] && (
+                  <p className="text-red-500 text-sm">{errors[field.name]}</p>
+                )}
+              </div>
             ))}
           </div>
-          <div className="flex mt-2 gap-2">
-            <input
-              type="text"
-              value={newInvestigator}
-              onChange={(e) => setNewInvestigator(e.target.value)}
-              placeholder="Add a new investigator"
-              className="flex-1 px-4 py-2 border rounded-md"
-            />
+
+          <FileUpload />
+
+          {/* Submit Button */}
+          <div className="mt-8">
             <button
-              type="button"
-              onClick={handleAddInvestigator}
-              className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+              type="submit"
+              disabled={isSubmitting}
+              className={`px-6 py-2 ${isSubmitting ? 'bg-gray-400' : 'bg-black'} text-white rounded-md hover:bg-slate-600 transition`}
             >
-              Add
+              {isSubmitting ? 'Submitting...' : 'Submit'}
             </button>
           </div>
-        </div>
-
-        {/* Other Fields */}
-        <div className="mt-6 space-y-6">
-          {[
-            { name: 'approvedObjective', label: 'Approved Objective' },
-            {
-              name: 'approvedWorkProgram',
-              label: 'Approved Work Program and Schedule',
-            },
-            {
-              name: 'workDetails',
-              label:
-                'Details of Work Done with Actual Time Schedule (Bar Chart)',
-            },
-            { name: 'revisedTimeSchedule', label: 'Revised Time Schedule' },
-            {
-              name: 'justification',
-              label: 'Justification for Revision/Re-appropriation',
-            },
-          ].map((field) => (
-            <div key={field.name}>
-              <label className="block font-medium mb-2">{field.label}</label>
-              <textarea
-                name={field.name}
-                value={formData[field.name]}
-                onChange={handleInputChange}
-                rows="4"
-                className="w-full px-4 py-2 border rounded-md"
-              />
-              {errors[field.name] && (
-                <p className="text-red-500 text-sm">{errors[field.name]}</p>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Financials */}
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {[
-            {
-              name: 'totalApprovedCost',
-              label: 'Total Approved Cost (₹ Lakhs)',
-              type: 'number',
-            },
-            {
-              name: 'actualExpenditure',
-              label: 'Actual Expenditure Till Last Quarter (₹ Lakhs)',
-              type: 'number',
-            },
-            {
-              name: 'revisedCost',
-              label: 'Revised Cost of the Project (₹ Lakhs)',
-              type: 'number',
-            },
-          ].map((field) => (
-            <div key={field.name}>
-              <label className="block font-medium mb-2">{field.label}</label>
-              <input
-                type={field.type || 'text'}
-                name={field.name}
-                value={formData[field.name]}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border rounded-md"
-              />
-              {errors[field.name] && (
-                <p className="text-red-500 text-sm">{errors[field.name]}</p>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Submit Button */}
-        <div className="mt-8">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`px-6 py-2 ${isSubmitting ? 'bg-gray-400' : 'bg-black'} text-white rounded-md hover:bg-slate-600 transition`}
-          >
-            {isSubmitting ? 'Submitting...' : 'Submit'}
-          </button>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
+    </>
   );
 }
 

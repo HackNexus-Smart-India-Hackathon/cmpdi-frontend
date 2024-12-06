@@ -1,9 +1,11 @@
 // reducers/index.js
 import { combineReducers } from 'redux';
-import authReducer, { chatReducer } from './index';
+import { reducers, chatReducer } from './index';
 
 const rootReducer = combineReducers({
-  auth: authReducer,
+  auth: reducers.auth,
+  project: reducers.project,
+  // auth: authReducer,
   chat: chatReducer,
 });
 

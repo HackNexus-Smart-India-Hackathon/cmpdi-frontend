@@ -1,10 +1,10 @@
 // reducers/index.js
 import { combineReducers } from 'redux';
-import authReducer , {chatReducer} from './index';
+import authReducer, { chatReducer } from './index';
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  chat: chatReducer
+  chat: chatReducer,
 });
 
 export default rootReducer;

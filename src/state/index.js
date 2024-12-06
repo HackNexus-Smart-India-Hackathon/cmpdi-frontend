@@ -4,12 +4,12 @@ const initialState = {
   role: null,
   user_id: null,
   access_token: null,
-  user : {},
+  chatUser: {},
 };
 
 const chatInitialState = {
-  chats : []
-}
+  chats: [],
+};
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -19,7 +19,7 @@ export const authSlice = createSlice({
       state.user_id = action.payload.user_id;
       state.access_token = action.payload.access_token;
       state.role = action.payload.role;
-      state.user = action.payload.chat;
+      state.chatUser = action.payload.chatUser;
     },
     setLogout: (state) => {
       state.user_id = null;
@@ -30,18 +30,17 @@ export const authSlice = createSlice({
 });
 
 export const chatSlice = createSlice({
-  name : 'chat' , 
-  initialState  : chatInitialState , 
-  reducers :  {
-    setChats  : (state , action) =>{
-      state.chats = action.payload.chat
-    } 
-  }
+  name: 'chat',
+  initialState: chatInitialState,
+  reducers: {
+    setChats: (state, action) => {
+      state.chats = action.payload.chats;
+    },
+  },
+});
 
-})
-
-export const chatReducer = chatSlice.reducer
+export const chatReducer = chatSlice.reducer;
 
 export const { setLogin, setLogout } = authSlice.actions;
-export const {setChats} = chatSlice.actions
+export const { setChats } = chatSlice.actions;
 export default authSlice.reducer;

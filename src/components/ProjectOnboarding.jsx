@@ -1,8 +1,10 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setProject } from '../state/index';
 
 function ProjectForm() {
+  const dispatch = useDispatch();
   const { user_id } = useSelector((state) => state.auth);
   const initialValues = {
     projectTitle: '',
@@ -91,7 +93,7 @@ function ProjectForm() {
 
     try {
       const response = await axios.post(
-        `${baseUrl}/api/projects/create`, // Replace with your API endpoint
+        `${baseUrl}/api/projects/create`,
         formData,
         {
           headers: {
@@ -100,6 +102,19 @@ function ProjectForm() {
         }
       );
       // setSuccess('Project submitted successfully!');
+      dispatch(
+        setProject({
+          projectId: response.data.projectId,
+          projectCode: response.data.projectCode,
+          projectTitle: formData.projectTitle,
+          fundingSource: formData.fundingSource,
+          principalImplementingAgency: formData.principalImplementingAgency,
+          subImplementingAgencies: formData.subImplementingAgencies,
+          projectInvestigatorEmail: formData.projectInvestigatorEmail,
+          startDate: formData.startDate,
+          scheduleCompletionDate: formData.scheduleCompletionDate,
+        })
+      );
       console.log('API Response:', response.data);
     } catch (err) {
       console.error('API Error:', err);

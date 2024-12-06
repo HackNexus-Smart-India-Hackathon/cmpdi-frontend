@@ -17,7 +17,6 @@ const project = {
 const ProjectDetails = () => {
   return (
     <div className=" my-8 p-8 bg-gradient-to-b from-gray-100 to-white border border-gray-200 rounded-lg shadow-lg">
-      {/* Project Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-gray-800">
           {project.projectTitle}
@@ -28,7 +27,6 @@ const ProjectDetails = () => {
         </p>
       </div>
 
-      {/* Project Details */}
       <div className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
@@ -55,7 +53,6 @@ const ProjectDetails = () => {
           )}
         </div>
 
-        {/* Emails */}
         <div>
           <p className="text-sm font-medium text-gray-500">
             Project Investigator Email(s)
@@ -72,7 +69,6 @@ const ProjectDetails = () => {
           </div>
         </div>
 
-        {/* Dates */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <p className="text-sm font-medium text-gray-500">Start Date</p>

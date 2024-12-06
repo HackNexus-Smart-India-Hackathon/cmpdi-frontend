@@ -4,16 +4,36 @@ import SearchIcon from '@mui/icons-material/Search';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Chatscreen from './chatscreen';
 import SidebarChat from './sidebarchat';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ChatSection = () => {
   const displaySectionRef = useRef(null);
+  const chatButtonRef = useRef(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
-
+  const dispatch = useDispatch()
+  const {user} = useSelector(state => state.auth)
+  const {chats} = useSelector(state => state.chats)
   const toggleChat = useCallback(() => {
     setIsChatOpen(!isChatOpen);
   }, [isChatOpen]);
-
+  useEffect(()=>{
+    const getChat = async ()=>{
+      try {
+        let response = await axios.post(`${baseUrl}/chat/chats` , {
+          user_id : user._id
+        })
+        if(response.status === 200) {
+          const chats = response.data.chat
+          dispatch(setChats({chats}))
+        }
+      } catch (error) {
+        console.log("error retrieving chat data")
+        toast.error('Error retrieving chat. Please try again.');
+      }
+    }
+    getChat();
+  },[])
   const openChat = (chat) => {
     setSelectedChat(chat);
     setIsChatOpen(true);
@@ -27,7 +47,9 @@ const ChatSection = () => {
     const handleClickOutside = (event) => {
       if (
         displaySectionRef.current &&
-        !displaySectionRef.current.contains(event.target)
+        !displaySectionRef.current.contains(event.target) &&
+        chatButtonRef.current &&
+        !chatButtonRef.current.contains(event.target)
       ) {
         closeChat();
         toggleChat();
@@ -55,41 +77,29 @@ const ChatSection = () => {
         </div>
         {/* chat list */}
         <div className="bg-white h-[56vh] p-1 rounded-md overflow-auto	">
-          <SidebarChat
-            roomName="Room 1"
-            lastMessage="Hello there!"
-            onClick={() => openChat({ roomName: 'Room 1' })}
-          />
-          <SidebarChat
-            roomName="Room 2"
-            lastMessage="How are you?"
-            onClick={() => openChat({ roomName: 'Room 2' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
+        {()=>{
+         if(!chats) {
+          return (<div>no chats found</div>)
+         }
+         else{
+          chats.forEach(chat=>{
+            let roomName = "Project Group"
+            if(chat.chat_members.length == 2){
+              if(chat.chat_members[0].name == user.name)
+                roomName = chat.chat_members[1]
+              else  
+              roomName = chat.chat_members[0]
+            }
+            return (
+              <SidebarChat
+                roomName={roomName}
+              lastMessage="Good morning!"
+              onClick={() => openChat({ roomName } , chat._id )}
+            /> 
+            )
+          })
+         }
+          }}
         </div>
       </div>
     );
@@ -114,9 +124,17 @@ const ChatSection = () => {
       )}
 
       <CommentRoundedIcon
-        ref={displaySectionRef}
+        ref={chatButtonRef}
         className="fixed bottom-5 right-5 cursor-pointer"
-        onClick={toggleChat}
+        onClick={() => {
+          if (isChatOpen) {
+            closeChat();
+            toggleChat();
+          }
+          else {
+            toggleChat();
+          }
+        }}
         fontSize="large"
       />
     </div>

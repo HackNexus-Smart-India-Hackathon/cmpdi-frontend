@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import FileUpload from '../FileUpload';
 import ProjectDetails from '../ProjectDetails';
 
 // Initial form state
@@ -191,6 +192,8 @@ function RevisionCostForm({ edit }) {
               </div>
             ))}
           </div>
+
+          <FileUpload />
 
           {/* Submit Button */}
           <div className="mt-8">

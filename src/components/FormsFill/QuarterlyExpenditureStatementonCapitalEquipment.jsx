@@ -1,6 +1,7 @@
 import { TrashIcon } from '@heroicons/react/outline';
 import axios from 'axios';
 import React, { useState } from 'react';
+import FileUpload from '../FileUpload';
 import ProjectDetails from '../ProjectDetails';
 
 const QuarterlyExpenditureStatementonCapitalEquipment = ({ edit }) => {
@@ -208,6 +209,8 @@ const QuarterlyExpenditureStatementonCapitalEquipment = ({ edit }) => {
               Add New Equipment
             </button>
           </div>
+
+          <FileUpload />
 
           {/* Submit Button */}
           <div className="mt-6 flex justify-end">

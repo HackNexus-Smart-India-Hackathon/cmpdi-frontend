@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import FileUpload from '../FileUpload';
 import ProjectDetails from '../ProjectDetails';
 
 const ProjectDurationExtensionForm = ({ edit }) => {
@@ -190,6 +191,8 @@ const ProjectDurationExtensionForm = ({ edit }) => {
           {errors.apiError && (
             <p className="text-red-500 mt-4">{errors.apiError}</p>
           )}
+
+          <FileUpload />
 
           <div className="mt-8 flex justify-end">
             <button

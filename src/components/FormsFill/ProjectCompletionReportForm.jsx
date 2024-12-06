@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import FileUpload from '../FileUpload';
 import ProjectDetails from '../ProjectDetails';
 
 const ProjectCompletionReportForm = () => {
@@ -198,6 +199,8 @@ const ProjectCompletionReportForm = () => {
               </div>
             ))}
           </div>
+
+          <FileUpload />
 
           <div className="mt-6 flex justify-end">
             <button

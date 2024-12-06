@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import FileUpload from '../FileUpload';
 import ProjectDetails from '../ProjectDetails';
 
 const items = [
@@ -213,6 +214,7 @@ function FundRequisitionForm({ edit }) {
               </div>
             ))}
           </div>
+          <FileUpload />
           <div className="mt-6 flex justify-end">
             <button
               type="submit"

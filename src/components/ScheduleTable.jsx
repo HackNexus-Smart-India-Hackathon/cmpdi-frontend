@@ -8,7 +8,8 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 const localizer = momentLocalizer(moment);
 
 const ScheduleTable = () => {
-  const meetBaseUrl = process.env.REACT_APP_MEET_BASE_URL;
+  const meetBaseUrl = process.env.REACT_APP_MEET_BASE_API;
+
   const project_id = 1; // Hardcoded project_id change it to redux state
   const [events, setEvents] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);

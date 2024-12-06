@@ -6,17 +6,13 @@ import Sidebar from '../components/Sidebar';
 import Timeline from '../components/Timeline';
 const InvestigatorConsole = () => {
   return (
-    <div className="flex flex-col h-screen">
-      {/* Navbar */}
-      <header className="w-full">
-        <Navbar />
-      </header>
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
 
-      <div className="flex flex-grow">
-        {/* Sidebar */}
-        <aside className="w-[17vw] bg-gray-100 border-r border-gray-300">
+      <div className="flex flex-1">
+        <div className="w-[17vw]">
           <Sidebar />
-        </aside>
+        </div>
 
         {/* Main Content */}
         <main className="flex-grow p-4 bg-white overflow-y-auto">

@@ -14,7 +14,7 @@ const LoginSignup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { user_id, access_token, role } = useSelector((state) => state.auth);
-  console.log(user_id, access_token, role);
+  // console.log(user_id, access_token, role);
 
   const baseUrl = process.env.REACT_APP_AUTH_BASE_API;
   const handleLogin = async (email, password) => {
@@ -27,10 +27,14 @@ const LoginSignup = () => {
         const user_id = response.data.user.id;
         const access_token = response.data.token;
         const { role } = response.data.user;
-        dispatch(setLogin({ user_id, access_token, role }));
+        const chatUser = response.data.chat.user;
+        dispatch(setLogin({ user_id, access_token, role, chatUser }));
 
-        console.log('Dispatched setLogin:', { user_id, access_token, role });
-        console.log('Updated state:', { user_id, access_token, role });
+        console.log('Dispatched setLogin:', {
+          chatUser,
+        });
+        console.log(response.data);
+        alert('Login successful!');
 
         toast.success('Login successful!');
         window.location.href = `/${role}/dashboard`;

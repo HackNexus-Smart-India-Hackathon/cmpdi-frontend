@@ -1,36 +1,98 @@
 import CommentRoundedIcon from '@mui/icons-material/CommentRounded';
 import SearchIcon from '@mui/icons-material/Search';
-// import { IconButton } from '@mui/material';
+import axios from 'axios';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import Chatscreen from './chatscreen';
 import SidebarChat from './sidebarchat';
+// import { setChats } from '../../state';
 
 const ChatSection = () => {
   const displaySectionRef = useRef(null);
+  const chatButtonRef = useRef(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
+  const [isChatGet, setIsChatGet] = useState(false);
+  const [chats, setChats] = useState([]);
+  const dispatch = useDispatch();
+  const { user_id, chatUser } = useSelector((state) => state.auth);
 
   const toggleChat = useCallback(() => {
-    setIsChatOpen(!isChatOpen);
-  }, [isChatOpen]);
-
+    setIsChatOpen((prev) => !prev);
+  }, []);
   const openChat = (chat) => {
     setSelectedChat(chat);
     setIsChatOpen(true);
   };
+
   const closeChat = () => {
     setSelectedChat(null);
-    setIsChatOpen(true);
+    setIsChatOpen(false);
   };
+
+  useEffect(() => {
+    if (user_id && chatUser) {
+      const baseUrl = process.env.REACT_APP_AUTH_BASE_API;
+      const getChat = async () => {
+        try {
+          const response = await axios.post(`${baseUrl}/chat/chats`, {
+            user_id: chatUser._id,
+          });
+
+          if (response.status === 200) {
+            setIsChatGet(true);
+            setChats(response.data.chat);
+            dispatch(setChats(response.data.chat));
+          }
+        } catch (error) {
+          console.error('Error retrieving chat data:', error);
+          toast.error('Error retrieving chat. Please try again.');
+        }
+      };
+      getChat();
+    }
+  }, [chatUser, dispatch, user_id]);
+
+  const renderChat = () =>
+    chats.map((chat) => (
+      <SidebarChat
+        key={chat._id}
+        roomName={`Group: ${chat.projectId}`} // Using projectId to create a name
+        lastMessage={`Members: ${chat.chat_members.length}`} // Display the number of members
+        onClick={() => openChat(chat)} // Open the selected chat
+      />
+    ));
+
+  const chatList = () => (
+    <div className="ease-out transition-all duration-1000">
+      {/* Search bar */}
+      <div className="h-[7vh] flex items-center bg-white rounded-full px-2 mx-2 mb-4">
+        <SearchIcon style={{ fontSize: '1.75em', color: '#2c2727e0' }} />
+        <input
+          className="h-[5vh] bg-none px-2 w-[84%] border-none outline-none"
+          type="search"
+          placeholder="Search chat"
+          aria-label="Search"
+        />
+      </div>
+
+      {/* Chat list */}
+      <div className="bg-white h-[56vh] p-1 rounded-md overflow-auto">
+        {isChatGet ? renderChat() : <p>Loading...</p>}
+      </div>
+    </div>
+  );
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         displaySectionRef.current &&
-        !displaySectionRef.current.contains(event.target)
+        !displaySectionRef.current.contains(event.target) &&
+        chatButtonRef.current &&
+        !chatButtonRef.current.contains(event.target)
       ) {
         closeChat();
-        toggleChat();
       }
     };
 
@@ -38,62 +100,7 @@ const ChatSection = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [displaySectionRef, toggleChat]);
-
-  const chatList = () => {
-    return (
-      <div className="ease-out transition-all duration-1000">
-        {/* search bar */}
-        <div className="ease-out transition-all duration-1000h-[7vh] flex items-center bg-white rounded-full px-2 mx-2 mb-4">
-          <SearchIcon style={{ fontSize: '1.75em', color: '#2c2727e0' }} />
-          <input
-            className="h-[5vh] bg-none px-2 w-[84%] border-none outline-none"
-            type="search"
-            placeholder="Search chat"
-            aria-label="Search"
-          />
-        </div>
-        {/* chat list */}
-        <div className="bg-white h-[56vh] p-1 rounded-md overflow-auto	">
-          <SidebarChat
-            roomName="Room 1"
-            lastMessage="Hello there!"
-            onClick={() => openChat({ roomName: 'Room 1' })}
-          />
-          <SidebarChat
-            roomName="Room 2"
-            lastMessage="How are you?"
-            onClick={() => openChat({ roomName: 'Room 2' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
-          <SidebarChat
-            roomName="Room 3"
-            lastMessage="Good morning!"
-            onClick={() => openChat({ roomName: 'Room 3' })}
-          />
-        </div>
-      </div>
-    );
-  };
+  }, [displaySectionRef]);
 
   return (
     <div className="flex">
@@ -104,8 +111,9 @@ const ChatSection = () => {
         >
           {selectedChat ? (
             <Chatscreen
-              roomName={selectedChat.roomName}
+              roomName={selectedChat.chatType}
               closeChat={closeChat}
+              chat_id={selectedChat._id}
             />
           ) : (
             chatList()
@@ -114,7 +122,7 @@ const ChatSection = () => {
       )}
 
       <CommentRoundedIcon
-        ref={displaySectionRef}
+        ref={chatButtonRef}
         className="fixed bottom-5 right-5 cursor-pointer"
         onClick={toggleChat}
         fontSize="large"

@@ -27,10 +27,11 @@ const LoginSignup = () => {
         const user_id = response.data.user.id;
         const access_token = response.data.token;
         const { role } = response.data.user;
-        dispatch(setLogin({ user_id, access_token, role }));
+        const {user} = response.data.chat
+        dispatch(setLogin({ user_id, access_token, role , user}));
 
-        console.log('Dispatched setLogin:', { user_id, access_token, role });
-        console.log('Updated state:', { user_id, access_token, role });
+        console.log('Dispatched setLogin:', { user_id, access_token, role ,user});
+        console.log('Updated state:', { user_id, access_token, role ,user});
 
         toast.success('Login successful!');
         window.location.href = `/${role}/dashboard`;

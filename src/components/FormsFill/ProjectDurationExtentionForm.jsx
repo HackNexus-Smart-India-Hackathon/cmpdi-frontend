@@ -194,7 +194,7 @@ const ProjectDurationExtensionForm = ({ edit }) => {
 
           <FileUpload />
 
-          <div className="mt-8 flex justify-start">
+          <div className="mt-8 flex justify-end">
             <button
               type="submit"
               disabled={isSubmitting}

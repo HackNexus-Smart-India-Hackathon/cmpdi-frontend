@@ -2,6 +2,7 @@ import { IconButton } from '@mui/material';
 import React, { useState, useRef, useEffect } from 'react';
 import { FiMoreVertical } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import ChatSection from '../components/chat/chatlist';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 const FormsList = () => {
@@ -150,6 +151,7 @@ const FormsList = () => {
                 ))}
               </tbody>
             </table>
+            <ChatSection />
           </div>
         </div>
       </div>

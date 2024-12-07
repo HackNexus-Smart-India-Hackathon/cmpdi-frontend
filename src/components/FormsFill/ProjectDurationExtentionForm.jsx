@@ -1,11 +1,11 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import FileUpload from '../FileUpload';
+// import FileUpload from '../FileUpload';
 import ProjectDetails from '../ProjectDetails';
 
 const ProjectDurationExtensionForm = ({ edit }) => {
   const initialValues = {
-    projectId: '',
+    projectId: 1,
     approvedObjectives: '',
     approvedWorkProgram: '',
     workDoneDetails: '',
@@ -24,6 +24,7 @@ const ProjectDurationExtensionForm = ({ edit }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateField = (name, value) => {
+    if (name === 'projectId') return '';
     if (
       !value.trim() &&
       !['furtherStudiesNeeded', 'applicationScope'].includes(name)
@@ -46,6 +47,7 @@ const ProjectDurationExtensionForm = ({ edit }) => {
       if (error) newErrors[key] = error;
     });
     setErrors(newErrors);
+    console.log(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -62,9 +64,10 @@ const ProjectDurationExtensionForm = ({ edit }) => {
     e.preventDefault();
     if (validateForm()) {
       setIsSubmitting(true);
+      formData.projectId = 1;
       try {
         const response = await axios.post(
-          'http://localhost:3000/api/forms/project-duration-extension',
+          'http://localhost:5001/api/forms/project-duration-extension',
           formData
         );
         console.log('Form submitted successfully:', response.data);
@@ -192,7 +195,7 @@ const ProjectDurationExtensionForm = ({ edit }) => {
             <p className="text-red-500 mt-4">{errors.apiError}</p>
           )}
 
-          <FileUpload />
+          {/* <FileUpload /> */}
 
           <div className="mt-8 flex justify-end">
             <button

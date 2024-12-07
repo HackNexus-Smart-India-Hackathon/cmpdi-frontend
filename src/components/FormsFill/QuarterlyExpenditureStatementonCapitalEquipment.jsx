@@ -6,6 +6,7 @@ import ProjectDetails from '../ProjectDetails';
 
 const QuarterlyExpenditureStatementonCapitalEquipment = ({ edit }) => {
   const initialValues = {
+    projectId: '',
     quarterEnding: '',
     equipmentDetails: [
       {
@@ -100,11 +101,11 @@ const QuarterlyExpenditureStatementonCapitalEquipment = ({ edit }) => {
     e.preventDefault();
     const formErrors = validateForm();
     setErrors(formErrors);
-
+    formData.projectId = 1;
     if (Object.keys(formErrors).length === 0) {
       try {
         const response = await axios.post(
-          'http://localhost:3000/api/forms/quarterly-expenditure-statement-capital-equipment',
+          'http://localhost:5001/api/forms/quarterly-expenditure-statement-capital-equipment',
           formData
         );
 

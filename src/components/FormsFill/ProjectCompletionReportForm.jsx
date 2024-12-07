@@ -25,19 +25,36 @@ const ProjectCompletionReportForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateField = (name, value) => {
-    if (!value.trim()) {
+    const stringValue = value != null ? String(value) : ''; // Ensure value is a string
+
+    if (!stringValue.trim()) {
       return 'This field is required.';
     }
+
+    // Specific validation for dates
+    if (name === 'actualCompletionDate') {
+      const date = new Date(stringValue);
+      if (isNaN(date)) {
+        return 'Please provide a valid date.';
+      }
+    }
+
+    if (name === 'projectId' && isNaN(stringValue)) {
+      return 'Project ID must be a number.';
+    }
+
     return '';
   };
 
   const validateForm = () => {
+    formData.projectId = 1;
     const newErrors = {};
     Object.entries(formData).forEach(([key, value]) => {
       const error = validateField(key, value);
       if (error) newErrors[key] = error;
     });
     setErrors(newErrors);
+    console.log(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -58,9 +75,10 @@ const ProjectCompletionReportForm = () => {
     if (validateForm()) {
       setIsSubmitting(true);
       setErrors({});
+
       try {
         const response = await axios.post(
-          'http://localhost:3000/api/forms//project-completion-report',
+          'http://localhost:5001/api/forms/project-completion-report',
           formData
         );
 
@@ -179,8 +197,8 @@ const ProjectCompletionReportForm = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6 mb-6">
             {[
               {
-                name: 'approvedCompletionDate',
-                label: 'Approved Completion Date',
+                name: 'actualCompletionDate',
+                label: 'Actual completion data',
                 type: 'date',
               },
             ].map((field) => (

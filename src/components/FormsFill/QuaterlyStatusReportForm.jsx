@@ -48,6 +48,7 @@ const sections = [
 ];
 
 const initialFormState = {
+  projectId: '',
   progressQuarter: '',
   barChartStatus: '',
   workDetails: '',
@@ -68,6 +69,8 @@ function QuarterlyStatusReportForm({ edit }) {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+  formData.projectId = 1;
 
   const validateForm = () => {
     let formErrors = {};
@@ -93,7 +96,7 @@ function QuarterlyStatusReportForm({ edit }) {
       setIsSubmitting(true);
       try {
         const response = await axios.post(
-          'http://localhost:3000/api/forms/quarterly-status-report',
+          'http://localhost:5001/api/forms/quarterly-status-report',
           formData
         );
         console.log('Form Data Submitted:', response.data);

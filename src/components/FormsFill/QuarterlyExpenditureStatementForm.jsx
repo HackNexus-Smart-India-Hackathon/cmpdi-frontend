@@ -31,6 +31,7 @@ const initializeFinancialDetails = () => {
 
 const QuarterlyExpenditureStatementForm = ({ edit }) => {
   const [formData, setFormData] = useState({
+    projectId: '',
     quarterEnding: '',
     financialDetails: initializeFinancialDetails(),
     fundsAdvanced: '',
@@ -68,13 +69,11 @@ const QuarterlyExpenditureStatementForm = ({ edit }) => {
     const newErrors = {};
 
     // Check required fields
-    ['projectName', 'projectCode', 'companyName', 'quarterEnding'].forEach(
-      (field) => {
-        if (!formData[field]) {
-          newErrors[field] = `${field.replace(/([A-Z])/g, ' $1')} is required.`;
-        }
+    ['quarterEnding'].forEach((field) => {
+      if (!formData[field]) {
+        newErrors[field] = `${field.replace(/([A-Z])/g, ' $1')} is required.`;
       }
-    );
+    });
 
     // Check numerical fields
     ['fundsAdvanced', 'expenditureToDate', 'unspentBalance'].forEach(
@@ -101,7 +100,8 @@ const QuarterlyExpenditureStatementForm = ({ edit }) => {
 
     setIsSubmitting(true);
 
-    // Prepare data for API
+    formData.projectId = 1;
+
     const apiPayload = {
       ...formData,
       financialDetails: Object.entries(formData.financialDetails).map(
@@ -116,7 +116,7 @@ const QuarterlyExpenditureStatementForm = ({ edit }) => {
 
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/forms/quarterly-expenditure-statement',
+        'http://localhost:5001/api/forms/quarterly-expenditure-statement',
         apiPayload,
         {
           headers: {
@@ -143,6 +143,21 @@ const QuarterlyExpenditureStatementForm = ({ edit }) => {
           Quarterly Expenditure Statement
         </h1>
         <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block font-medium mb-2">Quarter Ending</label>
+            <input
+              type="date"
+              name="quarterEnding"
+              value={formData.quarterEnding}
+              onChange={(e) =>
+                setFormData({ ...formData, quarterEnding: e.target.value })
+              }
+              className="w-full px-4 py-2 border rounded-md mb-2"
+            />
+            {errors.quarterEnding && (
+              <p className="text-red-500 text-sm">{errors.quarterEnding}</p>
+            )}
+          </div>
           {/* Financial Details */}
           <label className="block font-medium mb-3">Financial Details</label>
           <div className="space-y-4">

@@ -26,7 +26,7 @@ const initialData = items.reduce((acc, item) => {
 }, {});
 
 const initialFormState = {
-  projectId: '',
+  projectId: 1,
   yearPeriod: '',
   funds: initialData,
 };
@@ -121,8 +121,9 @@ function FundRequisitionForm({ edit }) {
     if (validateForm()) {
       setIsSubmitting(true);
       try {
+        formData.projectId = 1;
         const response = await axios.post(
-          'http://localhost:3000/api/forms/fund-requisition',
+          'http://localhost:5001/api/forms/fund-requisition',
           formData
         );
         console.log('Form Data Submitted:', response.data);

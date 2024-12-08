@@ -28,9 +28,12 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signup/:role/:userId" element={<SignUp />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
-        <Route path="/twofactorauthentication" element={<TwoFactorAuth />} />
+        <Route
+          path="/twofactorauthentication/:user_id"
+          element={<TwoFactorAuth />}
+        />
         <Route path="/admin/dashboard" element={<AdminConsole />} />
         <Route
           path="/investigator/dashboard"

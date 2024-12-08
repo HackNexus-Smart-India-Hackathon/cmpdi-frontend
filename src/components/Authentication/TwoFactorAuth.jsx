@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import OtpInput from './OtpInput';
@@ -11,8 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const TwoFactorAuth = () => {
   const navigate = useNavigate();
-  const { user_id, access_token, role } = useSelector((state) => state.auth);
-  console.log(access_token, user_id);
+  const { user_id } = useParams();
 
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [secret, setSecret] = useState('');
@@ -29,17 +27,11 @@ const TwoFactorAuth = () => {
     try {
       const response = await axios.post(
         `${baseUrl}/auth/verify-2fa/${user_id}`,
-        { token: twoFaPin },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-          withCredentials: true,
-        }
+        { token: twoFaPin }
       );
       if (response.status === 200) {
         console.log('2FA verification successful:', response.data);
-        navigate(`/${role}/dashboard`);
+        navigate(`/login`);
       }
     } catch (error) {
       console.error('Error verifying 2FA PIN:', error);
@@ -51,14 +43,7 @@ const TwoFactorAuth = () => {
     const generate2FASecret = async () => {
       try {
         const response = await axios.post(
-          `${baseUrl}/auth/generate-secret/${user_id}`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${access_token}`,
-            },
-            withCredentials: true,
-          }
+          `${baseUrl}/auth/generate-secret/${user_id}`
         );
         const { data_url, secret } = response.data;
 
@@ -100,7 +85,7 @@ const TwoFactorAuth = () => {
     };
 
     generate2FASecret();
-  }, [access_token, baseUrl, user_id]);
+  }, [baseUrl, user_id]);
   return (
     <div className="my-6 m-auto p-5 md:w-9/12 w-11/12 bg-white flex flex-col md:flex-row items-center justify-center  shadow-2xl rounded-3xl ">
       <div className="w-2/5 md:w-1/2">

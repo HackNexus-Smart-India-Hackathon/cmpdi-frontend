@@ -97,12 +97,12 @@ const LoginSignup = () => {
             <span>Here!</span>
           </Link>
         </div>
-        <div className="text-black text-l">
+        {/* <div className="text-black text-l">
           Don&apos;t have an Id? Sign Up{' '}
           <Link to="/signup" className="text-blue-900">
             <span>Here!</span>
           </Link>
-        </div>
+        </div> */}
         <button
           onClick={handleSubmit}
           type="submit"

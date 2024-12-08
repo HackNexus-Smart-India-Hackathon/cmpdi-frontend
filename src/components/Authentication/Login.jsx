@@ -28,14 +28,13 @@ const LoginSignup = () => {
         const access_token = response.data.token;
         const { role } = response.data.user;
         const chatUser = response.data.chat.user;
-        dispatch(setLogin({ user_id, access_token, role, chatUser }));
+        const project = response.data.user.project;
+        dispatch(setLogin({ user_id, access_token, role, chatUser, project }));
 
         console.log('Dispatched setLogin:', {
           chatUser,
         });
         console.log(response.data);
-        alert('Login successful!');
-
         toast.success('Login successful!');
         window.location.href = `/${role}/dashboard`;
       }
@@ -98,12 +97,12 @@ const LoginSignup = () => {
             <span>Here!</span>
           </Link>
         </div>
-        <div className="text-black text-l">
+        {/* <div className="text-black text-l">
           Don&apos;t have an Id? Sign Up{' '}
           <Link to="/signup" className="text-blue-900">
             <span>Here!</span>
           </Link>
-        </div>
+        </div> */}
         <button
           onClick={handleSubmit}
           type="submit"

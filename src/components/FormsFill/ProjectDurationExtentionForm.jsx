@@ -67,7 +67,7 @@ const ProjectDurationExtensionForm = ({ edit }) => {
       formData.projectId = 1;
       try {
         const response = await axios.post(
-          'http://localhost:5001/api/forms/project-duration-extension',
+          `${process.env.REACT_APP_PROJECT_BASE_API}/api/forms/project-duration-extension`,
           formData
         );
         console.log('Form submitted successfully:', response.data);

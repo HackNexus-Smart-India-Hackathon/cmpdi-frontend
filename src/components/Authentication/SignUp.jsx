@@ -1,10 +1,11 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+// import { useDispatch } from 'react-redux';
 // import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import * as yup from 'yup';
-import { setLogin } from '../../state';
+// import { setLogin } from '../../state';
 import email_icon from '../Assets/email.png';
 import password_icon from '../Assets/lock.png';
 import moc_img from '../Assets/moc.png';
@@ -38,14 +39,14 @@ const validationSchema = yup.object({
 });
 
 const SignUp = () => {
-  const dispatch = useDispatch();
+  const { role, userId } = useParams();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     confirmPassword: '',
     username: '',
     phone_number: '',
-    role: 'admin',
+    role,
   });
 
   const [errors, setErrors] = useState({});
@@ -80,14 +81,13 @@ const SignUp = () => {
     if (!isValid) return;
 
     try {
-      const response = await axios.post(`${baseUrl}/auth/register`, formData);
-      if (response.status === 201) {
+      const response = await axios.put(
+        `${baseUrl}/auth/user/${userId}`,
+        formData
+      );
+      if (response.status === 200) {
         toast.success('Sign up successful!');
-        const user_id = response.data.user.id;
-        const access_token = response.data.token;
-        const role = response.data.user.role;
-        dispatch(setLogin({ user_id, access_token, role }));
-        window.location.href = `/twofactorauthentication`;
+        window.location.href = `/twofactorauthentication/${userId}`;
       }
     } catch (error) {
       console.error('Error signing up:', error);
@@ -209,20 +209,9 @@ const SignUp = () => {
               )}
             </div>
             <div className="flex flex-col items-center w-1/2">
-              <div className="flex items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
+              <div className="flex py-2 pl-2 pr-4 items-center m-auto h-15 bg-white outline-black outline-1 outline rounded-md mt-2">
                 <img src={role_icon} alt="Role" className="w-6 h-6 mx-2" />
-                <select
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  className="w-full p-2 bg-transparent border-none outline-none"
-                >
-                  <option value="" disabled>
-                    Select Role
-                  </option>
-                  <option value="admin">Admin</option>
-                  <option value="investigator">Investigator</option>
-                </select>
+                {role}
               </div>
               {errors.role && (
                 <p className="text-red-500 text-xs">{errors.role}</p>

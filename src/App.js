@@ -28,9 +28,12 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signup/:role/:userId" element={<SignUp />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
-        <Route path="/twofactorauthentication" element={<TwoFactorAuth />} />
+        <Route
+          path="/twofactorauthentication/:user_id"
+          element={<TwoFactorAuth />}
+        />
         <Route path="/admin/dashboard" element={<AdminConsole />} />
         <Route
           path="/investigator/dashboard"
@@ -42,6 +45,7 @@ function App() {
         <Route path="/project/add" element={<AddProject />} />
 
         <Route path="/project/:title/:code/:id" element={<Project />} />
+        {/* project id title code */}
         <Route path="/project/onboard" element={<ProjectOnboarding />} />
         <Route path="/project/all" element={<ProjectList />} />
         <Route path="/schedule/meetings" element={<MeetingSchedule />} />

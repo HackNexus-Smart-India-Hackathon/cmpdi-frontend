@@ -55,10 +55,15 @@ const FormsView = () => {
   //       return <div>Form not found</div>;
   //   }
   // };
+  function replaceHyphensWithSpaces(str) {
+    return str.replace(/-/g, ' ');
+  }
   const common = () => {
     return (
       <div className="w-[80vw] mx-auto p-6 bg-white shadow-md border rounded-lg">
-        <h1 className="text-xl font-semibold mb-4">{title} Audit History</h1>
+        <h1 className="text-xl font-semibold mb-4">
+          {replaceHyphensWithSpaces(title)} Audit History
+        </h1>
         <table className="min-w-full border-collapse border border-gray-300 text-left">
           <thead>
             <tr className="bg-gray-100">

@@ -42,6 +42,7 @@ function App() {
         <Route path="/project/add" element={<AddProject />} />
 
         <Route path="/project/:title/:code/:id" element={<Project />} />
+        {/* project id title code */}
         <Route path="/project/onboard" element={<ProjectOnboarding />} />
         <Route path="/project/all" element={<ProjectList />} />
         <Route path="/schedule/meetings" element={<MeetingSchedule />} />

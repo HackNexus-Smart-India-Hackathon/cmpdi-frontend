@@ -116,7 +116,7 @@ const QuarterlyExpenditureStatementForm = ({ edit }) => {
 
     try {
       const response = await axios.post(
-        'http://localhost:5001/api/forms/quarterly-expenditure-statement',
+        `${process.env.REACT_APP_PROJECT_BASE_API}/api/forms/quarterly-expenditure-statement`,
         apiPayload,
         {
           headers: {

@@ -105,7 +105,7 @@ const QuarterlyExpenditureStatementonCapitalEquipment = ({ edit }) => {
     if (Object.keys(formErrors).length === 0) {
       try {
         const response = await axios.post(
-          'http://localhost:5001/api/forms/quarterly-expenditure-statement-capital-equipment',
+          `${process.env.REACT_APP_PROJECT_BASE_API}/api/forms/quarterly-expenditure-statement-capital-equipment`,
           formData
         );
 

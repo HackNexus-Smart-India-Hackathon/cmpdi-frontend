@@ -123,7 +123,7 @@ function FundRequisitionForm({ edit }) {
       try {
         formData.projectId = 1;
         const response = await axios.post(
-          'http://localhost:5001/api/forms/fund-requisition',
+          `${process.env.REACT_APP_PROJECT_BASE_API}/api/forms/fund-requisition`,
           formData
         );
         console.log('Form Data Submitted:', response.data);

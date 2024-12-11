@@ -1,47 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-// import FundRequisitionForm from '../components/formsView/FundRequisitionForm';
-// import ProjectCompletionReportForm from '../components/formsView/ProjectCompletionReportForm';
-// import ProjectDurationExtensionForm from '../components/formsView/ProjectDurationExtentionForm';
-// import QuarterlyExpenditureStatementForm from '../components/formsView/QuarterlyExpenditureStatementForm';
-// import QuarterlyExpenditureStatementonCapitalEquipment from '../components/formsView/QuarterlyExpenditureStatementonCapitalEquipment';
-// import QuarterlyStatusReportForm from '../components/formsView/QuarterlyStatusReportForm';
-// import RevisionCostForm from '../components/formsView/RevisionCostForm';
 import ChatList from '../components/chat/chatlist';
+import ExportFundDataToExcel from '../components/formsView/FundRequisitionForm';
+import ExportToExcel from '../components/formsView/QuarterlyExpenditureStatementForm';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
+
 const FormsView = () => {
   const { title, code, projectId } = useParams();
   const [auditData, setAuditData] = useState([]);
+  const [selectedEntryId, setSelectedEntryId] = useState(null);
   console.log(auditData);
-
-  // const auditData = [
-  //   {
-  //     id: 1,
-  //     auditTime: '2024-12-05 10:45 AM',
-  //     filledBy: 'John Doe',
-  //     formDataLink: '/forms/data/1',
-  //     supportingDocLink: '/forms/supporting-doc/1',
-  //   },
-  //   {
-  //     id: 2,
-  //     auditTime: '2024-12-04 02:30 PM',
-  //     filledBy: 'Jane Smith',
-  //     formDataLink: '/forms/data/2',
-  //     supportingDocLink: '/forms/supporting-doc/2',
-  //   },
-  //   {
-  //     id: 3,
-  //     auditTime: '2024-12-03 11:15 AM',
-  //     filledBy: 'Robert Brown',
-  //     formDataLink: '/forms/data/3',
-  //     supportingDocLink: '/forms/supporting-doc/3',
-  //   },
-  // ];
 
   function replaceHyphensWithSpaces(str) {
     return str.replace(/-/g, ' ');
   }
+  const renderExcel = () => {
+    switch (code) {
+      case '2':
+        return <ExportFundDataToExcel id={selectedEntryId} />;
+      case '3':
+        return <ExportToExcel id={selectedEntryId} />;
+      default:
+        alert('not done yet');
+    }
+  };
   useEffect(() => {
     const getTitle = () => {
       switch (code) {
@@ -106,14 +89,12 @@ const FormsView = () => {
                 </td>
                 <td className="border border-gray-300 p-3">{entry.filledBy}</td>
                 <td className="border border-gray-300 p-3">
-                  <a
-                    href={entry.formDataLink}
+                  <button
+                    onClick={() => setSelectedEntryId(entry.id)}
                     className="text-blue-600 hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
                   >
-                    View Form Data
-                  </a>
+                    View Excel
+                  </button>
                 </td>
                 <td className="border border-gray-300 p-3">
                   <a
@@ -129,6 +110,7 @@ const FormsView = () => {
             ))}
           </tbody>
         </table>
+        {selectedEntryId && renderExcel()}
         <ChatList />
       </div>
     );

@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 
-const ExportFundDataToExcel = () => {
+const ExportFundDataToExcel = ({ id }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,7 +12,7 @@ const ExportFundDataToExcel = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:5000/api/forms/fund-requisition/form/8'
+          `${process.env.REACT_APP_PROJECT_BASE_API}/api/forms/fund-requisition/form/${id}`
         );
         setData(response.data.data); // Assuming the response has the required data in `data`
         setLoading(false);
@@ -23,7 +23,7 @@ const ExportFundDataToExcel = () => {
     };
 
     fetchData();
-  }, []);
+  }, [id]);
 
   const handleExport = () => {
     if (!data) return;

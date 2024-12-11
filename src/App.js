@@ -51,7 +51,10 @@ function App() {
         <Route path="/schedule/meetings" element={<MeetingSchedule />} />
         <Route path="/meeting/logs" element={<MeetingLogs />} />
         <Route path="/forms" element={<FormsList />} />
-        <Route path="/forms/view/:title/:code" element={<FormsView />} />
+        <Route
+          path="/forms/view/:title/:code/:projectId"
+          element={<FormsView />}
+        />
         <Route path="/forms/fill/:title/:code" element={<FormsFill />} />
         <Route path="/piegraph" element={<PieChart />} />
         <Route path="/bargraph" element={<BarChart />} />

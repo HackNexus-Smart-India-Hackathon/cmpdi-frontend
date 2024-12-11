@@ -8,19 +8,20 @@ import FileUpload from './components/FileUpload';
 import BarChart from './components/graphs/BarChart';
 import PieChart from './components/graphs/PieChart';
 import ProjectOnboarding from './components/ProjectOnboarding';
+import ExcelDownload from "./components/exceldownload";
 
-import AddProject from './pages/AddProject';
-import AdminConsole from './pages/AdminConsole';
-import './App.css';
-import FormsFill from './pages/formsFill';
-import FormsList from './pages/formsList';
-import FormsView from './pages/formsView';
-import InvestigatorConsole from './pages/InvestigatorConsole';
-import MeetingLogs from './pages/MeetingLogs';
-import MeetingSchedule from './pages/MeetingSchedule';
-import Profile from './pages/profile';
-import Project from './pages/project';
-import ProjectList from './pages/projectList';
+import AddProject from "./pages/AddProject";
+import AdminConsole from "./pages/AdminConsole";
+import "./App.css";
+import FormsFill from "./pages/formsFill";
+import FormsList from "./pages/formsList";
+import FormsView from "./pages/formsView";
+import InvestigatorConsole from "./pages/InvestigatorConsole";
+import MeetingLogs from "./pages/MeetingLogs";
+import MeetingSchedule from "./pages/MeetingSchedule";
+import Profile from "./pages/profile";
+import Project from "./pages/project";
+import ProjectList from "./pages/projectList";
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
         <Route path="/piegraph" element={<PieChart />} />
         <Route path="/bargraph" element={<BarChart />} />
         <Route path="/fileupload" element={<FileUpload />} />
+        <Route path="/exceldownload" element={<ExcelDownload />} />
       </Routes>
     </Router>
   );

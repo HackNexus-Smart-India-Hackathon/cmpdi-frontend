@@ -1,10 +1,13 @@
 import { IconButton } from '@mui/material';
 import React, { useState, useRef, useEffect } from 'react';
 import { FiMoreVertical } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 import ChatSection from '../components/chat/chatlist';
 
 const FormsList = () => {
+  const { id } = useParams();
+  const { role } = useSelector((state) => state.auth);
   const forms = [
     { title: 'Fund Requisition', form: 'Form - II', link: 'Fund-Requisition' },
     {
@@ -46,7 +49,7 @@ const FormsList = () => {
     setDropdownOpen(dropdownOpen === index ? null : index);
   };
   const handelView = (title, index) => {
-    navigate(`/forms/view/${title}/${index + 2}`);
+    navigate(`/forms/view/${title}/${index + 2}/${id}`);
   };
   const handelFill = (title, index) => {
     navigate(`/forms/fill/${title}/${index + 2}`, {
@@ -115,24 +118,35 @@ const FormsList = () => {
                     className="absolute z-10 bg-white border border-gray-300 shadow-lg rounded mt-1 right-0"
                   >
                     <ul className="text-sm">
-                      <li
-                        onClick={() => handelFill(form.link, index)}
-                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                      >
-                        Fill
-                      </li>
-                      <li
-                        onClick={() => handelView(form.link, index)}
-                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                      >
-                        View
-                      </li>
-                      <li
-                        onClick={() => handelEdit(form.link, index)}
-                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                      >
-                        Edit
-                      </li>
+                      {role === 'admin' ? (
+                        <li
+                          onClick={() => handelView(form.link, index)}
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        >
+                          View
+                        </li>
+                      ) : (
+                        <>
+                          <li
+                            onClick={() => handelFill(form.link, index)}
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                          >
+                            Fill
+                          </li>
+                          <li
+                            onClick={() => handelView(form.link, index)}
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                          >
+                            View
+                          </li>
+                          <li
+                            onClick={() => handelEdit(form.link, index)}
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                          >
+                            Edit
+                          </li>
+                        </>
+                      )}
                     </ul>
                   </div>
                 )}

@@ -1,9 +1,11 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { setProject } from '../state/index';
 
 function ProjectForm() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user_id } = useSelector((state) => state.auth);
   const initialValues = {
@@ -116,6 +118,7 @@ function ProjectForm() {
         })
       );
       console.log('API Response:', response.data);
+      navigate(`/project/add/timeline/${response.data.projectId}`);
     } catch (err) {
       console.error('API Error:', err);
       // setError('Failed to submit the project. Please try again.');

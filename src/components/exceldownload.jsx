@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import * as XLSX from "xlsx";
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import * as XLSX from 'xlsx';
 
 const ExportToExcel = () => {
   const [data, setData] = useState(null);
@@ -12,7 +12,7 @@ const ExportToExcel = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/forms/quarterly-expenditure-statement/form/1"
+          'http://localhost:5000/api/forms/quarterly-expenditure-statement/form/1'
         );
         setData(response.data); // Assuming the response has the required data in `data`
         setLoading(false);
@@ -33,23 +33,23 @@ const ExportToExcel = () => {
 
     // Add summary sheet
     const summaryData = [
-      ["Project ID", data.projectId],
-      ["Quarter Ending", data.quarterEnding],
-      ["Expenditure To Date", data.expenditureToDate],
-      ["Funds Advanced", data.fundsAdvanced],
-      ["Unspent Balance", data.unspentBalance],
+      ['Project ID', data.projectId],
+      ['Quarter Ending', data.quarterEnding],
+      ['Expenditure To Date', data.expenditureToDate],
+      ['Funds Advanced', data.fundsAdvanced],
+      ['Unspent Balance', data.unspentBalance],
     ];
     const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
-    XLSX.utils.book_append_sheet(workbook, summarySheet, "Summary");
+    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
 
     // Add financial details sheet
     const financialDetailsHeader = [
-      "Category",
-      "Current Quarter",
-      "Previous Quarter",
-      "Previous Year",
-      "Sanctioned Provision",
-      "Total Approved",
+      'Category',
+      'Current Quarter',
+      'Previous Quarter',
+      'Previous Year',
+      'Sanctioned Provision',
+      'Total Approved',
     ];
     const financialDetailsData = data.financialDetails.map((item) => [
       item.category,
@@ -63,10 +63,14 @@ const ExportToExcel = () => {
       financialDetailsHeader,
       ...financialDetailsData,
     ]);
-    XLSX.utils.book_append_sheet(workbook, financialDetailsSheet, "Financial Details");
+    XLSX.utils.book_append_sheet(
+      workbook,
+      financialDetailsSheet,
+      'Financial Details'
+    );
 
     // Export the workbook
-    XLSX.writeFile(workbook, "Project_Details.xlsx");
+    XLSX.writeFile(workbook, 'Project_Details.xlsx');
   };
 
   if (loading) return <div>Loading...</div>;

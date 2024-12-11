@@ -9,6 +9,7 @@ import BarChart from './components/graphs/BarChart';
 import PieChart from './components/graphs/PieChart';
 import ProjectOnboarding from './components/ProjectOnboarding';
 import ExcelDownload from "./components/exceldownload";
+import Gantt from "./components/ganttchart.jsx";
 
 import AddProject from "./pages/AddProject";
 import AdminConsole from "./pages/AdminConsole";
@@ -58,6 +59,7 @@ function App() {
         <Route path="/bargraph" element={<BarChart />} />
         <Route path="/fileupload" element={<FileUpload />} />
         <Route path="/exceldownload" element={<ExcelDownload />} />
+        <Route path="/ganttchart" element={<Gantt />} />
       </Routes>
     </Router>
   );

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import * as XLSX from "xlsx";
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import * as XLSX from 'xlsx';
 
 const ExportFundDataToExcel = () => {
   const [data, setData] = useState(null);
@@ -12,7 +12,7 @@ const ExportFundDataToExcel = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/forms/fund-requisition/form/8"
+          'http://localhost:5000/api/forms/fund-requisition/form/8'
         );
         setData(response.data.data); // Assuming the response has the required data in `data`
         setLoading(false);
@@ -33,38 +33,38 @@ const ExportFundDataToExcel = () => {
 
     // Add summary sheet
     const summaryData = [
-      ["Project ID", data.projectId],
-      ["Year Period", data.yearPeriod],
-      ["Created At", data.createdAt],
-      ["Updated At", data.updatedAt],
+      ['Project ID', data.projectId],
+      ['Year Period', data.yearPeriod],
+      ['Created At', data.createdAt],
+      ['Updated At', data.updatedAt],
     ];
     const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
-    XLSX.utils.book_append_sheet(workbook, summarySheet, "Summary");
+    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
 
     // Add funds details sheet
     const fundsHeader = [
-      "Category",
-      "Provision",
-      "Expenditure",
-      "Fund Received",
-      "Fund Required",
-      "Interest Earned",
-      "Total Approved Cost",
+      'Category',
+      'Provision',
+      'Expenditure',
+      'Fund Received',
+      'Fund Required',
+      'Interest Earned',
+      'Total Approved Cost',
     ];
     const fundsData = Object.entries(data.funds).map(([category, details]) => [
       category,
-      details.provision || "",
-      details.expenditure || "",
-      details.fundReceived || "",
-      details.fundRequired || "",
-      details.interestEarned || "",
-      details.totalApprovedCost || "",
+      details.provision || '',
+      details.expenditure || '',
+      details.fundReceived || '',
+      details.fundRequired || '',
+      details.interestEarned || '',
+      details.totalApprovedCost || '',
     ]);
     const fundsSheet = XLSX.utils.aoa_to_sheet([fundsHeader, ...fundsData]);
-    XLSX.utils.book_append_sheet(workbook, fundsSheet, "Funds Details");
+    XLSX.utils.book_append_sheet(workbook, fundsSheet, 'Funds Details');
 
     // Export the workbook
-    XLSX.writeFile(workbook, "Fund_Requisition_Details.xlsx");
+    XLSX.writeFile(workbook, 'Fund_Requisition_Details.xlsx');
   };
 
   if (loading) return <div>Loading...</div>;

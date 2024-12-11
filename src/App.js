@@ -8,7 +8,7 @@ import FileUpload from './components/FileUpload';
 import BarChart from './components/graphs/BarChart';
 import PieChart from './components/graphs/PieChart';
 import ProjectOnboarding from './components/ProjectOnboarding';
-
+import TimelineForm from './components/TimelineForm';
 import AddProject from './pages/AddProject';
 import AdminConsole from './pages/AdminConsole';
 import './App.css';
@@ -43,6 +43,7 @@ function App() {
 
         <Route path="/project/:title" element={<Project />} />
         <Route path="/project/add" element={<AddProject />} />
+        <Route path="/project/add/timeline/:id" element={<TimelineForm />} />
 
         <Route path="/project/:title/:code/:id" element={<Project />} />
         {/* project id title code */}

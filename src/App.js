@@ -4,12 +4,12 @@ import Login from './components/Authentication/Login';
 import ResetPassword from './components/Authentication/ResetPassword';
 import SignUp from './components/Authentication/SignUp';
 import TwoFactorAuth from './components/Authentication/TwoFactorAuth';
-import ExcelDownload from './components/exceldownload';
 import FileUpload from './components/FileUpload';
 import BarChart from './components/graphs/BarChart';
 import PieChart from './components/graphs/PieChart';
 import ProjectOnboarding from './components/ProjectOnboarding';
 import TimelineForm from './components/TimelineForm';
+
 import AddProject from './pages/AddProject';
 import AdminConsole from './pages/AdminConsole';
 import './App.css';
@@ -61,7 +61,6 @@ function App() {
         <Route path="/piegraph" element={<PieChart />} />
         <Route path="/bargraph" element={<BarChart />} />
         <Route path="/fileupload" element={<FileUpload />} />
-        <Route path="/exceldownload" element={<ExcelDownload />} />
       </Routes>
     </Router>
   );

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import FileUpload from '../FileUpload';
 import ProjectDetails from '../ProjectDetails';
 
@@ -30,6 +31,9 @@ const initializeFinancialDetails = () => {
 };
 
 const QuarterlyExpenditureStatementForm = ({ edit }) => {
+  const { project } = useSelector((state) => state.auth);
+  console.log(project.id);
+
   const [formData, setFormData] = useState({
     projectId: '',
     quarterEnding: '',
@@ -100,7 +104,7 @@ const QuarterlyExpenditureStatementForm = ({ edit }) => {
 
     setIsSubmitting(true);
 
-    formData.projectId = 1;
+    formData.projectId = project.id;
 
     const apiPayload = {
       ...formData,

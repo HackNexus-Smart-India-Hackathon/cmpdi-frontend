@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import FileUpload from '../FileUpload';
 import ProjectDetails from '../ProjectDetails';
 
@@ -32,7 +33,8 @@ const initialFormState = {
 };
 
 function FundRequisitionForm({ edit }) {
-  console.log(edit);
+  // console.log(edit);
+  const { project } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState(initialFormState);
   const [expanded, setExpanded] = useState(null);
@@ -121,7 +123,7 @@ function FundRequisitionForm({ edit }) {
     if (validateForm()) {
       setIsSubmitting(true);
       try {
-        formData.projectId = 1;
+        formData.projectId = project.id;
         const response = await axios.post(
           `${process.env.REACT_APP_PROJECT_BASE_API}/api/forms/fund-requisition`,
           formData

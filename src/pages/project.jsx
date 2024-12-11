@@ -1,4 +1,5 @@
 import React from 'react';
+import QuarterlyExpenditure from '../components/charts/QuaterlyExpenditure';
 import ChatList from '../components/chat/chatlist';
 import FormsList from '../components/FormList';
 import Navbar from '../components/Navbar';
@@ -16,7 +17,7 @@ const Project = () => {
           <ProjectDetails />
           <FormsList />
           <div>
-            1 about project <br />2 project graphs <br />3 project forms
+            <QuarterlyExpenditure />
           </div>
         </div>
         <ChatList />

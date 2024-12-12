@@ -3,8 +3,9 @@ import AssignmentTurnedInRoundedIcon from '@mui/icons-material/AssignmentTurnedI
 import React from 'react';
 import { useSelector } from 'react-redux';
 import KeyMetrix from '../components/adminConsole/keymetrix';
-import QuarterlyExpenditure from '../components/charts/QuaterlyExpenditure';
+// import QuarterlyExpenditure from '../components/charts/QuaterlyExpenditure';
 import Navbar from '../components/Navbar';
+import PDFGenerate from '../components/PDFGenerate';
 import ProjectTable from '../components/projectList';
 import Sidebar from '../components/Sidebar';
 
@@ -51,9 +52,8 @@ const AdminConsole = () => {
           <div>
             <ProjectTable />
           </div>
-          <div className="mt-20">
-            <QuarterlyExpenditure />
-          </div>
+          <div className="mt-20">{/* <QuarterlyExpenditure /> */}</div>
+          <PDFGenerate />
         </div>
       </div>
     </div>

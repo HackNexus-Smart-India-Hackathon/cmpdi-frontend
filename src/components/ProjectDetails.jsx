@@ -55,7 +55,7 @@ const ProjectDetails = () => {
                 Principal Implementing Agency
               </p>
               <p className="text-gray-800">
-                {projectdata.principalImplementingAgency}
+                {/* {projectdata.principalImplementingAgency} */}
               </p>
             </div>
             {projectdata.subImplementingAgencies?.length > 0 && (
@@ -64,7 +64,7 @@ const ProjectDetails = () => {
                   Sub-Implementing Agencies
                 </p>
                 <p className="text-gray-800">
-                  {projectdata.subImplementingAgencies.join(', ')}
+                  {/* {projectdata.subImplementingAgencies.join(', ')} */}
                 </p>
               </div>
             )}
@@ -75,14 +75,14 @@ const ProjectDetails = () => {
               Project Investigator Email(s)
             </p>
             <div className="flex flex-wrap gap-2 mt-2">
-              {projectdata.projectInvestigatorEmail?.map((email, index) => (
+              {/* {projectdata.projectInvestigatorEmail?.map((email, index) => (
                 <span
                   key={index}
                   className="inline-block px-4 py-2 bg-slate-100 text-slate-800 rounded-full text-sm font-medium border border-slate-300"
                 >
                   {email}
                 </span>
-              ))}
+              ))} */}
             </div>
           </div>
 

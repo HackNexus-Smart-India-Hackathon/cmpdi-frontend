@@ -27,7 +27,7 @@ const LoginSignup = () => {
         const user_id = response.data.user.id;
         const access_token = response.data.token;
         const { role } = response.data.user;
-        const chatUser = response.data.chat.user;
+        const chatUser = response.data.chat?.user;
         const project = response.data.user.project;
         dispatch(setLogin({ user_id, access_token, role, chatUser, project }));
 

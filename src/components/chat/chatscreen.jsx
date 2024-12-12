@@ -61,10 +61,6 @@ const Chatscreen = ({ roomName, closeChat, chat_id }) => {
       }
     };
 
-    ws.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
-
     ws.onerror = (err) => {
       console.error('WebSocket error:', err);
     };

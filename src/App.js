@@ -18,6 +18,7 @@ import FormsFill from './pages/formsFill';
 import FormsList from './pages/formsList';
 import FormsView from './pages/formsView';
 import InvestigatorConsole from './pages/InvestigatorConsole';
+import Matrix from './pages/Matrix';
 import MeetingLogs from './pages/MeetingLogs';
 import MeetingSchedule from './pages/MeetingSchedule';
 import Profile from './pages/profile';
@@ -36,6 +37,7 @@ function App() {
           path="/twofactorauthentication/:user_id"
           element={<TwoFactorAuth />}
         />
+        <Route path="/analytics" element={<Matrix />} />
         <Route path="/admin/dashboard" element={<AdminConsole />} />
         <Route
           path="/investigator/dashboard"

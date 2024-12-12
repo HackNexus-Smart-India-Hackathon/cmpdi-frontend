@@ -159,16 +159,16 @@ function ProjectForm() {
     formData.outlay = [...formData.outlay, ...uniqueArray];
     console.log('Form Data:', formData);
     const baseUrl = process.env.REACT_APP_PROJECT_BASE_API;
-    function clubEmails(email1, subImplemtingAgencies) {
-      // const email2 = [];
-      // subImplemtingAgencies.forEach((item) => {
-      //   email2.push(item[Object.keys(item)[2]]);
-      // });
-      // email2.forEach((email) => {
-      //   email1.push(email);
-      // });
-      return email1;
-    }
+    // function clubEmails(email1, subImplemtingAgencies) {
+    // const email2 = [];
+    // subImplemtingAgencies.forEach((item) => {
+    //   email2.push(item[Object.keys(item)[2]]);
+    // });
+    // email2.forEach((email) => {
+    //   email1.push(email);
+    // });
+    //   return email1;
+    // }
     console.log('Form Data:', formData);
     const modifiedFormData = {
       projectTitle: formData.projectTitle,

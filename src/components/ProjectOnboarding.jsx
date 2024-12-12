@@ -19,7 +19,7 @@ function ProjectForm() {
       agencyName: '',
       projectInvestigatorName: '',
     },
-    projectInvestigators: [],
+    projectInvestigators: ['hello@gmail.com'],
     subImplementingAgencies: [],
     adminId: [user_id],
     projectOutlay: {
@@ -172,20 +172,29 @@ function ProjectForm() {
     //   return email1;
     // }
     console.log('Form Data:', formData);
+    const getSubImplementingAgencies = (subImplementingAgencies) => {
+      let arr = [];
+      subImplementingAgencies.forEach((item) => {
+        arr.push(item.investigatorEmail);
+      });
+      return arr;
+    };
     const modifiedFormData = {
       projectTitle: formData.projectTitle,
       fundingSource: formData.fundingSource,
       description: formData.description,
       principalImplementingAgency: {
         principalImplementingAgency: formData.principalImplementingAgency,
-        principalInvestigator: formData.projectInvestigators,
+        principalInvestigator: 'jiilk',
       },
       subImplementingAgencies: formData.subImplementingAgencies,
-      projectInvestigators: formData.subImplementingAgencies.investigatorEmail,
+      projectInvestigators: getSubImplementingAgencies(
+        formData.subImplementingAgencies
+      ),
       startDate: formData.startDate,
       scheduleCompletionDate: formData.scheduleCompletionDate,
       principalOutlay: formData.projectOutlay,
-      subOutlay: formData.outlay,
+      subOutlay: formData.projectOutlay,
       status: formData.status,
       adminId: formData.adminId,
     };

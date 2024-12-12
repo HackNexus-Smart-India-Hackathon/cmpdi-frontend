@@ -51,7 +51,7 @@ const TimelineForm = () => {
         setFormValues([
           { description: '', startDate: '', deadline: '', compressed: false },
         ]); // Reset form
-        navigate(`project/all`);
+        navigate(`/project/all`);
       }
     } catch (error) {
       console.error('Error adding timeline:', error);

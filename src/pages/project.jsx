@@ -2,6 +2,7 @@ import React from 'react';
 import QuarterlyExpenditure from '../components/charts/QuaterlyExpenditure';
 import ChatList from '../components/chat/chatlist';
 import FormsList from '../components/FormList';
+import GanttChart from '../components/ganttchart';
 import Navbar from '../components/Navbar';
 import ProjectDetails from '../components/ProjectDetails';
 import Sidebar from '../components/Sidebar';
@@ -15,6 +16,7 @@ const Project = () => {
         </div>
         <div className="flex-1">
           <ProjectDetails />
+          <GanttChart />
           <FormsList />
           <div>
             <QuarterlyExpenditure />

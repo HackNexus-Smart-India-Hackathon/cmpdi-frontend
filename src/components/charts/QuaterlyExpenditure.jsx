@@ -1,54 +1,75 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import Chart from 'react-apexcharts';
 
 const QuarterlyExpenditure = () => {
-  const data = {
-    Q1: { Land: 20, Equipment: 15, Manpower: 25, Consumable: 10, TA_DA: 5 },
-    Q2: { Land: 25, Equipment: 20, Manpower: 30, Consumable: 15, TA_DA: 8 },
-    Q3: { Land: 30, Equipment: 25, Manpower: 35, Consumable: 20, TA_DA: 10 },
-    Q4: { Land: 35, Equipment: 30, Manpower: 40, Consumable: 25, TA_DA: 12 },
-  };
-
-  const categories = ['Land', 'Equipment', 'Manpower', 'Consumable', 'TA_DA'];
+  const [data, setData] = useState(null);
+  const [selectedFeature, setSelectedFeature] = useState('currentQuarter');
+  const [compareQuarters, setCompareQuarters] = useState(['currentQuarter']);
   const [selectedQuarter, setSelectedQuarter] = useState('Q1');
-  const [compareQuarters, setCompareQuarters] = useState(['Q1', 'Q2']);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_PROJECT_BASE_API}/api/forms/quarterly-expenditure-statement/form/1`
+        );
+        setData(response.data.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (!data) return <div>Loading...</div>;
+
+  const categories = data.financialDetails.map((item) => item.category);
+
+  const getFeatureData = (feature) => {
+    return categories.map((cat) => {
+      const item = data.financialDetails.find((item) => item.category === cat);
+      return parseFloat(item[feature]); // Convert to number for charting
+    });
+  };
 
   // Bar Chart Options
   const barChartOptions = {
     chart: { type: 'bar' },
     xaxis: { categories },
-    title: { text: `Expenditure for ${selectedQuarter}` },
+    title: { text: `Expenditure for ${selectedFeature}` },
     legend: { position: 'bottom' },
   };
   const barChartSeries = [
     {
-      name: 'Expenditure (Rs. Lakhs)',
-      data: categories.map((cat) => data[selectedQuarter][cat]),
+      name: `Expenditure (${selectedFeature})`,
+      data: getFeatureData(selectedFeature),
     },
   ];
 
   // Line Chart Options
   const lineChartOptions = {
     chart: { type: 'line' },
-    xaxis: { categories: Object.keys(data) },
+    xaxis: { categories: compareQuarters },
     title: { text: 'Progressive Expenditure Over Quarters' },
     legend: { position: 'bottom' },
   };
-  const lineChartSeries = categories.map((cat) => ({
-    name: cat,
-    data: Object.keys(data).map((q) => data[q][cat]),
+  const lineChartSeries = compareQuarters.map((feature) => ({
+    name: feature,
+    data: getFeatureData(feature),
   }));
 
   // Radar Chart Options
   const radarChartOptions = {
     chart: { type: 'radar' },
     xaxis: { categories },
-    title: { text: `Proportional Expenditure for ${selectedQuarter}` },
+    title: { text: `Proportional Expenditure for ${selectedFeature}` },
   };
   const radarChartSeries = [
     {
-      name: selectedQuarter,
-      data: categories.map((cat) => data[selectedQuarter][cat]),
+      name: selectedFeature,
+      data: getFeatureData(selectedFeature),
     },
   ];
 
@@ -59,9 +80,9 @@ const QuarterlyExpenditure = () => {
     title: { text: 'Quarterly Comparison' },
     legend: { position: 'bottom' },
   };
-  const groupedBarChartSeries = compareQuarters.map((q) => ({
-    name: q,
-    data: categories.map((cat) => data[q][cat]),
+  const groupedBarChartSeries = compareQuarters.map((feature) => ({
+    name: feature,
+    data: getFeatureData(feature),
   }));
 
   return (
@@ -70,17 +91,28 @@ const QuarterlyExpenditure = () => {
         Quarterly Expenditure Dashboard
       </h1>
 
-      {/* Dropdowns */}
+      {/* Dropdowns for Main Feature and Quarter Selection */}
       <div className="flex justify-center gap-4 mb-6">
         <select
           onChange={(e) => setSelectedQuarter(e.target.value)}
+          value={selectedQuarter}
           className="p-2 border border-gray-300 rounded-md"
         >
-          {Object.keys(data).map((q) => (
-            <option key={q} value={q}>
-              {q}
-            </option>
-          ))}
+          <option value="Q1">Q1</option>
+          <option value="Q2">Q2</option>
+          <option value="Q3">Q3</option>
+          <option value="Q4">Q4</option>
+        </select>
+        <select
+          onChange={(e) => setSelectedFeature(e.target.value)}
+          value={selectedFeature}
+          className="p-2 border border-gray-300 rounded-md"
+        >
+          <option value="currentQuarter">Current Quarter</option>
+          <option value="previousQuarter">Previous Quarter</option>
+          <option value="previousYear">Previous Year</option>
+          <option value="sanctionedProvision">Sanctioned Provision</option>
+          <option value="totalApproved">Total Approved</option>
         </select>
         <select
           onChange={(e) =>
@@ -88,7 +120,7 @@ const QuarterlyExpenditure = () => {
           }
           className="p-2 border border-gray-300 rounded-md"
         >
-          {Object.keys(data).map((q) => (
+          {['Q1', 'Q2', 'Q3', 'Q4'].map((q) => (
             <option key={q} value={q}>
               Compare: {q}
             </option>
@@ -100,6 +132,20 @@ const QuarterlyExpenditure = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Bar Chart */}
         <div className="p-4 border rounded-lg shadow">
+          <div className="mb-4">
+            <label className="mr-2">Select Feature:</label>
+            <select
+              onChange={(e) => setSelectedFeature(e.target.value)}
+              value={selectedFeature}
+              className="p-2 border border-gray-300 rounded-md"
+            >
+              <option value="currentQuarter">Current Quarter</option>
+              <option value="previousQuarter">Previous Quarter</option>
+              <option value="previousYear">Previous Year</option>
+              <option value="sanctionedProvision">Sanctioned Provision</option>
+              <option value="totalApproved">Total Approved</option>
+            </select>
+          </div>
           <Chart
             options={barChartOptions}
             series={barChartSeries}
@@ -110,6 +156,20 @@ const QuarterlyExpenditure = () => {
 
         {/* Radar Chart */}
         <div className="p-4 border rounded-lg shadow">
+          <div className="mb-4">
+            <label className="mr-2">Select Feature:</label>
+            <select
+              onChange={(e) => setSelectedFeature(e.target.value)}
+              value={selectedFeature}
+              className="p-2 border border-gray-300 rounded-md"
+            >
+              <option value="currentQuarter">Current Quarter</option>
+              <option value="previousQuarter">Previous Quarter</option>
+              <option value="previousYear">Previous Year</option>
+              <option value="sanctionedProvision">Sanctioned Provision</option>
+              <option value="totalApproved">Total Approved</option>
+            </select>
+          </div>
           <Chart
             options={radarChartOptions}
             series={radarChartSeries}
@@ -122,6 +182,24 @@ const QuarterlyExpenditure = () => {
       <div className="mt-6">
         {/* Line Chart */}
         <div className="p-4 border rounded-lg shadow">
+          <div className="mb-4">
+            <label className="mr-2">Select Quarters to Compare:</label>
+            <select
+              onChange={(e) =>
+                setCompareQuarters([
+                  e.target.value,
+                  ...compareQuarters.slice(1),
+                ])
+              }
+              className="p-2 border border-gray-300 rounded-md"
+            >
+              {['Q1', 'Q2', 'Q3', 'Q4'].map((q) => (
+                <option key={q} value={q}>
+                  {q}
+                </option>
+              ))}
+            </select>
+          </div>
           <Chart
             options={lineChartOptions}
             series={lineChartSeries}
@@ -134,6 +212,24 @@ const QuarterlyExpenditure = () => {
       <div className="mt-6">
         {/* Grouped Bar Chart */}
         <div className="p-4 border rounded-lg shadow">
+          <div className="mb-4">
+            <label className="mr-2">Select Quarters to Compare:</label>
+            <select
+              onChange={(e) =>
+                setCompareQuarters([
+                  e.target.value,
+                  ...compareQuarters.slice(1),
+                ])
+              }
+              className="p-2 border border-gray-300 rounded-md"
+            >
+              {['Q1', 'Q2', 'Q3', 'Q4'].map((q) => (
+                <option key={q} value={q}>
+                  {q}
+                </option>
+              ))}
+            </select>
+          </div>
           <Chart
             options={groupedBarChartOptions}
             series={groupedBarChartSeries}
@@ -146,26 +242,61 @@ const QuarterlyExpenditure = () => {
       {/* Data Table */}
       <div className="mt-6 p-4 border rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4">Detailed Data</h2>
+        <div className="mb-4">
+          <label className="mr-2">Select Quarter:</label>
+          <select
+            onChange={(e) => setSelectedQuarter(e.target.value)}
+            value={selectedQuarter}
+            className="p-2 border border-gray-300 rounded-md"
+          >
+            <option value="Q1">Q1</option>
+            <option value="Q2">Q2</option>
+            <option value="Q3">Q3</option>
+            <option value="Q4">Q4</option>
+          </select>
+        </div>
         <table className="w-full table-auto border-collapse border border-gray-200">
           <thead>
             <tr>
               <th className="border border-gray-200 px-4 py-2">Category</th>
-              {Object.keys(data).map((q) => (
-                <th key={q} className="border border-gray-200 px-4 py-2">
-                  {q}
-                </th>
-              ))}
+              <th className="border border-gray-200 px-4 py-2">
+                Current Quarter
+              </th>
+              <th className="border border-gray-200 px-4 py-2">
+                Previous Quarter
+              </th>
+              <th className="border border-gray-200 px-4 py-2">
+                Previous Year
+              </th>
+              <th className="border border-gray-200 px-4 py-2">
+                Sanctioned Provision
+              </th>
+              <th className="border border-gray-200 px-4 py-2">
+                Total Approved
+              </th>
             </tr>
           </thead>
           <tbody>
-            {categories.map((cat) => (
-              <tr key={cat}>
-                <td className="border border-gray-200 px-4 py-2">{cat}</td>
-                {Object.keys(data).map((q) => (
-                  <td key={q} className="border border-gray-200 px-4 py-2">
-                    {data[q][cat]}
-                  </td>
-                ))}
+            {data.financialDetails.map((item, index) => (
+              <tr key={index}>
+                <td className="border border-gray-200 px-4 py-2">
+                  {item.category}
+                </td>
+                <td className="border border-gray-200 px-4 py-2">
+                  {item.currentQuarter}
+                </td>
+                <td className="border border-gray-200 px-4 py-2">
+                  {item.previousQuarter}
+                </td>
+                <td className="border border-gray-200 px-4 py-2">
+                  {item.previousYear}
+                </td>
+                <td className="border border-gray-200 px-4 py-2">
+                  {item.sanctionedProvision}
+                </td>
+                <td className="border border-gray-200 px-4 py-2">
+                  {item.totalApproved}
+                </td>
               </tr>
             ))}
           </tbody>

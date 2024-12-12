@@ -11,6 +11,7 @@ import ProjectOutlay from './ProjectOutlay';
 function ProjectForm() {
   const navigate = useNavigate();
   // const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user_id } = useSelector((state) => state.auth);
   const initialValues = {
     projectTitle: '',

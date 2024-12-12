@@ -1,12 +1,12 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 
 const TimelineForm = () => {
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const [formValues, setFormValues] = useState([
     { description: '', startDate: '', deadline: '' },
   ]);
@@ -43,14 +43,15 @@ const TimelineForm = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_PROJECT_BASE_API}/api/projects/${id}/addMildstone`,
-        formValues.map(({ compressed, ...rest }) => rest) // Exclude 'compressed' from submission
+        `${process.env.REACT_APP_PROJECT_BASE_API}/api/projects/${id}/addTimeline`,
+        { milestones: formValues } // Exclude 'compressed' from submission
       );
-      if (response.status === 200) {
+      if (response.status === 201) {
         alert('Timeline added successfully');
         setFormValues([
           { description: '', startDate: '', deadline: '', compressed: false },
         ]); // Reset form
+        navigate(`project/all`);
       }
     } catch (error) {
       console.error('Error adding timeline:', error);

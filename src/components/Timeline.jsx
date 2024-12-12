@@ -1,69 +1,143 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const MilestoneTimeline = () => {
+  const { project } = useSelector((state) => state.auth);
   const [milestones, setMilestones] = useState([
-    { id: 1, fraction: '0', goals: [] },
-    { id: 2, fraction: '1/7', goals: [] },
-    { id: 3, fraction: '2/7', goals: [] },
-    { id: 4, fraction: '3/7', goals: [] },
-    { id: 5, fraction: '4/7', goals: [] },
-    { id: 6, fraction: '5/7', goals: [] },
-    { id: 7, fraction: '6/7', goals: [] },
-    { id: 8, fraction: '1', goals: [] },
+    {
+      id: 6,
+      startDate: '2024-12-12T06:49',
+      description: 'm2',
+      deadline: '2024-12-27T01:19:00.000Z',
+      notified: false,
+      investigators_email: ['abc@gmail.com'],
+      projectId: '43',
+      createdAt: '2024-12-12T01:25:50.402Z',
+      updatedAt: '2024-12-12T01:25:50.402Z',
+    },
+    {
+      id: 7,
+      startDate: '2024-12-20T06:50',
+      description: 'm3',
+      deadline: '2025-01-08T01:20:00.000Z',
+      notified: false,
+      investigators_email: ['abc@gmail.com'],
+      projectId: '43',
+      createdAt: '2024-12-12T01:25:50.476Z',
+      updatedAt: '2024-12-12T01:25:50.476Z',
+    },
+    {
+      id: 8,
+      startDate: '2024-12-12T06:50',
+      description: 'm1',
+      deadline: '2024-12-20T01:20:00.000Z',
+      notified: false,
+      investigators_email: ['abc@gmail.com'],
+      projectId: '43',
+      createdAt: '2024-12-12T01:25:50.543Z',
+      updatedAt: '2024-12-12T01:25:50.543Z',
+    },
+    {
+      id: 9,
+      startDate: '2024-12-12T06:49',
+      description: 'm2',
+      deadline: '2024-12-27T01:19:00.000Z',
+      notified: false,
+      investigators_email: ['abc@gmail.com'],
+      projectId: '43',
+      createdAt: '2024-12-12T01:26:33.053Z',
+      updatedAt: '2024-12-12T01:26:33.053Z',
+    },
+    {
+      id: 10,
+      startDate: '2024-12-20T06:50',
+      description: 'm3',
+      deadline: '2025-01-08T01:20:00.000Z',
+      notified: false,
+      investigators_email: ['abc@gmail.com'],
+      projectId: '43',
+      createdAt: '2024-12-12T01:26:33.115Z',
+      updatedAt: '2024-12-12T01:26:33.115Z',
+    },
+    {
+      id: 11,
+      startDate: '2024-12-12T06:50',
+      description: 'm1',
+      deadline: '2024-12-20T01:20:00.000Z',
+      notified: false,
+      investigators_email: ['abc@gmail.com'],
+      projectId: '43',
+      createdAt: '2024-12-12T01:26:33.180Z',
+      updatedAt: '2024-12-12T01:26:33.180Z',
+    },
   ]);
   const [hoveredMilestone, setHoveredMilestone] = useState(null);
-  const [goalInput, setGoalInput] = useState('');
+  // const [goalInput, setGoalInput] = useState('');
 
-  const addGoal = (milestoneId) => {
-    if (goalInput.trim()) {
-      setMilestones((prevMilestones) =>
-        prevMilestones.map((milestone) =>
-          milestone.id === milestoneId
-            ? {
-                ...milestone,
-                goals: [
-                  ...milestone.goals,
-                  { text: goalInput.trim(), completed: false },
-                ],
-              }
-            : milestone
-        )
-      );
-      setGoalInput('');
-    }
-  };
+  // const addGoal = (milestoneId) => {
+  //   if (goalInput.trim()) {
+  //     setMilestones((prevMilestones) =>
+  //       prevMilestones.map((milestone) =>
+  //         milestone.id === milestoneId
+  //           ? {
+  //               ...milestone,
+  //               goals: [
+  //                 ...milestone.goals,
+  //                 { text: goalInput.trim(), completed: false },
+  //               ],
+  //             }
+  //           : milestone
+  //       )
+  //     );
+  //     setGoalInput('');
+  //   }
+  // };
 
-  const toggleGoal = (milestoneId, goalIndex) => {
-    setMilestones((prevMilestones) =>
-      prevMilestones.map((milestone) =>
-        milestone.id === milestoneId
-          ? {
-              ...milestone,
-              goals: milestone.goals.map((goal, index) =>
-                index === goalIndex
-                  ? { ...goal, completed: !goal.completed }
-                  : goal
-              ),
-            }
-          : milestone
-      )
-    );
-  };
+  // const toggleGoal = (milestoneId, goalIndex) => {
+  //   setMilestones((prevMilestones) =>
+  //     prevMilestones.map((milestone) =>
+  //       milestone.id === milestoneId
+  //         ? {
+  //             ...milestone,
+  //             goals: milestone.goals.map((goal, index) =>
+  //               index === goalIndex
+  //                 ? { ...goal, completed: !goal.completed }
+  //                 : goal
+  //             ),
+  //           }
+  //         : milestone
+  //     )
+  //   );
+  // };
 
-  const calculateProgress = () => {
-    const totalGoals = milestones.reduce(
-      (acc, milestone) => acc + milestone.goals.length,
-      0
-    );
-    const completedGoals = milestones.reduce(
-      (acc, milestone) =>
-        acc + milestone.goals.filter((goal) => goal.completed).length,
-      0
-    );
-    return totalGoals > 0 ? (completedGoals / totalGoals) * 100 : 0;
-  };
+  // const calculateProgress = () => {
+  //   const totalGoals = milestones.reduce(
+  //     (acc, milestone) => acc + milestone.goals.length,
+  //     0
+  //   );
+  //   const completedGoals = milestones.reduce(
+  //     (acc, milestone) =>
+  //       acc + milestone.goals.filter((goal) => goal.completed).length,
+  //     0
+  //   );
+  //   return totalGoals > 0 ? (completedGoals / totalGoals) * 100 : 0;
+  // };
 
-  const progress = calculateProgress();
+  // const progress = calculateProgress();
+  useEffect(() => {
+    const fetchMilestones = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_PROJECT_BASE_API}/api/projects/${project.id}/milestones`
+        );
+        setMilestones(response.data.notification);
+      } catch (error) {
+        console.error('Error fetching milestones:', error);
+      }
+    };
+    fetchMilestones();
+  }, [project.id]);
 
   return (
     <div className="w-full p-6 relative bg-slate-200 shadow-lg ">
@@ -73,14 +147,14 @@ const MilestoneTimeline = () => {
           style={{
             width: '100%',
             backgroundColor: 'white',
-            clipPath: `inset(0 ${100 - progress}% 0 0)`,
+            // clipPath: `inset(0 ${100 - progress}% 0 0)`,
           }}
         ></div>
       </div>
 
       {/* Milestone Buttons */}
       <div className="relative flex justify-between items-center w-full -mt-2">
-        {milestones.map((milestone) => (
+        {milestones.map((milestone, index) => (
           <div
             key={milestone.id}
             className="relative flex flex-col items-center"
@@ -91,49 +165,18 @@ const MilestoneTimeline = () => {
             <button className="w-4 h-4 bg-black transform rotate-45 translate-y-1/2"></button>
 
             {/* Fraction Display */}
-            <p className="text-xs mt-2">{milestone.fraction}</p>
+            <p className="text-xs mt-2">
+              {index + 1}/{milestones.length}
+            </p>
 
             {/* Checklist UI */}
             {hoveredMilestone === milestone.id && (
-              <div className="absolute top-10 left-1/2 transform -translate-x-1/2 bg-white text-black border border-black rounded-md p-4 shadow-lg z-10">
+              <div className="absolute z-20 top-10 left-1/2 transform -translate-x-1/2 bg-white text-black border border-black rounded-md p-4 shadow-lg">
                 <ul className="list-none">
-                  {milestone.goals.length > 0 ? (
-                    milestone.goals.map((goal, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center space-x-2 mb-2"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={goal.completed}
-                          onChange={() => toggleGoal(milestone.id, index)}
-                        />
-                        <span
-                          className={`${
-                            goal.completed ? 'line-through text-gray-500' : ''
-                          }`}
-                        >
-                          {goal.text}
-                        </span>
-                      </li>
-                    ))
-                  ) : (
-                    <li className="italic text-gray-500">No goals added.</li>
-                  )}
+                  <li className="text-lg ">{milestone.description}</li>
+                  <li>StartDate: {milestone.startDate.slice(0, 10)}</li>
+                  <li>Deadline:{milestone.deadline.slice(0, 10)}</li>
                 </ul>
-                <input
-                  type="text"
-                  className="w-full border border-gray-300 p-1 rounded mb-2"
-                  value={goalInput}
-                  placeholder="Add a goal"
-                  onChange={(e) => setGoalInput(e.target.value)}
-                />
-                <button
-                  className="w-full bg-black text-white py-1 rounded hover:bg-gray-800"
-                  onClick={() => addGoal(milestone.id)}
-                >
-                  Add Goal
-                </button>
               </div>
             )}
           </div>

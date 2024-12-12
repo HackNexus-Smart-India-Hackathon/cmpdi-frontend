@@ -7,7 +7,8 @@ import ChatSection from '../components/chat/chatlist';
 
 const FormsList = () => {
   const { id } = useParams();
-  const { role } = useSelector((state) => state.auth);
+  const { role, project } = useSelector((state) => state.auth);
+  const projectId = id ? id : project.id;
   const forms = [
     { title: 'Fund Requisition', form: 'Form - II', link: 'Fund-Requisition' },
     {
@@ -49,7 +50,7 @@ const FormsList = () => {
     setDropdownOpen(dropdownOpen === index ? null : index);
   };
   const handelView = (title, index) => {
-    navigate(`/forms/view/${title}/${index + 2}/${id}`);
+    navigate(`/forms/view/${title}/${index + 2}/${projectId}`);
   };
   const handelFill = (title, index) => {
     navigate(`/forms/fill/${title}/${index + 2}`, {

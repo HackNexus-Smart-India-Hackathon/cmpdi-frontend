@@ -2,11 +2,14 @@ import axios from 'axios';
 import React, { useState } from 'react';
 // import { useSelector } from 'react-redux';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import ProjectOutlay from './ProjectOutlay';
+
 // import ShowProjectOutlay from './ShowProjectOutlay';
 // import { setProject } from '../state/index';
 
 function ProjectForm() {
+  const navigate = useNavigate();
   // const dispatch = useDispatch();
   const { user_id } = useSelector((state) => state.auth);
   const initialValues = {
@@ -16,6 +19,7 @@ function ProjectForm() {
     principalImplementingAgency: {
       agencyName: '',
       projectInvestigatorName: '',
+      projectInvestigatorEmail: '',
     },
     projectInvestigators: [],
     subImplementingAgencies: [],
@@ -159,24 +163,27 @@ function ProjectForm() {
     formData.outlay = [...formData.outlay, ...uniqueArray];
     console.log('Form Data:', formData);
     const baseUrl = process.env.REACT_APP_PROJECT_BASE_API;
-    function clubEmails(email1, subImplemtingAgencies) {
-      // const email2 = [];
-      // subImplemtingAgencies.forEach((item) => {
-      //   email2.push(item[Object.keys(item)[2]]);
-      // });
-      // email2.forEach((email) => {
-      //   email1.push(email);
-      // });
-      return email1;
-    }
+    // function clubEmails(email1, subImplemtingAgencies) {
+    // const email2 = [];
+    // subImplemtingAgencies.forEach((item) => {
+    //   email2.push(item[Object.keys(item)[2]]);
+    // });
+    // email2.forEach((email) => {
+    //   email1.push(email);
+    // });
+    //   return email1;
+    // }
     console.log('Form Data:', formData);
     const modifiedFormData = {
       projectTitle: formData.projectTitle,
       fundingSource: formData.fundingSource,
       description: formData.description,
       principalImplementingAgency: {
-        principalImplementingAgency: formData.principalImplementingAgency,
-        principalInvestigator: formData.projectInvestigators,
+        principalImplementingAgency:
+          formData.principalImplementingAgency.agencyName,
+        principalInvestigatorName:
+          formData.projectInvestigators.projectInvestigatorName,
+        principalInvestigatorEmail: formData.projectinvestigationEmail,
       },
       subImplementingAgencies: formData.subImplementingAgencies,
       projectInvestigators: formData.subImplementingAgencies.investigatorEmail,

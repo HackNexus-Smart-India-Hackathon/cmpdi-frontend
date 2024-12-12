@@ -1,71 +1,83 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import { Chart } from 'react-google-charts';
 
-const GanttChart = () => {
-  // JSON data
-  const jsonData = [
-    {
-      id: 'Task1',
-      name: 'Event Planning',
-      startDate: '2024-12-01',
-      endDate: '2024-12-05',
-      dependencies: null,
-    },
-    {
-      id: 'Task2',
-      name: 'Venue Preparation',
-      startDate: '2024-12-06',
-      endDate: '2024-12-10',
-      dependencies: null,
-    },
-    {
-      id: 'Task3',
-      name: 'Invitations',
-      startDate: '2024-12-03',
-      endDate: '2024-12-07',
-      dependencies: null,
-    },
-    {
-      id: 'Task4',
-      name: 'Final Event',
-      startDate: '2024-12-5',
-      endDate: '2024-12-15',
-      dependencies: null,
-    },
-  ];
+const GanttChart = ({ id }) => {
+  const [taskjson, setTaskjson] = useState(null); // State to store the fetched task data
+  const [chartData, setChartData] = useState([]); // State to store the chart data
+
+  useEffect(() => {
+    // Fetch data from the API
+    const transformTasksToChartData = (tasks) => {
+      const header = [
+        'Task ID',
+        'Task Name',
+        'Start Date',
+        'End Date',
+        'Duration',
+        'Percent Complete',
+        'Dependencies',
+      ];
+
+      const rows = tasks.map((task) => {
+        const transformedTask = transformDataToGanttJson(task);
+        const startDate = parseDate(transformedTask.startDate);
+        const endDate = parseDate(transformedTask.endDate);
+        return [
+          transformedTask.id, // Task ID as a string
+          transformedTask.name, // Task Name
+          startDate, // Start Date
+          endDate, // End Date
+          (endDate - startDate) / (1000 * 60 * 60 * 24), // Duration in days
+          percentageComplete(startDate, endDate), // Percent Complete
+          transformedTask.dependencies, // Dependencies
+        ];
+      });
+
+      return [header, ...rows];
+    };
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_PROJECT_BASE_API}/api/projects/${id}/getMilestones`
+        );
+        const data = response.data.notification || {};
+        setTaskjson(data);
+
+        // Generate chart data after fetching
+        if (data.tasks) {
+          const formattedData = transformTasksToChartData(data.tasks);
+          setChartData(formattedData);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const percentageComplete = (startDate, endDate) => {
     const currentDate = Date.now();
-    if (currentDate >= endDate) return 100;
-    return ((currentDate - startDate) * 100) / (endDate - startDate);
-  };
-  // Helper function to convert string to JavaScript Date
-  const parseDate = (dateString) => {
-    const [year, month, day] = dateString.split('-').map(Number);
-    return new Date(year, month - 1, day); // Month is zero-based in JavaScript Date
+    if (currentDate >= endDate.getTime()) return 100;
+    return (
+      ((currentDate - startDate.getTime()) * 100) /
+      (endDate.getTime() - startDate.getTime())
+    );
   };
 
-  // Convert JSON data to the format required by Google Charts
-  const chartData = [
-    [
-      'Task ID',
-      'Task Name',
-      'Start Date',
-      'End Date',
-      'Duration',
-      'Percent Complete',
-      'Dependencies',
-    ],
-    ...jsonData.map((task) => [
-      task.id,
-      task.name,
-      parseDate(task.startDate), // Convert string to Date
-      parseDate(task.endDate), // Convert string to Date
-      parseDate(task.endDate) - parseDate(task.startDate),
-      percentageComplete(parseDate(task.startDate), parseDate(task.endDate)),
-      task.dependencies,
-    ]),
-  ];
+  const transformDataToGanttJson = (task) => ({
+    id: `${task.id}`, // Ensure Task ID is a string
+    name: task.description, // Map description to name
+    startDate: task.startDate.split('T')[0], // Extract date from ISO format
+    endDate: task.deadline.split('T')[0], // Extract date from ISO format
+    dependencies: null, // Default dependencies to null
+  });
+
+  const parseDate = (dateString) => {
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day); // Month is zero-based
+  };
 
   const options = {
     height: 400,
@@ -77,6 +89,10 @@ const GanttChart = () => {
       },
     },
   };
+
+  if (!taskjson) {
+    return <div>Loading...</div>; // Show a loading state while fetching data
+  }
 
   return (
     <div>

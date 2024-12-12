@@ -5,6 +5,7 @@ import ResetPassword from './components/Authentication/ResetPassword';
 import SignUp from './components/Authentication/SignUp';
 import TwoFactorAuth from './components/Authentication/TwoFactorAuth';
 import FileUpload from './components/FileUpload';
+import GanttChart from './components/ganttchart';
 import BarChart from './components/graphs/BarChart';
 import PieChart from './components/graphs/PieChart';
 import ProjectOnboarding from './components/ProjectOnboarding';
@@ -61,6 +62,7 @@ function App() {
         <Route path="/piegraph" element={<PieChart />} />
         <Route path="/bargraph" element={<BarChart />} />
         <Route path="/fileupload" element={<FileUpload />} />
+        <Route path="/ganttchart" element={<GanttChart />} />
       </Routes>
     </Router>
   );

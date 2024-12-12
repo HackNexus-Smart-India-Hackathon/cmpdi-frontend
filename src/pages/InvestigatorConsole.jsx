@@ -1,10 +1,13 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import ChatList from '../components/chat/chatlist';
+import GanttChart from '../components/ganttchart';
 import Navbar from '../components/Navbar';
 import ScheduleTable from '../components/ScheduleTable';
 import Sidebar from '../components/Sidebar';
-import Timeline from '../components/Timeline';
+// import Timeline from '../components/Timeline';
 const InvestigatorConsole = () => {
+  const { project } = useSelector((state) => state.auth);
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -18,7 +21,7 @@ const InvestigatorConsole = () => {
         <main className="flex-grow p-4 bg-white overflow-y-auto">
           {/* Timeline */}
           <section className="mb-6">
-            <Timeline />
+            <GanttChart id={project.id} />
           </section>
 
           {/* Schedule Table */}

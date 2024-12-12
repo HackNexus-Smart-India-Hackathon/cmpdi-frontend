@@ -1,22 +1,22 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import Chart from "react-apexcharts";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import Chart from 'react-apexcharts';
 
 const QuarterlyExpenditure = () => {
   const [data, setData] = useState(null);
-  const [selectedFeature, setSelectedFeature] = useState("currentQuarter");
-  const [compareQuarters, setCompareQuarters] = useState(["currentQuarter"]);
-  const [selectedQuarter, setSelectedQuarter] = useState("Q1");
+  const [selectedFeature, setSelectedFeature] = useState('currentQuarter');
+  const [compareQuarters, setCompareQuarters] = useState(['currentQuarter']);
+  const [selectedQuarter, setSelectedQuarter] = useState('Q1');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/forms/quarterly-expenditure-statement/form/1"
+          `${process.env.REACT_APP_PROJECT_BASE_API}/api/forms/quarterly-expenditure-statement/form/1`
         );
         setData(response.data.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
       }
     };
 
@@ -36,10 +36,10 @@ const QuarterlyExpenditure = () => {
 
   // Bar Chart Options
   const barChartOptions = {
-    chart: { type: "bar" },
+    chart: { type: 'bar' },
     xaxis: { categories },
     title: { text: `Expenditure for ${selectedFeature}` },
-    legend: { position: "bottom" },
+    legend: { position: 'bottom' },
   };
   const barChartSeries = [
     {
@@ -50,10 +50,10 @@ const QuarterlyExpenditure = () => {
 
   // Line Chart Options
   const lineChartOptions = {
-    chart: { type: "line" },
+    chart: { type: 'line' },
     xaxis: { categories: compareQuarters },
-    title: { text: "Progressive Expenditure Over Quarters" },
-    legend: { position: "bottom" },
+    title: { text: 'Progressive Expenditure Over Quarters' },
+    legend: { position: 'bottom' },
   };
   const lineChartSeries = compareQuarters.map((feature) => ({
     name: feature,
@@ -62,7 +62,7 @@ const QuarterlyExpenditure = () => {
 
   // Radar Chart Options
   const radarChartOptions = {
-    chart: { type: "radar" },
+    chart: { type: 'radar' },
     xaxis: { categories },
     title: { text: `Proportional Expenditure for ${selectedFeature}` },
   };
@@ -75,10 +75,10 @@ const QuarterlyExpenditure = () => {
 
   // Grouped Bar Chart Options
   const groupedBarChartOptions = {
-    chart: { type: "bar" },
+    chart: { type: 'bar' },
     xaxis: { categories },
-    title: { text: "Quarterly Comparison" },
-    legend: { position: "bottom" },
+    title: { text: 'Quarterly Comparison' },
+    legend: { position: 'bottom' },
   };
   const groupedBarChartSeries = compareQuarters.map((feature) => ({
     name: feature,
@@ -120,7 +120,7 @@ const QuarterlyExpenditure = () => {
           }
           className="p-2 border border-gray-300 rounded-md"
         >
-          {["Q1", "Q2", "Q3", "Q4"].map((q) => (
+          {['Q1', 'Q2', 'Q3', 'Q4'].map((q) => (
             <option key={q} value={q}>
               Compare: {q}
             </option>
@@ -193,7 +193,7 @@ const QuarterlyExpenditure = () => {
               }
               className="p-2 border border-gray-300 rounded-md"
             >
-              {["Q1", "Q2", "Q3", "Q4"].map((q) => (
+              {['Q1', 'Q2', 'Q3', 'Q4'].map((q) => (
                 <option key={q} value={q}>
                   {q}
                 </option>
@@ -223,7 +223,7 @@ const QuarterlyExpenditure = () => {
               }
               className="p-2 border border-gray-300 rounded-md"
             >
-              {["Q1", "Q2", "Q3", "Q4"].map((q) => (
+              {['Q1', 'Q2', 'Q3', 'Q4'].map((q) => (
                 <option key={q} value={q}>
                   {q}
                 </option>

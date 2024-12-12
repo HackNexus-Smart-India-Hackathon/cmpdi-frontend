@@ -1,9 +1,11 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import FileUpload from '../FileUpload';
 import ProjectDetails from '../ProjectDetails';
 
 const ProjectCompletionReportForm = () => {
+  const { project } = useSelector((state) => state.auth);
   const initialValues = {
     projectId: '',
     actualCompletionDate: '',
@@ -47,7 +49,7 @@ const ProjectCompletionReportForm = () => {
   };
 
   const validateForm = () => {
-    formData.projectId = 1;
+    formData.projectId = project.id;
     const newErrors = {};
     Object.entries(formData).forEach(([key, value]) => {
       const error = validateField(key, value);
@@ -78,7 +80,7 @@ const ProjectCompletionReportForm = () => {
 
       try {
         const response = await axios.post(
-          'http://localhost:5001/api/forms/project-completion-report',
+          `${process.env.REACT_APP_PROJECT_BASE_API}/api/forms/project-completion-report`,
           formData
         );
 

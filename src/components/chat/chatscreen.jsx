@@ -34,7 +34,7 @@ const Chatscreen = ({ roomName, closeChat, chat_id }) => {
 
     fetchPrevMessages();
 
-    const ws = new WebSocket('ws://localhost:8080');
+    const ws = new WebSocket(`${process.env.REACT_APP_WS_BASE_API}`);
     setSocket(ws);
 
     ws.onopen = () => {

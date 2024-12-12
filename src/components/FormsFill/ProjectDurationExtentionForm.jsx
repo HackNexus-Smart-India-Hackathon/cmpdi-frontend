@@ -1,11 +1,13 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 // import FileUpload from '../FileUpload';
+import { useSelector } from 'react-redux';
 import ProjectDetails from '../ProjectDetails';
 
 const ProjectDurationExtensionForm = ({ edit }) => {
+  const { project } = useSelector((state) => state.auth);
   const initialValues = {
-    projectId: 1,
+    projectId: '',
     approvedObjectives: '',
     approvedWorkProgram: '',
     workDoneDetails: '',
@@ -64,10 +66,10 @@ const ProjectDurationExtensionForm = ({ edit }) => {
     e.preventDefault();
     if (validateForm()) {
       setIsSubmitting(true);
-      formData.projectId = 1;
+      formData.projectId = project.id;
       try {
         const response = await axios.post(
-          'http://localhost:5001/api/forms/project-duration-extension',
+          `${process.env.REACT_APP_PROJECT_BASE_API}/api/forms/project-duration-extension`,
           formData
         );
         console.log('Form submitted successfully:', response.data);

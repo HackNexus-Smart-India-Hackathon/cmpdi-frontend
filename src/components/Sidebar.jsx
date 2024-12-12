@@ -134,7 +134,6 @@ const Sidebar = () => {
       </Link>
     );
   };
-  console.log(data);
 
   useEffect(() => {
     const baseUrl = process.env.REACT_APP_AUTH_BASE_API;

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import FileUpload from '../FileUpload';
 import ProjectDetails from '../ProjectDetails';
 
@@ -51,6 +52,7 @@ const sections = [
 ];
 
 function RevisionCostForm({ edit }) {
+  const { project } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState({});
   const [expanded, setExpanded] = useState(null);
@@ -81,12 +83,12 @@ function RevisionCostForm({ edit }) {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    formData.projectId = 1;
+    formData.projectId = project.id;
     if (validateForm()) {
       setIsSubmitting(true);
       try {
         const response = await axios.post(
-          'http://localhost:5001/api/forms/revision-cost-report',
+          `${process.env.REACT_APP_PROJECT_BASE_API}/api/forms/revision-cost-report`,
           formData
         );
         console.log('Form Data Submitted:', response.data);

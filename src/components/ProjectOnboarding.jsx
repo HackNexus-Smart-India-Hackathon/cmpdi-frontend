@@ -215,6 +215,7 @@ function ProjectForm() {
       //   })
       // );
       console.log('API Response:', response.data);
+      navigate(`/project/add/timeline/${response.data.projectId}`);
     } catch (err) {
       console.error('API Error:', err);
       // setError('Failed to submit the project. Please try again.');

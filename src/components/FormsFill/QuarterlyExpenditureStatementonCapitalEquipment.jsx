@@ -1,10 +1,12 @@
 import { TrashIcon } from '@heroicons/react/outline';
 import axios from 'axios';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import FileUpload from '../FileUpload';
 import ProjectDetails from '../ProjectDetails';
 
 const QuarterlyExpenditureStatementonCapitalEquipment = ({ edit }) => {
+  const { project } = useSelector((state) => state.auth);
   const initialValues = {
     projectId: '',
     quarterEnding: '',
@@ -101,11 +103,11 @@ const QuarterlyExpenditureStatementonCapitalEquipment = ({ edit }) => {
     e.preventDefault();
     const formErrors = validateForm();
     setErrors(formErrors);
-    formData.projectId = 1;
+    formData.projectId = project.id;
     if (Object.keys(formErrors).length === 0) {
       try {
         const response = await axios.post(
-          'http://localhost:5001/api/forms/quarterly-expenditure-statement-capital-equipment',
+          `${process.env.REACT_APP_PROJECT_BASE_API}/api/forms/quarterly-expenditure-statement-capital-equipment`,
           formData
         );
 

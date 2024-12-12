@@ -4,6 +4,7 @@ const initialAuthState = {
   role: null,
   user_id: null,
   access_token: null,
+  project: null,
   chatUser: {},
 };
 
@@ -32,11 +33,14 @@ export const authSlice = createSlice({
       state.access_token = action.payload.access_token;
       state.role = action.payload.role;
       state.chatUser = action.payload.chatUser;
+      state.project = action.payload.project;
     },
     setLogout: (state) => {
       state.user_id = null;
       state.access_token = null;
       state.role = null;
+      state.chatUser = {};
+      state.project = null;
     },
   },
 });

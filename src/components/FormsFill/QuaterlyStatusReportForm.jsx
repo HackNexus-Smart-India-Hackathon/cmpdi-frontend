@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import FileUpload from '../FileUpload';
 import ProjectDetails from '../ProjectDetails';
-
 // Quarterly Report Sections
 const sections = [
   {
@@ -60,6 +60,7 @@ const initialFormState = {
 };
 
 function QuarterlyStatusReportForm({ edit }) {
+  const { project } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState(initialFormState);
   const [expanded, setExpanded] = useState(null);
   const [errors, setErrors] = useState({});
@@ -70,7 +71,7 @@ function QuarterlyStatusReportForm({ edit }) {
     setFormData({ ...formData, [name]: value });
   };
 
-  formData.projectId = 1;
+  formData.projectId = project.id;
 
   const validateForm = () => {
     let formErrors = {};
@@ -96,7 +97,7 @@ function QuarterlyStatusReportForm({ edit }) {
       setIsSubmitting(true);
       try {
         const response = await axios.post(
-          'http://localhost:5001/api/forms/quarterly-status-report',
+          `${process.env.REACT_APP_PROJECT_BASE_API}/api/forms/quarterly-status-report`,
           formData
         );
         console.log('Form Data Submitted:', response.data);

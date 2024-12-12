@@ -4,12 +4,13 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ProjectOutlay from './ProjectOutlay';
+
 // import ShowProjectOutlay from './ShowProjectOutlay';
 // import { setProject } from '../state/index';
 
 function ProjectForm() {
-  // const dispatch = useDispatch();
   const navigate = useNavigate();
+  // const dispatch = useDispatch();
   const { user_id } = useSelector((state) => state.auth);
   const initialValues = {
     projectTitle: '',
@@ -18,6 +19,7 @@ function ProjectForm() {
     principalImplementingAgency: {
       agencyName: '',
       projectInvestigatorName: '',
+      projectInvestigatorEmail: '',
     },
     projectInvestigators: [],
     subImplementingAgencies: [],
@@ -177,8 +179,11 @@ function ProjectForm() {
       fundingSource: formData.fundingSource,
       description: formData.description,
       principalImplementingAgency: {
-        principalImplementingAgency: formData.principalImplementingAgency,
-        principalInvestigator: formData.projectInvestigators,
+        principalImplementingAgency:
+          formData.principalImplementingAgency.agencyName,
+        principalInvestigatorName:
+          formData.projectInvestigators.projectInvestigatorName,
+        principalInvestigatorEmail: formData.projectinvestigationEmail,
       },
       subImplementingAgencies: formData.subImplementingAgencies,
       projectInvestigators: formData.subImplementingAgencies.investigatorEmail,

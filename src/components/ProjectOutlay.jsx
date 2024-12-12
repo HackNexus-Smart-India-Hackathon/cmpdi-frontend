@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const ProjectOutlay = ({ projectOutlay, agencyName, Title }) => {
-  const [numYears, setNumYears] = useState(3); // Default number of years
+  const [numYears, setNumYears] = useState(3);
   const [data, setData] = useState({
     'Capital Expenditure': {
       'Land Building': { totalCost: '', yearWise: Array(numYears).fill('') },

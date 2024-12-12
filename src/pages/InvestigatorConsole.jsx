@@ -20,14 +20,18 @@ const InvestigatorConsole = () => {
         {/* Main Content */}
         <main className="flex-grow p-4 bg-white overflow-y-auto">
           {/* Timeline */}
-          <section className="mb-6">
-            <GanttChart id={project.id} />
-          </section>
+
+          <div className="mt-10 mx-4">
+            {' '}
+            <GanttChart id={project?.id} />
+          </div>
 
           {/* Schedule Table */}
-          <section>
+
+          <div className="mt-20">
             <ScheduleTable />
-          </section>
+          </div>
+
           <ChatList />
         </main>
       </div>

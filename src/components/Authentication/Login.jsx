@@ -31,9 +31,6 @@ const LoginSignup = () => {
         const project = response.data.user.project;
         dispatch(setLogin({ user_id, access_token, role, chatUser, project }));
 
-        console.log('Dispatched setLogin:', {
-          chatUser,
-        });
         console.log(response.data);
         toast.success('Login successful!');
         window.location.href = `/${role}/dashboard`;

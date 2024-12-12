@@ -2,12 +2,14 @@ import axios from 'axios';
 import React, { useState } from 'react';
 // import { useSelector } from 'react-redux';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import ProjectOutlay from './ProjectOutlay';
 // import ShowProjectOutlay from './ShowProjectOutlay';
 // import { setProject } from '../state/index';
 
 function ProjectForm() {
   // const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user_id } = useSelector((state) => state.auth);
   const initialValues = {
     projectTitle: '',

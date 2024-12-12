@@ -1,8 +1,9 @@
 import { Modal } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import ChatList from '../components/chat/chatlist';
+import Disbursement from '../components/Disbursement';
 import ExportFundDataToExcel from '../components/formsView/FundRequisitionForm';
 import ExportToExcel from '../components/formsView/QuarterlyExpenditureStatementForm';
 import Navbar from '../components/Navbar';
@@ -20,7 +21,7 @@ const FormsView = () => {
   });
   const { role } = useSelector((state) => state.auth);
 
-  console.log(auditData);
+  // console.log(auditData);
 
   const handleChangeField = (event) => {
     const { name, value } = event.target;
@@ -105,7 +106,23 @@ const FormsView = () => {
         alert('not done yet');
     }
   };
+  const updatedData = useRef([]);
   useEffect(() => {
+    function getCreatedAtAndFunds(data) {
+      return data.map((item) => {
+        const totalFundsReceived = Object.values(item.funds).reduce(
+          (total, fund) => {
+            return total + parseFloat(fund.fundReceived);
+          },
+          0
+        );
+
+        return {
+          createdAt: item.createdAt,
+          totalFundsReceived: totalFundsReceived,
+        };
+      });
+    }
     const getTitle = () => {
       switch (code) {
         case '2':
@@ -134,6 +151,8 @@ const FormsView = () => {
         const result = await response.json();
         if (result.success) {
           setAuditData(result.data);
+          updatedData.current = getCreatedAtAndFunds(result.data);
+          // console.log(updatedData.current);
         } else {
           console.error('Failed to fetch audit data');
         }
@@ -282,7 +301,10 @@ const FormsView = () => {
           <Sidebar />
         </div>
 
-        <div className="flex-1 m-4">{common()}</div>
+        <div className="flex-1 m-4">
+          {common()}
+          {code === '2' && <Disbursement data={updatedData.current} />}
+        </div>
       </div>
     </div>
   );

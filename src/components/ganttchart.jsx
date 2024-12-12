@@ -67,7 +67,7 @@ const GanttChart = ({ id }) => {
   };
 
   const transformDataToGanttJson = (task) => ({
-    id: `${task.id}`, // Ensure Task ID is a string
+    id: task.id, // Ensure Task ID is a string
     name: task.description, // Map description to name
     startDate: task.startDate.split('T')[0], // Extract date from ISO format
     endDate: task.deadline.split('T')[0], // Extract date from ISO format
